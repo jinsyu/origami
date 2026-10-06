@@ -24,6 +24,7 @@ const KO = {
   title: '종이접기 교실', full: '크게 보기', unfull: '작게 보기', stop: '멈추기', replay: '처음부터 다시 보기', auto: '끝까지 이어서 보기',
   done: '완성', folded: '접어 봤어요', next: (n) => `다음 작품: ${n}`, stepsCount: (n) => `${n}단계`, level: (l) => `난이도 ${l}`,
   printTitle: (n) => `${n} 접는 방법`,
+  bands: [['all', '전체'], ['easy', '처음 (1~3)'], ['mid', '중간 (4~6)'], ['hard', '도전 (7~10)']], bandLabel: '난이도로 보기',
 };
 const T = EN ? enUI : KO;
 if (EN) {
@@ -91,14 +92,40 @@ const hero = createHero($('heroCanvas'), MODELS, plansOf, (m) => {
   $('heroLink').href = `#/m/${m.id}`;
 });
 
+// 난이도 구간 필터 (고른 구간은 이 브라우저에 기억)
+const bandKey = 'origami.band';
+let band = 'all';
+try { band = localStorage.getItem(bandKey) || 'all'; } catch { /* 저장소 사용 불가 */ }
+function applyBand() {
+  [...$('cards').children].forEach((li) => { li.hidden = band !== 'all' && li.dataset.band !== band; });
+  $('bands').querySelectorAll('button').forEach((b) => b.setAttribute('aria-pressed', String(b.dataset.band === band)));
+}
+function renderBands() {
+  const box = $('bands');
+  if (box.childElementCount) return;
+  box.setAttribute('aria-label', T.bandLabel);
+  for (const [key, label] of T.bands) {
+    const b = document.createElement('button');
+    b.type = 'button';
+    b.dataset.band = key;
+    const n = key === 'all' ? MODELS.length : MODELS.filter((m) => (m.level <= 3 ? 'easy' : m.level <= 6 ? 'mid' : 'hard') === key).length;
+    b.innerHTML = `<span></span><small>${n}</small>`;
+    b.querySelector('span').textContent = label;
+    b.onclick = () => { band = key; try { localStorage.setItem(bandKey, band); } catch { /* 무시 */ } applyBand(); };
+    box.appendChild(b);
+  }
+}
+
 function renderGallery() {
   const ol = $('cards');
-  if (ol.childElementCount) { refreshDone(); return; }
+  renderBands();
+  if (ol.childElementCount) { refreshDone(); applyBand(); return; }
   const queue = [];
   for (const m of MODELS) {
     const li = document.createElement('li');
     li.className = 'card';
     li.dataset.id = m.id;
+    li.dataset.band = m.level <= 3 ? 'easy' : m.level <= 6 ? 'mid' : 'hard';
     li.innerHTML = `<a href="#/m/${m.id}"><div class="pic matgrid"><span class="lv" aria-hidden="true">${m.level}</span><img alt="" /></div>
       <div class="meta"><h3></h3><p></p><div class="facts"><span class="steps"></span></div></div></a>`;
     li.querySelector('h3').textContent = m.name;
@@ -109,6 +136,7 @@ function renderGallery() {
     ol.appendChild(li);
     queue.push([m, li.querySelector('img')]);
   }
+  applyBand();
   // 완성 그림: 미리 만들어 둔 이미지(thumbs/작품.webp)를 쓰고, 없으면 3D로 그린다.
   // 주소에 ?live 를 붙이면 항상 새로 그린다 (작품을 고친 뒤 썸네일을 다시 만들 때)
   const live = new URLSearchParams(location.search).has('live');

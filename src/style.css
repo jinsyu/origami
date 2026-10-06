@@ -48,6 +48,12 @@ button, select, input { font: inherit; color: inherit; }
 .lede { font-size: 19px; line-height: 1.6; color: var(--ink-soft); max-width: 34em; margin: 0; }
 .g-main { max-width: 1120px; margin: 0 auto; padding: 8px 24px 40px; }
 .g-title { font-family: var(--display); font-weight: 400; font-size: 24px; margin: 24px 0 18px; }
+.bands { display: flex; flex-wrap: wrap; gap: 8px; margin: 0 0 22px; }
+.bands button { font: inherit; font-size: 14.5px; display: inline-flex; align-items: center; gap: 8px; padding: 8px 14px; border-radius: 999px; border: 1px solid var(--rule); background: var(--sheet); color: var(--ink-soft); cursor: pointer; }
+.bands button small { font-size: 12px; color: var(--muted); }
+.bands button:hover { border-color: var(--ink-soft); }
+.bands button[aria-pressed="true"] { background: var(--ink); border-color: var(--ink); color: var(--sheet); }
+.bands button[aria-pressed="true"] small { color: inherit; opacity: .75; }
 .cards { list-style: none; padding: 0; margin: 0; display: grid; grid-template-columns: repeat(auto-fill, minmax(230px, 1fr)); gap: 22px; }
 .card a { display: block; text-decoration: none; color: inherit; border-radius: 4px; }
 .card .pic { position: relative; aspect-ratio: 1; border-radius: 3px; overflow: hidden; box-shadow: 0 1px 0 rgba(30, 43, 58, 0.08); }

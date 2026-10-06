@@ -316,6 +316,7 @@ export const enUI = {
   title: 'Origami Classroom',
   lede: 'Get a sheet of origami paper. Each step shows the fold line and direction first, then folds slowly in 3D.',
   ladder: 'From easiest to hardest',
+  bands: [['all', 'All'], ['easy', 'Beginner (1–3)'], ['mid', 'Intermediate (4–6)'], ['hard', 'Challenge (7–10)']], bandLabel: 'Filter by level',
   symbols: 'Learn the fold symbols',
   foot: 'Drag to rotate the paper. Use ← → to change steps and Space to play.',
   back: 'All models', print: 'Printable diagram', full: 'Full screen', unfull: 'Exit full screen',
