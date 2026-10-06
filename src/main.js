@@ -266,6 +266,7 @@ $('fold').onclick = foldStep;
 $('auto').onclick = toggleAuto;
 $('speed').onchange = (e) => { speed = +e.target.value; };
 slider.oninput = () => {
+  if (!model) return;
   autoAll = false;
   if (step >= N) enterStep(N - 1, false);
   t = +slider.value;

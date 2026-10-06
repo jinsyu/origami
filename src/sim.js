@@ -106,7 +106,7 @@ export function prepareSim(plan) {
     const p2 = polys.map((q) => q.tags.has(tag('obis')) || q.tags.has(tag('ibis')));
     squash = { roleIdx, group, p2 };
   }
-  const sim = { loops, nCorner, NV: nCorner, member, subs: plan.subs, start, end, dist, guides, squash };
+  const sim = { loops, nCorner, NV: nCorner, member, subs: plan.subs, start, end, dist, guides, squash, tearOk: plan.tearOk };
   if (squash) {
     // 해석적 경로의 시작·끝을 실제 상태와 맞추기 위한 보정값
     const A0 = squashPose(sim, 0), A1 = squashPose(sim, 1);
@@ -254,7 +254,8 @@ function bake(sim) {
     }
     prevX = x; prevAvg = avg;
     // 층 간격처럼 작은 차이는 살리고, 이음매 벌어짐은 없앤다. 시작·끝 근처에서는 이완을 줄인다
-    const w = Math.min(1, Math.min(t, 1 - t) * 25);
+    // tearOk: 가려지는 이음선이 일부러 벌어지는 단계는 이완하지 않는다
+    const w = sim.tearOk ? 0 : Math.min(1, Math.min(t, 1 - t) * 25);
     frames.push(sim.loops.map((L, pi) => L.map((it, li) => {
       const p = kin[pi][li], o = [0, 0, 0];
       for (let c = 0; c < 3; c++) {

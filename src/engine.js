@@ -155,7 +155,7 @@ function selectMove(cur, m, mi) {
     if (Math.abs(t) > 1e-6) { sg = Math.sign(t); break outer; }
   }
   const angle = m.angle ?? 180;
-  const mv = { o, d, n, u, theta: (sg * angle * Math.PI) / 180, shift: 0, flat: angle >= 179, unfold: !!m.unfold, fixedShift: m.shift, insert: m.insert };
+  const mv = { o, d, n, u, theta: (sg * angle * Math.PI) / 180, shift: 0, flat: angle >= 179, unfold: !!m.unfold, fixedShift: m.shift, insert: m.insert, noRejoin: !!m.noRejoin };
 
   // 뒤집어 접기 경로: 날개(flap)가 등선을 축으로 책처럼 펼쳐졌다 반대로 닫히면서(180°),
   // 동시에 접는 선과 등선이 만나는 점을 중심으로 평면 안에서 2(α-β)만큼 돈다.
@@ -224,7 +224,7 @@ function computeShift(cur, mv, mi) {
       }
     }
   });
-  if (rc && !mv.insert) return rs / rc;
+  if (rc && !mv.insert && !mv.noRejoin) return rs / rc;
 
   const proj = (pts) => pts.map((p) => [dot(p, mv.d), dot(p, mv.n)]);
   const sp = stat.map((q) => ({ h: Math.max(...q.p.map((p) => dot(p, mv.u))), z: centroid(q.p)[2], pp: proj(q.p) }));
@@ -288,7 +288,7 @@ function planSeqStep(polys, step) {
     subs.push({ mv, at: m.at || [0, 1], curve: m.curve || (mv.transient ? 'updown' : 'ease'), peak: m.peak ?? 0.5, role: m.role });
   });
   cur.forEach((q) => { q.owner = -1; });
-  return { polys: cur, moves: [], subs, sim: true, edges: edgeList(cur) };
+  return { polys: cur, moves: [], subs, sim: true, tearOk: !!step.tearOk, edges: edgeList(cur) };
 }
 
 // 단순 단계에서 진행률 t(0~1)일 때 각 다각형의 꼭짓점 위치

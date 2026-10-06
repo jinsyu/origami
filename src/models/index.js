@@ -8,5 +8,6 @@ import { heart } from './heart.js';
 import { tulip } from './tulip.js';
 import { crane } from './crane.js';
 import { masu } from './masu.js';
+import { lily } from './lily.js';
 
-export const MODELS = [dog, cup, cicada, airplane, swan, heart, tulip, masu, crane].sort((a, b) => a.level - b.level);
+export const MODELS = [dog, cup, cicada, airplane, swan, heart, tulip, masu, crane, lily].sort((a, b) => a.level - b.level);
