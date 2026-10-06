@@ -231,6 +231,19 @@ export const enModels = {
       'Turn it back over. Your tulip bud is done!',
     ],
   },
+  dino: {
+    name: 'Dinosaur', desc: 'Three reverse folds make a long neck, a head and a tail. Line up the fold angles carefully.', paper: 'Square origami paper',
+    done: 'Your dinosaur is done! Draw spikes along its back.',
+    steps: [
+      'Place the paper colored side down as a diamond. Fold it in half vertically and unfold to make a center line.',
+      'Fold the two lower edges to the center line to make a kite.',
+      'Fold the paper in half backward along the center line.',
+      'Lay it down with the fold at the bottom. The thin end points right.',
+      'Outside reverse fold the thin end so it stands up high. This is the long neck.',
+      'Reverse fold the tip of the neck forward to make the head.',
+      'Outside reverse fold the left end into a slightly raised tail. Your dinosaur is done!',
+    ],
+  },
   masu: {
     name: 'Masu Box', desc: 'Pre-crease the paper flat, then raise the walls and tuck in the corners to build a 3D box.', paper: 'Square origami paper',
     done: 'Your masu box is done! Fold a slightly bigger sheet the same way to make a lid.',
