@@ -85,6 +85,16 @@ export const enModels = {
       'Fold the remaining back layer behind. Your helmet is done!',
     ],
   },
+  hat: {
+    name: 'Paper Hat', desc: 'Fold the corners down to a point, then fold the bottom strips up on the front and back separately. Fold a big sheet and wear it.', paper: 'Square origami paper',
+    done: 'Your paper hat is done! Open the bottom and you can wear it.',
+    steps: [
+      'Place the paper colored side down. Fold the top half down.',
+      'Fold the two top corners down at an angle, leaving a strip at the bottom.',
+      'Fold the front layer of the bottom strip up.',
+      'Fold the back strip up behind. Your paper hat is done!',
+    ],
+  },
   airplane: {
     name: 'Paper Airplane', desc: 'A pointed dart folded to the center line, with wings opened at the end. Fly it when you finish.', paper: 'Square origami paper',
     done: 'Your paper airplane is done! Hold it under the body and push it gently forward.',

@@ -7,6 +7,7 @@ import { house } from './house.js';
 import { penguin } from './penguin.js';
 import { cicada } from './cicada.js';
 import { kabuto } from './kabuto.js';
+import { hat } from './hat.js';
 import { airplane } from './airplane.js';
 import { swan } from './swan.js';
 import { heart } from './heart.js';
@@ -15,4 +16,4 @@ import { crane } from './crane.js';
 import { masu } from './masu.js';
 import { lily } from './lily.js';
 
-export const MODELS = [dog, cat, flower, cup, house, penguin, cicada, kabuto, airplane, swan, heart, tulip, masu, crane, lily].sort((a, b) => a.level - b.level);
+export const MODELS = [dog, cat, flower, cup, house, penguin, cicada, kabuto, hat, airplane, swan, heart, tulip, masu, crane, lily].sort((a, b) => a.level - b.level);
