@@ -1,21 +1,24 @@
 // 종이 접기 엔진
-// 종이를 볼록 다각형들의 집합으로 표현한다. 한 단계의 접기마다 접힘선(평면)으로
-// 다각형을 정확히 잘라낸 뒤, 접히는 쪽 다각형만 접힘선을 축으로 회전시킨다.
-// 그래서 접힌 모서리가 깨끗하고, 몇 번을 접어도 형태가 정확하다.
+// 종이를 볼록 다각형들의 집합으로 표현한다. 접기마다 접힘선(평면)으로 다각형을 정확히 잘라낸 뒤,
+// 접히는 쪽 다각형을 접힘선을 축으로 회전시킨다.
+// - 단순 단계: 여러 회전을 동시에 진행하는 강체 애니메이션 (pose)
+// - 복합 단계(sim): 하위 동작을 차례로 적용해 최종 평면 상태를 만들고,
+//   접힌 선의 각도를 목표값으로 옮기는 제약 풀이기(sim.js)로 움직임을 만든다.
+//   (안쪽 뒤집어 접기, 펼쳐 누르기, 꽃잎 접기, 가라앉히기 등)
 
 export const GAP = 0.0022; // 겹친 종이 층 사이 간격
 const E = 1e-7;
 const CUT = 3; // 임시: 방금 자른 모서리
 // 모서리 종류: 1 = 종이 가장자리, 2 = 접힌 선
 
-const add = (a, b) => [a[0] + b[0], a[1] + b[1], a[2] + b[2]];
-const sub = (a, b) => [a[0] - b[0], a[1] - b[1], a[2] - b[2]];
-const mul = (a, s) => [a[0] * s, a[1] * s, a[2] * s];
-const dot = (a, b) => a[0] * b[0] + a[1] * b[1] + a[2] * b[2];
-const cross = (a, b) => [a[1] * b[2] - a[2] * b[1], a[2] * b[0] - a[0] * b[2], a[0] * b[1] - a[1] * b[0]];
-const norm = (a) => mul(a, 1 / Math.hypot(a[0], a[1], a[2]));
+export const add = (a, b) => [a[0] + b[0], a[1] + b[1], a[2] + b[2]];
+export const sub = (a, b) => [a[0] - b[0], a[1] - b[1], a[2] - b[2]];
+export const mul = (a, s) => [a[0] * s, a[1] * s, a[2] * s];
+export const dot = (a, b) => a[0] * b[0] + a[1] * b[1] + a[2] * b[2];
+export const cross = (a, b) => [a[1] * b[2] - a[2] * b[1], a[2] * b[0] - a[0] * b[2], a[0] * b[1] - a[1] * b[0]];
+export const norm = (a) => mul(a, 1 / (Math.hypot(a[0], a[1], a[2]) || 1));
 const lerp = (a, b, t) => a.map((x, i) => x + (b[i] - x) * t);
-const centroid = (pts) => pts.reduce((s, p) => s.map((x, i) => x + p[i] / pts.length), pts[0].map(() => 0));
+export const centroid = (pts) => pts.reduce((s, p) => s.map((x, i) => x + p[i] / pts.length), pts[0].map(() => 0));
 
 // 점 p를 축(원점 o, 단위방향 d) 기준으로 th 라디안 회전 (로드리게스 공식)
 export function rotate(p, o, d, th) {
@@ -37,9 +40,20 @@ export function polyNormal(pts) {
   return [x / l, y / l, z / l];
 }
 
-const clone = (q) => ({ p: q.p.map((v) => v.slice()), uv: q.uv, e: q.e, tags: new Set(q.tags), owner: -1 });
+// 이웃한 두 면 A, B 사이의 접힌 각도 (A의 k번째 모서리 방향 기준, 부호 있음)
+// 0 = 평평, -π = 골짜기 접기로 완전히 접힘(B가 A 위), +π = 산 접기로 완전히 접힘
+export function foldAngle(PA, PB, k) {
+  const nA = polyNormal(PA), nB = polyNormal(PB);
+  const e = norm(sub(PA[(k + 1) % PA.length], PA[k]));
+  const c = dot(nA, nB);
+  if (c < -0.9995) return dot(sub(centroid(PB), centroid(PA)), nA) > 0 ? -Math.PI : Math.PI;
+  return Math.atan2(dot(cross(nA, nB), e), c);
+}
+
+const clonePoly = (q) => ({ p: q.p.map((v) => v.slice()), uv: q.uv, e: q.e, tags: new Set(q.tags), owner: -1, hist: q.hist });
 
 // 볼록 다각형을 평면(o, n)으로 둘로 자른다. 걸치지 않으면 null
+// 위치 기록(hist)도 같은 비율로 함께 자른다.
 function splitPoly(q, o, n) {
   const ds = q.p.map((p) => dot(sub(p, o), n));
   if (!ds.some((x) => x > E) || !ds.some((x) => x < -E)) return null;
@@ -47,21 +61,22 @@ function splitPoly(q, o, n) {
   for (let i = 0; i < N; i++) {
     const j = (i + 1) % N, di = ds[i], dj = ds[j];
     const si = di > E ? 1 : di < -E ? -1 : 0, sj = dj > E ? 1 : dj < -E ? -1 : 0;
-    const v = { p: q.p[i], uv: q.uv[i], on: si === 0, src: i };
+    const v = { i, j: i, t: 0, on: si === 0, src: i };
     if (si >= 0) A.push(v);
     if (si <= 0) B.push(v);
     if (si * sj < 0) {
-      const t = di / (di - dj);
-      const x = { p: lerp(q.p[i], q.p[j], t), uv: lerp(q.uv[i], q.uv[j], t), on: true, src: i };
+      const x = { i, j, t: di / (di - dj), on: true, src: i };
       A.push(x); B.push(x);
     }
   }
+  const at = (arr, v) => (v.t === 0 ? arr[v.i].slice() : lerp(arr[v.i], arr[v.j], v.t));
   const build = (L) => ({
-    p: L.map((v) => v.p.slice()),
-    uv: L.map((v) => v.uv.slice()),
+    p: L.map((v) => at(q.p, v)),
+    uv: L.map((v) => at(q.uv, v)),
     e: L.map((v, k) => (v.on && L[(k + 1) % L.length].on ? CUT : q.e[v.src])),
     tags: new Set(q.tags),
     owner: -1,
+    hist: q.hist ? q.hist.map((h) => L.map((v) => at(h, v))) : undefined,
   });
   return [build(A), build(B)];
 }
@@ -82,84 +97,112 @@ function overlap(A, B) {
   return true;
 }
 
-// 한 단계 계획: 다각형 자르기 → 접힐 부분 고르기 → 회전축·방향·층 간격 계산
-function planStep(polys, step) {
-  let cur = polys.map(clone);
-  const moves = [];
+// 동작 하나: 접힘선으로 자르고, 접힐 다각형을 고르고, 회전축·방향을 정한다
+function selectMove(cur, m, mi) {
+  if (m.spin) {
+    for (const q of cur) if (q.owner === -1) q.owner = mi;
+    const d = norm(sub(m.spin.b, m.spin.a));
+    return { cur, mv: { o: m.spin.a, d, u: [0, 0, 1], n: [0, 0, 0], theta: (m.spin.angle * Math.PI) / 180, shift: 0, spin: true } };
+  }
+  const u = [0, 0, m.toward ?? 1];
+  let o = [m.line[0][0], m.line[0][1], 0];
+  const d = norm(sub([m.line[1][0], m.line[1][1], 0], o));
+  const n = norm(cross(d, u));
+  const sideOf = (c) => dot(sub([c[0], c[1], 0], o), n);
+  const ref = m.side ? Math.sign(sideOf(m.side)) : 0;
+  const sel = (q) => {
+    const c = centroid(q.p);
+    if (ref && sideOf(c) * ref <= 1e-6) return false;
+    return m.filter ? m.filter({ x: c[0], y: c[1], z: c[2], uv: centroid(q.uv), tags: q.tags }) : true;
+  };
 
-  step.moves.forEach((m, mi) => {
-    // 종이 전체를 돌리기(뒤집기, 방향 바꾸기)
-    if (m.spin) {
-      for (const q of cur) if (q.owner === -1) q.owner = mi;
-      moves.push({ o: m.spin.a, d: norm(sub(m.spin.b, m.spin.a)), u: [0, 0, 1], n: [0, 0, 0], theta: (m.spin.angle * Math.PI) / 180, shift: 0, spin: true });
-      return;
-    }
-    const u = [0, 0, m.toward ?? 1];
-    let o = [m.line[0][0], m.line[0][1], 0];
-    const d = norm(sub([m.line[1][0], m.line[1][1], 0], o));
-    const n = norm(cross(d, u));
-    const sideOf = (c) => dot(sub([c[0], c[1], 0], o), n);
-    const ref = m.side ? Math.sign(sideOf(m.side)) : 0;
-    const sel = (q) => {
-      const c = centroid(q.p);
-      if (ref && sideOf(c) * ref <= 1e-6) return false;
-      return m.filter ? m.filter({ x: c[0], y: c[1], z: c[2], uv: centroid(q.uv), tags: q.tags }) : true;
-    };
-
-    const next = [];
-    for (const q of cur) {
-      if (q.owner !== -1) { next.push(q); continue; }
-      const parts = splitPoly(q, o, n);
-      if (parts) {
-        const s = parts.map(sel);
-        if (s[0] !== s[1]) {
-          parts.forEach((pt, k) => { pt.e = pt.e.map((f) => (f === CUT ? 2 : f)); pt.owner = s[k] ? mi : -1; next.push(pt); });
-          continue;
-        }
+  const next = [];
+  for (const q of cur) {
+    if (q.owner !== -1) { next.push(q); continue; }
+    const parts = splitPoly(q, o, n);
+    if (parts) {
+      const s = parts.map(sel);
+      if (s[0] !== s[1]) {
+        parts.forEach((pt, k) => { pt.e = pt.e.map((f) => (f === CUT ? 2 : f)); pt.owner = s[k] ? mi : -1; next.push(pt); });
+        continue;
       }
-      q.owner = sel(q) ? mi : -1;
-      next.push(q);
     }
-    cur = next;
+    q.owner = sel(q) ? mi : -1;
+    next.push(q);
+  }
 
-    const mem = cur.filter((q) => q.owner === mi);
-    if (m.tag) mem.forEach((q) => q.tags.add(m.tag));
-    // 회전축 높이를 실제 접힘선 위치(층 높이)에 맞춘다
-    let hs = 0, hc = 0;
-    for (const q of mem) for (const p of q.p) if (Math.abs(dot(sub(p, o), n)) < 1e-6) { hs += dot(p, u); hc++; }
-    if (hc) o = add(o, mul(u, hs / hc - dot(o, u)));
-    // 회전 방향: 접히는 부분이 toward 쪽으로 들리도록
-    let sg = 1;
-    outer: for (const q of mem) for (const p of q.p) {
-      const t = dot(cross(d, sub(p, o)), u);
-      if (Math.abs(t) > 1e-6) { sg = Math.sign(t); break outer; }
-    }
-    const angle = m.angle ?? 180;
-    moves.push({ o, d, n, u, theta: (sg * angle * Math.PI) / 180, shift: 0, flat: angle >= 179, unfold: !!m.unfold });
+  const mem = next.filter((q) => q.owner === mi);
+  if (m.tag) mem.forEach((q) => q.tags.add(m.tag));
+  if (m.untag) mem.forEach((q) => q.tags.delete(m.untag));
+  // 회전축 높이를 실제 접힘선 위치(층 높이)에 맞춘다
+  let hs = 0, hc = 0;
+  for (const q of mem) for (const p of q.p) if (Math.abs(dot(sub(p, o), n)) < 1e-6) { hs += dot(p, u); hc++; }
+  if (hc) o = add(o, mul(u, hs / hc - dot(o, u)));
+  // 회전 방향: 접히는 부분이 toward 쪽으로 들리도록
+  let sg = 1;
+  outer: for (const q of mem) for (const p of q.p) {
+    const t = dot(cross(d, sub(p, o)), u);
+    if (Math.abs(t) > 1e-6) { sg = Math.sign(t); break outer; }
+  }
+  const angle = m.angle ?? 180;
+  return { cur: next, mv: { o, d, n, u, theta: (sg * angle * Math.PI) / 180, shift: 0, flat: angle >= 179, unfold: !!m.unfold, fixedShift: m.shift } };
+}
+
+// 완전히 접히는 경우, 접힌 층이 겹치는 층 위로 오도록 올리는 양
+function computeShift(cur, mv, mi) {
+  if (!mv.flat || mv.unfold || mv.spin) return 0;
+  if (mv.fixedShift !== undefined) return mv.fixedShift * GAP;
+  const proj = (pts) => pts.map((p) => [dot(p, mv.d), dot(p, mv.n)]);
+  const sp = cur.filter((q) => q.owner === -1).map((q) => ({ h: Math.max(...q.p.map((p) => dot(p, mv.u))), pp: proj(q.p) }));
+  let need = GAP * 0.5;
+  for (const q of cur) {
+    if (q.owner !== mi) continue;
+    const r = q.p.map((p) => rotate(p, mv.o, mv.d, mv.theta));
+    const lo = Math.min(...r.map((p) => dot(p, mv.u)));
+    const rp = proj(r);
+    for (const s of sp) if (overlap(rp, s.pp)) need = Math.max(need, s.h - lo + GAP);
+  }
+  return need;
+}
+
+const moveTo = (p, mv, f) => add(rotate(p, mv.o, mv.d, mv.theta * f), mul(mv.u, mv.shift * f));
+
+// 단순 단계: 여러 동작을 동시에 진행
+function planStep(polys, step) {
+  let cur = polys.map(clonePoly);
+  const moves = [];
+  step.moves.forEach((m, mi) => {
+    const r = selectMove(cur, m, mi);
+    cur = r.cur;
+    moves.push(r.mv);
   });
-
-  // 완전히 접히는 경우, 접힌 층이 아래 층과 겹치지 않도록 위로 올린다
-  const stat = cur.filter((q) => q.owner === -1);
-  moves.forEach((mv, mi) => {
-    if (!mv.flat || mv.unfold || mv.spin) return;
-    const proj = (pts) => pts.map((p) => [dot(p, mv.d), dot(p, mv.n)]);
-    const sp = stat.map((q) => ({ h: Math.max(...q.p.map((p) => dot(p, mv.u))), pp: proj(q.p) }));
-    let need = 0;
-    for (const q of cur) {
-      if (q.owner !== mi) continue;
-      const r = q.p.map((p) => rotate(p, mv.o, mv.d, mv.theta));
-      const lo = Math.min(...r.map((p) => dot(p, mv.u)));
-      const rp = proj(r);
-      for (const s of sp) if (overlap(rp, s.pp)) need = Math.max(need, s.h - lo + GAP);
-    }
-    mv.shift = need;
-  });
-
+  moves.forEach((mv, mi) => { mv.shift = computeShift(cur, mv, mi); });
   return { polys: cur, moves, edges: edgeList(cur) };
 }
 
-// 진행률 t(0~1)에서 각 다각형의 꼭짓점 위치
+// 복합 단계: 하위 동작을 차례로 적용해 최종 상태를 만든다 (각 상태의 위치를 hist에 기록)
+function planSeqStep(polys, step) {
+  let cur = polys.map((q) => ({ ...clonePoly(q), hist: [q.p.map((v) => v.slice())] }));
+  const subs = [];
+  step.moves.forEach((m) => {
+    cur.forEach((q) => { q.owner = -1; });
+    const r = selectMove(cur, m, 0);
+    cur = r.cur;
+    const mv = r.mv;
+    mv.shift = computeShift(cur, mv, 0);
+    for (const q of cur) {
+      if (q.owner === 0) q.p = q.p.map((p) => moveTo(p, mv, 1));
+      q.hist = [...q.hist, q.p.map((v) => v.slice())];
+    }
+    subs.push({ mv, at: m.at || [0, 1] });
+  });
+  cur.forEach((q) => { q.owner = -1; });
+  return { polys: cur, moves: [], subs, sim: true, edges: edgeList(cur) };
+}
+
+// 단순 단계에서 진행률 t(0~1)일 때 각 다각형의 꼭짓점 위치
 export function pose(plan, t) {
+  if (plan.sim) return t < 0.5 ? plan.polys.map((q) => q.hist[0]) : plan.polys.map((q) => q.p);
   const e = t * t * (3 - 2 * t);
   return plan.polys.map((q) => {
     if (q.owner < 0) return q.p;
@@ -169,6 +212,10 @@ export function pose(plan, t) {
     return q.p.map((p) => add(rotate(p, mv.o, mv.d, mv.theta * f), mul(mv.u, s)));
   });
 }
+
+// 단계의 시작·끝 상태
+export const startPose = (plan) => (plan.sim ? plan.polys.map((q) => q.hist[0]) : plan.polys.map((q) => q.p));
+export const endPose = (plan) => (plan.sim ? plan.polys.map((q) => q.p) : pose(plan, 1));
 
 // 그릴 모서리 목록: 가장자리(1)와 접힌 선(2, 맞닿은 이웃 다각형 포함)
 function edgeList(polys) {
@@ -198,15 +245,15 @@ export function buildModel(model) {
   let polys = [{ p: model.outline.map(([x, y]) => [x, y, 0]), uv: model.outline.map((v) => v.slice()), e: model.outline.map(() => 1), tags: new Set(), owner: -1 }];
   const plans = [];
   for (const step of model.steps) {
-    const plan = planStep(polys, step);
+    const plan = step.sim ? planSeqStep(polys, step) : planStep(polys, step);
     plans.push(plan);
-    const fin = pose(plan, 1);
-    polys = plan.polys.map((q, i) => ({ ...clone(q), p: fin[i].map((v) => v.slice()) }));
+    const fin = endPose(plan);
+    polys = plan.polys.map((q, i) => ({ ...clonePoly(q), p: fin[i].map((v) => v.slice()), hist: undefined }));
   }
   return plans;
 }
 
-// 미리보기용: 접힘선 구간과 대표 꼭짓점의 이동 경로
+// 미리보기용: 접힘선 구간과 대표 꼭짓점의 이동 경로 (단순 단계)
 export function moveGuides(plan, mi) {
   const mv = plan.moves[mi];
   const mem = plan.polys.filter((q) => q.owner === mi);
@@ -252,7 +299,7 @@ export function moveGuides(plan, mi) {
     const c = add(mv.o, mul(mv.d, dot(sub(tip, mv.o), mv.d)));
     for (let k = 0; k <= 40; k++) {
       const s = k / 40;
-      let q = add(rotate(tip, mv.o, mv.d, mv.theta * s), mul(mv.u, mv.shift * s));
+      let q = moveTo(tip, mv, s);
       q = add(c, mul(sub(q, c), 1.05));
       path.push(add(q, mul(mv.u, 0.012 * Math.sin(Math.PI * s))));
     }

@@ -4,10 +4,12 @@ import { Line2 } from 'three/addons/lines/Line2.js';
 import { LineGeometry } from 'three/addons/lines/LineGeometry.js';
 import { LineMaterial } from 'three/addons/lines/LineMaterial.js';
 import { buildModel, pose, polyNormal, moveGuides } from './engine.js';
+import { prepareSim, simPose, simGuides } from './sim.js';
 import { cicada } from './models/cicada.js';
 import { airplane } from './models/airplane.js';
 
 const MODELS = [cicada, airplane];
+if (location.hash === '#dev') MODELS.push((await import('./models/_test.js')).test);
 const FOLD_SEC = 2.2;   // 한 단계 접는 시간
 const WAIT_SEC = 0.9;   // 접기 전 접는 선·화살표를 보여 주는 시간
 const $ = (id) => document.getElementById(id);
@@ -80,21 +82,40 @@ let model, plans, N;
 let step = 0, t = 0, phase = 'idle', waitT = 0, autoAll = false;
 let plan = null, geoPlan = null, uvScale = 1, uvMin = [0, 0];
 
+// 단계 p의 진행률 t에서 다각형별 꼭짓점 고리
+const simOf = (p) => p._sim || (p._sim = prepareSim(p));
+const loopsOf = (p, tt) => (p.sim ? simPose(simOf(p), tt) : pose(p, tt));
+// 고리의 uv와, 원래 꼭짓점(모서리 그리기용)이 고리의 몇 번째인지
+function metaOf(p) {
+  if (p._meta) return p._meta;
+  if (!p.sim) {
+    p._meta = { uv: p.polys.map((q) => q.uv), corners: p.polys.map((q) => q.uv.map((_, k) => k)) };
+  } else {
+    const s = simOf(p);
+    const uv = s.loops.map((L, pi) => L.map((it) => {
+      const U = p.polys[pi].uv, a = U[it.k], b = U[(it.k + 1) % U.length];
+      return [a[0] + (b[0] - a[0]) * it.t, a[1] + (b[1] - a[1]) * it.t];
+    }));
+    const corners = s.loops.map((L) => { const c = []; L.forEach((it, li) => { if (it.t === 0) c[it.k] = li; }); return c; });
+    p._meta = { uv, corners };
+  }
+  return p._meta;
+}
+
+// 다각형마다 중심점 부채꼴로 삼각형을 만든다 (T자 접점이 있어도 갈라지지 않게)
 function setupGeometry(p) {
   geoPlan = p;
-  const tris = p.polys.reduce((s, q) => s + q.p.length - 2, 0);
+  const meta = metaOf(p);
+  const tris = meta.uv.reduce((s, L) => s + L.length, 0);
   const geo = new THREE.BufferGeometry();
   geo.setAttribute('position', new THREE.BufferAttribute(new Float32Array(tris * 9), 3));
   geo.setAttribute('normal', new THREE.BufferAttribute(new Float32Array(tris * 9), 3));
   const uv = new Float32Array(tris * 6);
   let k = 0;
-  for (const q of p.polys) {
-    for (let i = 1; i < q.uv.length - 1; i++) {
-      for (const v of [q.uv[0], q.uv[i], q.uv[i + 1]]) {
-        uv[k++] = (v[0] - uvMin[0]) * uvScale;
-        uv[k++] = (v[1] - uvMin[1]) * uvScale;
-      }
-    }
+  const put = (v) => { uv[k++] = (v[0] - uvMin[0]) * uvScale; uv[k++] = (v[1] - uvMin[1]) * uvScale; };
+  for (const L of meta.uv) {
+    const c = [L.reduce((a, v) => a + v[0], 0) / L.length, L.reduce((a, v) => a + v[1], 0) / L.length];
+    for (let i = 0; i < L.length; i++) { put(c); put(L[i]); put(L[(i + 1) % L.length]); }
   }
   geo.setAttribute('uv', new THREE.BufferAttribute(uv, 2));
   frontMesh.geometry.dispose();
@@ -109,15 +130,17 @@ function setupGeometry(p) {
 
 function drawPaper(p, tt) {
   if (p !== geoPlan) setupGeometry(p);
-  const posed = pose(p, tt);
-  const normals = posed.map(polyNormal);
+  const loops = loopsOf(p, tt);
+  const meta = metaOf(p);
+  const normals = loops.map(polyNormal);
   const geo = frontMesh.geometry;
   const P = geo.attributes.position.array, Nn = geo.attributes.normal.array;
   let k = 0;
-  posed.forEach((pts, qi) => {
+  loops.forEach((pts, qi) => {
     const nn = normals[qi];
-    for (let i = 1; i < pts.length - 1; i++) {
-      for (const v of [pts[0], pts[i], pts[i + 1]]) {
+    const c = [0, 1, 2].map((i) => pts.reduce((a, v) => a + v[i], 0) / pts.length);
+    for (let i = 0; i < pts.length; i++) {
+      for (const v of [c, pts[i], pts[(i + 1) % pts.length]]) {
         P[k] = v[0]; P[k + 1] = v[1]; P[k + 2] = v[2];
         Nn[k] = nn[0]; Nn[k + 1] = nn[1]; Nn[k + 2] = nn[2];
         k += 3;
@@ -131,7 +154,8 @@ function drawPaper(p, tt) {
   const D = darkLines.geometry.attributes.position.array, L = lightLines.geometry.attributes.position.array;
   let di = 0, li = 0;
   for (const ed of p.edges) {
-    const pts = posed[ed.i], a = pts[ed.k], b = pts[(ed.k + 1) % pts.length];
+    const pts = loops[ed.i], cs = meta.corners[ed.i];
+    const a = pts[cs[ed.k]], b = pts[cs[(ed.k + 1) % cs.length]];
     let dark = ed.border;
     if (!dark && ed.j >= 0) {
       const n1 = normals[ed.i], n2 = normals[ed.j];
@@ -146,7 +170,7 @@ function drawPaper(p, tt) {
   lightLines.geometry.setDrawRange(0, li / 3);
   darkLines.geometry.attributes.position.needsUpdate = true;
   lightLines.geometry.attributes.position.needsUpdate = true;
-  return posed;
+  return loops;
 }
 
 // ---------- 접는 선(점선)과 화살표 ----------
@@ -161,6 +185,21 @@ function buildGuides(p) {
   clearGuides();
   const color = new THREE.Color(model.accent);
   const pts = [];
+  if (p.sim) {
+    // 골짜기 접기: 강조색 짧은 점선, 산 접기: 갈색 긴 점선
+    for (const g of simGuides(simOf(p))) {
+      const lg = new LineGeometry();
+      lg.setPositions([g.a[0], g.a[1], g.a[2] + 0.006, g.b[0], g.b[1], g.b[2] + 0.006]);
+      const m = new LineMaterial({ color: g.valley ? color : new THREE.Color('#9a5b13'), linewidth: 3, dashed: true, dashSize: g.valley ? 0.03 : 0.06, gapSize: g.valley ? 0.022 : 0.03, transparent: true, depthTest: false });
+      m.resolution.set(canvas.clientWidth, canvas.clientHeight);
+      const l = new Line2(lg, m);
+      l.computeLineDistances();
+      l.renderOrder = 10;
+      guideGroup.add(l);
+      guideMats.push(m);
+    }
+    return pts;
+  }
   p.moves.forEach((_, mi) => {
     const { line, path } = moveGuides(p, mi);
     if (line) {
@@ -230,12 +269,12 @@ function enterStep(i, play) {
     plan = plans[N - 1];
     t = 1; phase = 'idle'; autoAll = false;
     clearGuides();
-    frameTo(toVecs(pose(plan, 1)), model.finalView);
+    frameTo(toVecs(loopsOf(plan, 1)), model.finalView);
   } else {
     plan = plans[step];
     t = 0; phase = play ? 'wait' : 'idle'; waitT = WAIT_SEC;
     const arrowPts = buildGuides(plan);
-    const pts = [...toVecs(pose(plan, 0)), ...toVecs(pose(plan, 1)), ...arrowPts];
+    const pts = [...toVecs(loopsOf(plan, 0)), ...toVecs(loopsOf(plan, 1)), ...(plan.sim ? toVecs(loopsOf(plan, 0.5)) : []), ...arrowPts];
     frameTo(pts, model.steps[step].view || model.view);
   }
   updateUI();
