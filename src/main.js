@@ -386,6 +386,14 @@ function renderPrint(m) {
   setTimeout(next, 30);
 }
 $('printBtn').onclick = () => window.print();
+// 크게 보기: 접기 화면을 전체 화면으로 (교실 화면용)
+const fullBtn = $('fullBtn');
+if (!document.documentElement.requestFullscreen) fullBtn.hidden = true;
+fullBtn.onclick = () => (document.fullscreenElement ? document.exitFullscreen() : $('viewer').requestFullscreen());
+document.addEventListener('fullscreenchange', () => {
+  fullBtn.textContent = document.fullscreenElement ? '작게 보기' : '크게 보기';
+  setTimeout(resize, 50);
+});
 
 function route() {
   const pm = location.hash.match(/^#\/print\/([\w-]+)/);

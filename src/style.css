@@ -122,6 +122,15 @@ button, select, input { font: inherit; color: inherit; }
 #stepList li.now .num { color: var(--accent); }
 #stepList li.done .num { color: var(--ink); }
 
+/* 크게 보기(전체 화면): 교실 화면에 띄워 함께 접을 때 */
+button.print-link { cursor: pointer; font: inherit; font-weight: 600; }
+#viewer:fullscreen { background: var(--page); }
+#viewer:fullscreen #stepText { font-size: 30px; }
+#viewer:fullscreen .badge { font-size: 30px; }
+#viewer:fullscreen .v-steps { display: none; }
+#viewer:fullscreen .v-body { grid-template-columns: 1fr; }
+#viewer:fullscreen .peek img { width: 96px; height: 96px; }
+
 /* 이 단계를 마치면 되는 모양 */
 .peek { margin: 0 0 0 auto; flex: none; text-align: center; }
 .peek img { width: 64px; height: 64px; display: block; border-radius: 4px; background: var(--mat); border: 1px solid var(--rule); }
