@@ -151,6 +151,17 @@ export const enModels = {
       'Reverse fold the neck outward so it stands up, wrapping around the body.',
     ],
   },
+  owl: {
+    name: 'Owl', desc: 'Fold a head and beak out of the kite base. Learn to fold a tip back on itself.', paper: 'Square origami paper',
+    done: 'Your owl is done! Draw big round eyes.',
+    steps: [
+      'Place the paper colored side down as a diamond. Fold it in half vertically and unfold to make a center line.',
+      'Fold the two lower edges to the center line to make a kite. The sides are the wings.',
+      'Fold the top corner down. This is the head.',
+      'Fold that tip back up a little. This is the beak.',
+      'Fold the bottom corner behind so it can stand. Your owl is done!',
+    ],
+  },
   heart: {
     name: 'Heart', desc: 'Make a neat strip, fold the sides up and round off the corners. Needs careful folding.', paper: 'Square origami paper',
     done: 'Your heart is done! Give it to a friend.',
