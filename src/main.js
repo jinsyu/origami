@@ -20,6 +20,11 @@ const WAIT_SEC = 0.9;   // 접기 전 접는 선·화살표를 보여 주는 시
 const MOUNTAIN = '#9a5b13';
 const $ = (id) => document.getElementById(id);
 
+// 접어 본 작품 기록 (이 기기에만 저장, 실패해도 동작에는 영향 없음)
+const doneKey = 'origami.done';
+const readDone = () => { try { return new Set(JSON.parse(localStorage.getItem(doneKey) || '[]')); } catch { return new Set(); } };
+const markDone = (id) => { try { const d = readDone(); d.add(id); localStorage.setItem(doneKey, JSON.stringify([...d])); } catch { /* 저장 불가 */ } };
+
 // 작품별 계획은 처음 필요할 때 계산
 const planCache = new Map();
 const plansOf = (m) => { if (!planCache.has(m.id)) planCache.set(m.id, buildModel(m)); return planCache.get(m.id); };
@@ -33,13 +38,26 @@ function meter(level) {
   return el;
 }
 
+function refreshDone() {
+  const done = readDone();
+  document.querySelectorAll('.card').forEach((li) => {
+    const id = li.dataset.id, has = done.has(id);
+    const pic = li.querySelector('.pic'), facts = li.querySelector('.facts');
+    let mark = pic.querySelector('.check'), badge = facts.querySelector('.done-badge');
+    if (has && !mark) { mark = document.createElement('span'); mark.className = 'check'; mark.setAttribute('aria-hidden', 'true'); pic.appendChild(mark); }
+    if (has && !badge) { badge = document.createElement('span'); badge.className = 'done-badge'; badge.textContent = '접어 봤어요'; facts.appendChild(badge); }
+    if (!has) { mark?.remove(); badge?.remove(); }
+  });
+}
+
 function renderGallery() {
   const ol = $('cards');
-  if (ol.childElementCount) return;
+  if (ol.childElementCount) { refreshDone(); return; }
   const queue = [];
   for (const m of MODELS) {
     const li = document.createElement('li');
     li.className = 'card';
+    li.dataset.id = m.id;
     li.innerHTML = `<a href="#/m/${m.id}"><div class="pic matgrid"><span class="lv" aria-hidden="true">${m.level}</span><img alt="" /></div>
       <div class="meta"><h3></h3><p></p><div class="facts"><span class="steps"></span></div></div></a>`;
     li.querySelector('h3').textContent = m.name;
@@ -59,6 +77,7 @@ function renderGallery() {
     setTimeout(next, 16);
   };
   setTimeout(next, 50);
+  refreshDone();
 }
 
 // ---------- 3D 장면 ----------
@@ -223,6 +242,11 @@ function openModel(m, startStep = 0) {
 const slider = $('progress');
 function updateUI() {
   const done = step >= N;
+  if (done) markDone(model.id);
+  const nextM = MODELS[MODELS.indexOf(model) + 1];
+  $('nextModel').hidden = !done || !nextM;
+  $('fold').hidden = done && !!nextM;
+  if (nextM) { $('nextModel').href = `#/m/${nextM.id}`; $('nextModel').textContent = `다음 작품: ${nextM.name}`; }
   $('badge').textContent = done ? '완성' : `${step + 1}/${N}`;
   $('stepText').textContent = done ? model.done : model.steps[step].text;
   $('prev').disabled = step === 0 && t === 0;

@@ -78,7 +78,7 @@ export const crane = {
     { text: '왼쪽 다리도 안쪽 뒤집어 접어 세워요. 꼬리가 돼요.', sim: true, moves: lift(-1, 145, 'tail') },
     { text: '목 끝을 안쪽 뒤집어 접어 머리를 만들어요.', sim: true, moves: head() },
     {
-      text: '양쪽 날개를 아래로 펼쳐 내리면 학 완성!',
+      text: '양쪽 날개를 옆으로 수평이 되게 펼치면 학 완성!',
       moves: [
         { line: [[-1, -K], [1, -K]], side: [0, 0.2], filter: (c) => c.tags.has('petalB'), angle: 90, toward: 1 },
         { line: [[-1, -K], [1, -K]], side: [0, 0.2], filter: (c) => c.tags.has('petalA'), angle: 90, toward: -1 },
