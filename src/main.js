@@ -183,8 +183,8 @@ function setGuideOpacity(a) {
 // ---------- 카메라 자동 맞춤 ----------
 let camTween = null;
 controls.addEventListener('start', () => { camTween = null; });
-function frameTo(points, dir, instant) {
-  const fit = fitCamera(camera, points, dir, canvas.clientWidth / Math.max(1, canvas.clientHeight));
+function frameTo(points, dir, instant, extra = []) {
+  const fit = fitCamera(camera, points, dir, canvas.clientWidth / Math.max(1, canvas.clientHeight), 1.12, extra);
   camTween = { k: instant ? 1 : 0, fromPos: camera.position.clone(), fromTarget: controls.target.clone(), toPos: fit.pos, toTarget: fit.target };
 }
 
@@ -201,8 +201,8 @@ function enterStep(i, play, instant) {
     plan = plans[step];
     t = 0; phase = play ? 'wait' : 'idle'; waitT = WAIT_SEC / speed;
     const arrowPts = buildGuides(plan);
-    const pts = [...toVecs(loopsOf(plan, 0)), ...toVecs(loopsOf(plan, 1)), ...(plan.sim ? toVecs(loopsOf(plan, 0.5)) : []), ...arrowPts];
-    frameTo(pts, model.steps[step].view || model.view, instant);
+    const pts = [...toVecs(loopsOf(plan, 0)), ...toVecs(loopsOf(plan, 1)), ...(plan.sim ? toVecs(loopsOf(plan, 0.5)) : [])];
+    frameTo(pts, model.steps[step].view || model.view, instant, arrowPts);
   }
   const want = `#/m/${model.id}${step ? `/${step + 1}` : ''}`;
   if (location.hash !== want) history.replaceState(null, '', want);

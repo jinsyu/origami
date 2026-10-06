@@ -74,7 +74,7 @@ export function snapshot(model, plan, t, dir, size = 320, key, withGuides = fals
   if (withGuides) drawGuides(guides, model, plan);
   const pts = toVecs(loops);
   if (withGuides) guides.traverse((o) => { if (o.isMesh || o.isLine) { o.geometry.computeBoundingSphere(); const s = o.geometry.boundingSphere; pts.push(s.center.clone().addScaledVector(new THREE.Vector3(1, 1, 0).normalize(), s.radius * 0.5)); } });
-  const fit = fitCamera(camera, pts, dir, 1, 1.12);
+  const fit = fitCamera(camera, pts, dir, 1, 1.18);
   camera.position.copy(fit.pos);
   camera.lookAt(fit.target);
   renderer.render(scene, camera);

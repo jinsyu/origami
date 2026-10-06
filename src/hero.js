@@ -24,7 +24,7 @@ export function createHero(canvas, models, plansOf, onChange) {
     const box = new THREE.Box3().setFromPoints(toVecs(loops));
     const c = box.getCenter(new THREE.Vector3());
     paper.group.position.set(-c.x, -c.y, -c.z);
-    const fit = fitCamera(camera, toVecs(loops).map((v) => v.sub(c)), m.finalView, canvas.clientWidth / Math.max(1, canvas.clientHeight), 1.05);
+    const fit = fitCamera(camera, toVecs(loops).map((v) => v.sub(c)), m.finalView, canvas.clientWidth / Math.max(1, canvas.clientHeight), 1.2);
     camera.position.copy(fit.pos.sub(fit.target));
     camera.lookAt(0, 0, 0);
     pivot.rotation.set(0, 0, 0);

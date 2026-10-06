@@ -157,14 +157,27 @@ export class PaperMesh {
 }
 
 // 점들이 화면에 꽉 차도록 카메라 위치 계산
-export function fitCamera(camera, points, dir, aspect, margin = 1.08) {
+// 점들이 화면에 꽉 차도록 카메라 위치 계산 (보는 방향에 투영한 가로·세로 범위로 맞춤)
+// extra: 화살표처럼 '거의' 보이면 되는 점들 — 중심 쪽으로 당겨서 반영한다
+export function fitCamera(camera, points, dir, aspect, margin = 1.1, extra = []) {
   const box = new THREE.Box3().setFromPoints(points);
   const center = box.getCenter(new THREE.Vector3());
-  const r = Math.max(0.15, ...points.map((p) => p.distanceTo(center)));
+  const all = [...points, ...extra.map((p) => center.clone().lerp(p, 0.75))];
+  const v = new THREE.Vector3(...dir).normalize();
+  const right = new THREE.Vector3(0, 1, 0).cross(v);
+  if (right.lengthSq() < 1e-6) right.set(1, 0, 0);
+  right.normalize();
+  const up = v.clone().cross(right).normalize();
+  let hw = 0.08, hh = 0.08, front = 0;
+  for (const p of all) {
+    const d = p.clone().sub(center);
+    hw = Math.max(hw, Math.abs(d.dot(right)));
+    hh = Math.max(hh, Math.abs(d.dot(up)));
+    front = Math.max(front, d.dot(v));
+  }
   const vf = THREE.MathUtils.degToRad(camera.fov) / 2;
   const hf = Math.atan(Math.tan(vf) * aspect);
-  const dist = (r / Math.sin(Math.min(vf, hf))) * margin;
-  const v = new THREE.Vector3(...dir).normalize();
+  const dist = Math.max(hw / Math.tan(hf), hh / Math.tan(vf)) * margin + front;
   return { pos: center.clone().addScaledVector(v, dist), target: center };
 }
 
