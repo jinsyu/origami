@@ -28,12 +28,26 @@ function drawGuides(group, model, plan) {
   group.traverse((o) => { if (o.geometry) o.geometry.dispose(); if (o.material) o.material.dispose(); });
   group.clear();
   const accent = new THREE.Color(model.accent);
+  // 점선을 짧은 원기둥 조각으로 그린다 (밝은 테두리를 아래에 깔아 어떤 종이 위에서도 보이게)
+  const halo = new THREE.MeshBasicMaterial({ color: '#fbfaf6', depthTest: false, transparent: true, opacity: 0.9 });
+  const seg = (p, q, r, m, order) => {
+    const len = p.distanceTo(q);
+    if (len < 1e-5) return;
+    const c = new THREE.Mesh(new THREE.CylinderGeometry(r, r, len, 6), m);
+    c.position.copy(p).add(q).multiplyScalar(0.5);
+    c.quaternion.setFromUnitVectors(new THREE.Vector3(0, 1, 0), q.clone().sub(p).normalize());
+    c.renderOrder = order;
+    group.add(c);
+  };
   const dashed = (a, b, color, mountain) => {
-    const g = new THREE.BufferGeometry().setFromPoints([new THREE.Vector3(...a), new THREE.Vector3(...b)]);
-    const l = new THREE.Line(g, new THREE.LineDashedMaterial({ color, dashSize: mountain ? 0.05 : 0.025, gapSize: 0.02, depthTest: false }));
-    l.computeLineDistances();
-    l.renderOrder = 10;
-    group.add(l);
+    const A = new THREE.Vector3(...a), B = new THREE.Vector3(...b), L = A.distanceTo(B);
+    const dash = mountain ? 0.05 : 0.026, gap = 0.018;
+    const m = new THREE.MeshBasicMaterial({ color, depthTest: false });
+    for (let s = 0; s < L; s += dash + gap) {
+      const p = A.clone().lerp(B, s / L), q = A.clone().lerp(B, Math.min(1, (s + dash) / L));
+      seg(p, q, 0.009, halo, 9);
+      seg(p, q, 0.0045, m, 10);
+    }
   };
   const arrow = (path, color) => {
     const vs = path.map((v) => new THREE.Vector3(...v));

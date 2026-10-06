@@ -182,3 +182,4 @@ export function fitCamera(camera, points, dir, aspect, margin = 1.1, extra = [])
 }
 
 export const toVecs = (loops) => loops.flat().map((v) => new THREE.Vector3(...v));
+

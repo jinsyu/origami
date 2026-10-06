@@ -171,6 +171,15 @@ function clearGuides() {
 }
 
 function dashed(a, b, color, mountain) {
+  // 밝은 테두리(헤일로)를 먼저 깔아 어떤 색 종이 위에서도 점선이 보이게
+  const hg = new LineGeometry();
+  hg.setPositions([...a, ...b]);
+  const hm = new LineMaterial({ color: new THREE.Color('#fbfaf6'), linewidth: 6, transparent: true, opacity: 0.85, depthTest: false });
+  hm.resolution.set(canvas.clientWidth, canvas.clientHeight);
+  const halo = new Line2(hg, hm);
+  halo.renderOrder = 9;
+  guideGroup.add(halo);
+  guideMats.push(hm);
   const g = new LineGeometry();
   g.setPositions([...a, ...b]);
   const m = new LineMaterial({ color, linewidth: 3, dashed: true, dashSize: mountain ? 0.06 : 0.03, gapSize: mountain ? 0.03 : 0.022, transparent: true, depthTest: false });
