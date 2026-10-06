@@ -107,6 +107,8 @@ export function prepareSim(plan) {
     squash = { roleIdx, group, p2 };
   }
   const sim = { loops, nCorner, NV: nCorner, member, subs: plan.subs, start, end, dist, guides, squash, tearOk: plan.tearOk };
+  // 꽃잎 접기 묶음(역할: plift, ptop/psec R·L)이 있으면 옆 조각 각도를 들어 올리는 각도에 맞춰 푼다
+  if (['plift', 'ptopR', 'ptopL', 'psecR', 'psecL'].every((r) => r in roleIdx)) solvePetal(sim, roleIdx);
   if (squash) {
     // 해석적 경로의 시작·끝을 실제 상태와 맞추기 위한 보정값
     const A0 = squashPose(sim, 0), A1 = squashPose(sim, 1);
@@ -209,11 +211,93 @@ function squashPose(sim, t) {
   return out;
 }
 
+// 꽃잎 접기의 기하 경로.
+// 가운데(아래 삼각형)는 가로선을 축으로 φ만큼 들린다. 맨 위 장의 옆 조각은 연 모양 선을 축으로 a만큼 접힌 채 가운데와 함께 들리고,
+// 둘째 장의 옆 조각은 제자리의 연 모양 선을 축으로 b만큼 접힌다. 두 옆 조각은 바깥 변(접힌 변)으로 이어져 있으므로
+// φ마다 그 변의 꼭짓점이 서로 붙도록 (a, b)를 가우스-뉴턴으로 푼다. 앞 프레임의 해에서 이어 풀어 한 갈래를 따라간다.
+const PETAL_N = 240;
+const rotBy = (p, mv, f) => rotate(p, mv.o, mv.d, mv.theta * f);
+function petalRaw(sim, fl, fr) {
+  const { subs, start, member } = sim, P = sim.petal;
+  return start.map((L, pi) => {
+    const m = member[pi];
+    const sd = P.sides.find((d) => m.includes(d.kt) || m.includes(d.ks));
+    if (!m.includes(P.kl) && !sd) return null;
+    return L.map((p) => {
+      if (sd && m.includes(sd.ks)) return rotBy(p, subs[sd.ks].mv, fr[sd.ks]);
+      let y = p;
+      if (sd && m.includes(sd.kt)) y = rotBy(y, subs[sd.kt].mv, fr[sd.kt]);
+      return m.includes(P.kl) ? rotBy(y, subs[P.kl].mv, fl) : y;
+    });
+  });
+}
+function solvePetal(sim, roleIdx) {
+  const { loops, member } = sim;
+  const sides = ['R', 'L'].map((S) => {
+    const kt = roleIdx[`ptop${S}`], ks = roleIdx[`psec${S}`];
+    const byW = new Map();
+    loops.forEach((L, pi) => L.forEach((it, li) => {
+      const m = member[pi], g = m.includes(kt) ? 't' : m.includes(ks) ? 's' : null;
+      if (!g) return;
+      const e = byW.get(it.w) || { t: null, s: null };
+      if (!e[g]) e[g] = [pi, li];
+      byW.set(it.w, e);
+    }));
+    return { kt, ks, welds: [...byW.values()].filter((e) => e.t && e.s) };
+  });
+  const kl = roleIdx.plift;
+  sim.petal = { sides, kl };
+  const table = [];
+  const cur = sides.map(() => [0.01, 0.01]);
+  for (let n = 0; n <= PETAL_N; n++) {
+    const fl = curveOf(sim.subs[kl], n / PETAL_N);
+    const fr = {};
+    sides.forEach((sd, si) => {
+      const res = (v) => {
+        const f = { ...fr, [sd.kt]: v[0], [sd.ks]: v[1] };
+        const A = petalRaw(sim, fl, f);
+        return sd.welds.flatMap((e) => sub3(A[e.t[0]][e.t[1]], A[e.s[0]][e.s[1]]));
+      };
+      let x = cur[si];
+      for (let it = 0; it < 40; it++) {
+        const r = res(x), h = 1e-6;
+        const J = [0, 1].map((j) => { const y = [...x]; y[j] += h; return res(y).map((v, i) => (v - r[i]) / h); });
+        const a11 = dot(J[0], J[0]) + 1e-12, a12 = dot(J[0], J[1]), a22 = dot(J[1], J[1]) + 1e-12;
+        const b1 = -dot(J[0], r), b2 = -dot(J[1], r), det = a11 * a22 - a12 * a12;
+        const dx = [(b1 * a22 - b2 * a12) / det, (a11 * b2 - a12 * b1) / det];
+        x = [Math.min(1, Math.max(0, x[0] + dx[0])), Math.min(1, Math.max(0, x[1] + dx[1]))];
+        if (Math.abs(dx[0]) + Math.abs(dx[1]) < 1e-10) break;
+      }
+      cur[si] = x;
+      fr[sd.kt] = x[0]; fr[sd.ks] = x[1];
+    });
+    table.push({ fl, fr });
+  }
+  sim.petal.table = table;
+  // 시작·끝 보정 (층 간격 이동 등)
+  const A0 = petalPose(sim, 0), A1 = petalPose(sim, 1);
+  sim.petal.c0 = sim.start.map((L, pi) => L.map((p, li) => (A0[pi] ? sub3(p, A0[pi][li]) : [0, 0, 0])));
+  sim.petal.c1 = sim.end.map((L, pi) => L.map((p, li) => (A1[pi] ? sub3(p, A1[pi][li]) : [0, 0, 0])));
+  return sim.petal;
+}
+function petalPose(sim, t) {
+  const T = sim.petal.table, x = Math.min(1, Math.max(0, t)) * PETAL_N, i = Math.min(PETAL_N - 1, Math.floor(x)), u = x - i;
+  const A = T[i], B = T[i + 1], fr = {};
+  for (const k in A.fr) fr[k] = A.fr[k] + (B.fr[k] - A.fr[k]) * u;
+  return petalRaw(sim, A.fl + (B.fl - A.fl) * u, fr);
+}
+const dot = (a, b) => a.reduce((s, v, i) => s + v * b[i], 0);
+
 // 진행률 t에서 다각형별 고리 꼭짓점 위치
 // 운동학 경로(이완 전)에서 다각형별 고리 꼭짓점 위치
 function kinematic(sim, t) {
   const fs = sim.subs.map((s) => curveOf(s, t));
   let kin = sim.start.map((L, pi) => L.map((p) => chain(p, sim.member[pi], sim.subs, fs)));
+  if (sim.petal) {
+    // 층 간격 보정은 꽃잎이 내려앉기 전에 끝나야 아래 겹을 지나치지 않는다
+    const A = petalPose(sim, t), { c0, c1 } = sim.petal, w = ease(t / 0.7);
+    kin = kin.map((L, pi) => (A[pi] ? A[pi].map((p, li) => [0, 1, 2].map((c) => p[c] + c0[pi][li][c] * (1 - w) + c1[pi][li][c] * w)) : L));
+  }
   if (sim.squash) {
     const A = squashPose(sim, t), { c0, c1 } = sim.squash;
     kin = kin.map((L, pi) => (A[pi] ? A[pi].map((p, li) => [0, 1, 2].map((c) => p[c] + c0[pi][li][c] * (1 - t) + c1[pi][li][c] * t)) : L));

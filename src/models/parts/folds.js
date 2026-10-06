@@ -37,11 +37,12 @@ export const petal = (R, face, front, tag) => {
   // 맨 위 장의 옆은 가운데 조각 '아래'로, 둘째 장의 옆은 그 위로 접혀 들어간다.
   // 들어 올리면 순서가 뒤집혀 맨 위 장의 옆 조각이 꽃잎 겉면이 된다 (실제 학의 기본형과 같은 겉면).
   return [
-    { line: kiteR, side: [R / 2, -R / 2], filter: top, toward: -1, insert: 1, at: [0, 0.6] },
-    { line: kiteL, side: [-R / 2, -R / 2], filter: top, toward: -1, insert: 1, at: [0, 0.6] },
-    { line: kiteR, side: [R / 2, -R / 2], filter: second, toward: 1, insert: 2, at: [0, 0.6] },
-    { line: kiteL, side: [-R / 2, -R / 2], filter: second, toward: 1, insert: 2, at: [0, 0.6] },
-    { line: [[-1, -K], [1, -K]], side: [0, -1], filter: face, toward: 1, at: [0.2, 1], tag },
+    // 옆 조각의 각도는 sim.js 가 들어 올리는 각도에 맞춰 이음선이 붙어 있도록 풀어 정한다 (role)
+    { line: kiteR, side: [R / 2, -R / 2], filter: top, toward: -1, insert: 1, role: 'ptopR' },
+    { line: kiteL, side: [-R / 2, -R / 2], filter: top, toward: -1, insert: 1, role: 'ptopL' },
+    { line: kiteR, side: [R / 2, -R / 2], filter: second, toward: 1, insert: 2, role: 'psecR' },
+    { line: kiteL, side: [-R / 2, -R / 2], filter: second, toward: 1, insert: 2, role: 'psecL' },
+    { line: [[-1, -K], [1, -K]], side: [0, -1], filter: face, toward: 1, tag, role: 'plift', noRejoin: true },
   ];
 };
 
