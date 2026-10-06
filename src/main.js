@@ -75,15 +75,23 @@ function renderGallery() {
     ol.appendChild(li);
     queue.push([m, li.querySelector('img')]);
   }
-  // 완성 그림은 하나씩 차례로 그린다 (첫 화면이 멈추지 않게)
+  // 완성 그림: 미리 만들어 둔 이미지(thumbs/작품.webp)를 쓰고, 없으면 3D로 그린다.
+  // 주소에 ?live 를 붙이면 항상 새로 그린다 (작품을 고친 뒤 썸네일을 다시 만들 때)
+  const live = new URLSearchParams(location.search).has('live');
+  const render = [];
+  for (const [m, img] of queue) {
+    if (live) { render.push([m, img]); continue; }
+    img.onerror = () => { img.onerror = null; render.push([m, img]); if (render.length === 1) setTimeout(next, 16); };
+    img.src = `thumbs/${m.id}.webp`;
+  }
   const next = () => {
-    const job = queue.shift();
+    const job = render.shift();
     if (!job) return;
     const [m, img] = job;
     img.src = finalThumb(m, plansOf(m));
     setTimeout(next, 16);
   };
-  setTimeout(next, 50);
+  if (live) setTimeout(next, 50);
   refreshDone();
 }
 
