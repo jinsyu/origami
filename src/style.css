@@ -58,6 +58,20 @@ button, select, input { font: inherit; color: inherit; }
 .card .facts { margin-top: 8px; display: flex; align-items: center; gap: 10px; font-size: 13px; color: var(--muted); }
 .g-foot { max-width: 1120px; margin: 0 auto; padding: 12px 24px 56px; color: var(--muted); font-size: 14px; }
 
+/* 접기 기호 */
+.symbols { list-style: none; padding: 0; margin: 0; display: grid; grid-template-columns: repeat(auto-fill, minmax(230px, 1fr)); gap: 18px; }
+.symbols a { display: block; text-decoration: none; color: inherit; background: var(--sheet); border: 1px solid var(--rule); border-radius: 6px; padding: 16px 18px 18px; height: 100%; }
+.symbols a:hover { border-color: #b9c4b5; }
+.symbols svg { width: 120px; height: 80px; display: block; margin-bottom: 8px; }
+.symbols h3 { font-family: var(--display); font-weight: 400; font-size: 20px; margin: 0 0 4px; }
+.symbols p { margin: 0; font-size: 14px; color: var(--ink-soft); line-height: 1.55; }
+.sym-paper { fill: #f3efe6; stroke: var(--ink); stroke-width: 1.2; }
+.sym-valley { stroke: #d9483b; stroke-width: 2.5; stroke-dasharray: 6 4; }
+.sym-valley.thin { stroke-width: 1.6; fill: none; }
+.sym-mountain { stroke: #9a5b13; stroke-width: 2.5; stroke-dasharray: 10 3 2 3; }
+.sym-arrow { fill: none; stroke: var(--ink); stroke-width: 2; stroke-linecap: round; }
+.sym-arrow.back { stroke-dasharray: 4 3; }
+
 /* 난이도 막대: 10칸 중 채운 칸 */
 .meter { display: inline-flex; gap: 2px; vertical-align: middle; }
 .meter i { width: 7px; height: 7px; background: var(--rule); transform: rotate(45deg); border-radius: 1px; }
