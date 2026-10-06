@@ -1,5 +1,7 @@
 // 난이도(1~10) 순서의 작품 목록
+import { dog } from './dog.js';
+import { cup } from './cup.js';
 import { cicada } from './cicada.js';
 import { airplane } from './airplane.js';
 
-export const MODELS = [cicada, airplane].sort((a, b) => a.level - b.level);
+export const MODELS = [dog, cup, cicada, airplane].sort((a, b) => a.level - b.level);
