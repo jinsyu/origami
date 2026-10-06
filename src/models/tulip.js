@@ -1,0 +1,69 @@
+// 튤립 꽃봉오리 (정사각형 색종이)
+// 반으로 두 번 접은 뒤 양쪽을 펼쳐 눌러(squash) 물풍선 기본형(삼각형)을 만들고,
+// 앞뒤 날개 끝을 꼭대기로 접어 올려 꽃봉오리를 만든다.
+//
+// 펼쳐 누르기(정사각 날개 → 삼각형): 날개는 경첩(세로 접힌 선)과 등선(윗변 접힌 선)이 만나는 꼭짓점을 가진다.
+//  - 바깥 겹: 등선 쪽 삼각형을 꼭짓점의 이등분선을 따라 안으로 접는다.
+//  - 안쪽 겹: 등선 쪽 삼각형을 이등분선으로 접어 올린 뒤, 겹 전체를 경첩 건너편으로 펼친다.
+// 이렇게 하면 경첩과 등선이 모두 이어진 채로 날개가 삼각형으로 눌린다.
+const H = 0.5;
+const has = (t) => (c) => c.tags.has(t);
+const not = (t) => (c) => !c.tags.has(t);
+const and = (...fs) => (c) => fs.every((f) => f(c));
+const flip = { spin: { a: [0, 0, 0], b: [0, 1, 0], angle: 180 } };
+
+// sx: 날개가 있는 쪽 (-1 왼쪽, 1 오른쪽). outer/inner: 바깥·안쪽 겹 고르기
+const squash = (sx, outer, inner) => {
+  const bis = [[0, 0], [sx * H, -H]];       // 꼭짓점 (0,0)의 이등분선
+  const spineSide = [sx * 0.4, -0.05];      // 등선(윗변) 쪽
+  return [
+    { line: bis, side: spineSide, filter: outer, toward: -1, shift: 0.5 },
+    { line: bis, side: spineSide, filter: inner, toward: 1 },
+    { line: [[0, -1], [0, 1]], side: [sx * 0.2, -0.2], filter: inner, toward: 1 },
+  ];
+};
+
+// 앞 날개의 아래 양 끝을 꼭대기 바깥 위쪽 점 (±0.12, 0.08)로 접어 올린다 (접는 선 = 두 점의 수직이등분선)
+const petals = (front) => [
+  { line: [[0.31, -0.21], [0.89, 0.17]], side: [0.45, -0.48], filter: (c) => front(c) && c.x > 0, tag: 'petal' },
+  { line: [[-0.31, -0.21], [-0.89, 0.17]], side: [-0.45, -0.48], filter: (c) => front(c) && c.x < 0, tag: 'petal' },
+];
+
+export const tulip = {
+  id: 'tulip',
+  name: '튤립 꽃봉오리',
+  level: 7,
+  desc: '날개를 벌려 눌러 삼각형 기본형을 만들고, 날개 끝을 모아 꽃봉오리를 만들어요. 펼쳐 누르기를 배워요.',
+  paper: '정사각형 색종이',
+  colors: { front: '#fbf8f1', back: '#e2557b' },
+  accent: '#c43a62',
+  outline: [[-H, -H], [H, -H], [H, H], [-H, H]],
+  view: [0.3, -0.45, 1],
+  finalView: [0.15, -0.25, 1],
+  done: '튤립 꽃봉오리 완성! 줄기를 그리거나 빨대에 끼워 보세요.',
+  steps: [
+    { text: '색깔 면이 아래로 가게 놓고, 위쪽 절반을 아래로 접어 내려요.', moves: [{ line: [[-1, 0], [1, 0]], side: [0, 1], tag: 'f1' }] },
+    { text: '오른쪽 절반을 왼쪽으로 접어 작은 정사각형을 만들어요.', moves: [{ line: [[0, -1], [0, 1]], side: [1, 0], tag: 'f2' }] },
+    {
+      text: '위에 있는 날개를 세우고 틈을 벌린 뒤, 꾹 눌러 삼각형으로 펼쳐 눌러요.',
+      sim: true,
+      moves: squash(-1, and(has('f2'), not('f1')), and(has('f2'), has('f1'))),
+    },
+    { text: '종이를 뒤집어요.', moves: [flip], view: [0, 0.4, 1] },
+    {
+      text: '반대쪽 날개도 똑같이 펼쳐 눌러요. 삼각형 기본형이 완성돼요.',
+      sim: true,
+      moves: squash(1, and(not('f2'), not('f1')), and(not('f2'), has('f1'))),
+    },
+    {
+      text: '앞쪽 날개의 양쪽 아래 끝을 꼭대기보다 조금 위, 바깥쪽으로 비스듬히 접어 올려요. 꽃잎이 돼요.',
+      moves: petals((c) => !c.tags.has('f2')),
+    },
+    { text: '종이를 뒤집어요.', moves: [flip], view: [0, 0.4, 1] },
+    {
+      text: '이쪽 날개도 똑같이 비스듬히 접어 올려요.',
+      moves: petals((c) => c.tags.has('f2')),
+    },
+    { text: '다시 뒤집으면 튤립 꽃봉오리 완성!', moves: [flip], view: [0, 0.4, 1] },
+  ],
+};
