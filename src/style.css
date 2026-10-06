@@ -189,10 +189,11 @@ button.print-link { cursor: pointer; font: inherit; font-weight: 600; }
   .v-head { flex-wrap: wrap; gap: 8px 14px; padding: 10px 14px; }
   .paper-info { margin-left: 0; width: 100%; }
   .v-body { grid-template-columns: 1fr; }
-  .v-left { grid-template-rows: auto 58vh auto; }
+  /* 안내문·접기 화면·조작 버튼이 한 화면에 함께 보이도록: 조작부는 화면 아래에 붙인다 */
+  .v-left { grid-template-rows: auto clamp(240px, 100svh - 430px, 58vh) auto; }
   .instruction { padding: 14px 16px 10px; }
   #stepText { font-size: 18px; }
-  .controls { padding: 12px 16px 16px; }
+  .controls { padding: 10px 16px 12px; position: sticky; bottom: 0; z-index: 5; box-shadow: 0 -1px 0 var(--rule), 0 -8px 16px rgba(30, 43, 58, 0.06); }
   .speed { margin-left: 0; }
   .v-steps { border-left: 0; border-top: 1px solid var(--rule); }
   .g-head { padding-top: 40px; }
