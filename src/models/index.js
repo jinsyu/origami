@@ -4,5 +4,6 @@ import { cup } from './cup.js';
 import { cicada } from './cicada.js';
 import { airplane } from './airplane.js';
 import { swan } from './swan.js';
+import { heart } from './heart.js';
 
-export const MODELS = [dog, cup, cicada, airplane, swan].sort((a, b) => a.level - b.level);
+export const MODELS = [dog, cup, cicada, airplane, swan, heart].sort((a, b) => a.level - b.level);
