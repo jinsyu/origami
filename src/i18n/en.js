@@ -162,6 +162,18 @@ export const enModels = {
       'Fold the bottom corner behind so it can stand. Your owl is done!',
     ],
   },
+  whale: {
+    name: 'Whale', desc: 'Blunt the head of a kite, then outside reverse fold the thin end up into a tail.', paper: 'Square origami paper',
+    done: 'Your whale is done! Draw an eye and a water spout above its head.',
+    steps: [
+      'Place the paper colored side down as a diamond. Fold it in half vertically and unfold to make a center line.',
+      'Fold the two lower edges to the center line to make a kite.',
+      'Fold the top corner down to make a blunt head.',
+      'Fold the paper in half backward along the center line.',
+      'Lay it down with the fold at the bottom. The thin end points right.',
+      'Outside reverse fold the thin end so it stands up. This is the tail. Your whale is done!',
+    ],
+  },
   heart: {
     name: 'Heart', desc: 'Make a neat strip, fold the sides up and round off the corners. Needs careful folding.', paper: 'Square origami paper',
     done: 'Your heart is done! Give it to a friend.',
