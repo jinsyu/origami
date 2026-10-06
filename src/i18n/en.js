@@ -203,6 +203,19 @@ export const enModels = {
       'Turn it back over. Your picture frame is done!',
     ],
   },
+  duck: {
+    name: 'Duck', desc: 'Reverse fold the thin end up into a neck, then reverse fold its tip once more for the head and beak. Two reverse folds in a row.', paper: 'Square origami paper',
+    done: 'Your duck is done! Draw an eye and float it on water.',
+    steps: [
+      'Place the paper colored side down as a diamond. Fold it in half vertically and unfold to make a center line.',
+      'Fold the two lower edges to the center line to make a kite.',
+      'Fold the top corner down to make a blunt tail.',
+      'Fold the paper in half backward along the center line.',
+      'Lay it down with the fold at the bottom. The thin end points right.',
+      'Outside reverse fold the thin end so it stands up. This is the neck.',
+      'Reverse fold the tip of the neck forward for the head and beak. Your duck is done!',
+    ],
+  },
   tulip: {
     name: 'Tulip Bud', desc: 'Squash the flaps into a triangle base, then fold the tips up into a bud. Learn the squash fold.', paper: 'Square origami paper',
     done: 'Your tulip bud is done! Draw a stem or put it on a straw.',
