@@ -55,6 +55,7 @@
         <span id="modelLevel" class="meter" aria-label=""></span>
       </div>
       <span id="paperInfo" class="paper-info"></span>
+      <a id="printLink" class="print-link" href="#/">인쇄용 도면</a>
     </header>
     <div class="v-body">
       <div class="v-left">
@@ -90,6 +91,22 @@
         <ol id="stepList"></ol>
       </aside>
     </div>
+  </section>
+
+  <!-- 인쇄용 도면 -->
+  <section id="print" class="view" hidden>
+    <header class="p-head">
+      <a id="printBack" class="back" href="#/">접기 화면으로</a>
+      <button id="printBtn" type="button" class="p-btn">인쇄하기</button>
+    </header>
+    <main class="p-sheet">
+      <div class="p-title">
+        <h1 id="pName"></h1>
+        <p id="pInfo"></p>
+      </div>
+      <ol id="pSteps" class="p-steps"></ol>
+      <p class="p-legend"><span><i class="lg valley"></i>골짜기 접기</span><span><i class="lg mountain"></i>산 접기</span><span>origami.gyosil.app</span></p>
+    </main>
   </section>
 
   <script type="module" src="src/main.js"></script>

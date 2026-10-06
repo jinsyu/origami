@@ -1,6 +1,8 @@
 // 작품 완성 모습·단계별 그림을 이미지로 만든다 (화면 밖 렌더러 하나를 공유)
 import * as THREE from 'three';
-import { PaperMesh, addLights, fitCamera, loopsOf, toVecs } from './paper.js';
+import { PaperMesh, addLights, fitCamera, loopsOf, simOf, toVecs } from './paper.js';
+import { moveGuides } from './engine.js';
+import { simGuides, simArrows } from './sim.js';
 
 let r = null;
 function ctx() {
@@ -11,21 +13,68 @@ function ctx() {
   addLights(scene);
   const paper = new PaperMesh();
   scene.add(paper.group);
+  const guides = new THREE.Group();
+  scene.add(guides);
   const camera = new THREE.PerspectiveCamera(30, 1, 0.01, 50);
-  r = { renderer, scene, paper, camera };
+  r = { renderer, scene, paper, camera, guides };
   return r;
 }
 
 const cache = new Map();
+const MOUNTAIN = '#9a5b13';
+
+// 도면용 안내선: 접는 선(점선)과 움직임 화살표
+function drawGuides(group, model, plan) {
+  group.traverse((o) => { if (o.geometry) o.geometry.dispose(); if (o.material) o.material.dispose(); });
+  group.clear();
+  const accent = new THREE.Color(model.accent);
+  const dashed = (a, b, color, mountain) => {
+    const g = new THREE.BufferGeometry().setFromPoints([new THREE.Vector3(...a), new THREE.Vector3(...b)]);
+    const l = new THREE.Line(g, new THREE.LineDashedMaterial({ color, dashSize: mountain ? 0.05 : 0.025, gapSize: 0.02, depthTest: false }));
+    l.computeLineDistances();
+    l.renderOrder = 10;
+    group.add(l);
+  };
+  const arrow = (path, color) => {
+    const vs = path.map((v) => new THREE.Vector3(...v));
+    if (vs.length < 2) return;
+    const m = new THREE.MeshBasicMaterial({ color, depthTest: false });
+    const curve = new THREE.CatmullRomCurve3(vs);
+    const tube = new THREE.Mesh(new THREE.TubeGeometry(curve, 40, 0.006, 6), m);
+    const end = curve.getPointAt(1), before = curve.getPointAt(0.93);
+    const dir = end.clone().sub(before).normalize();
+    const cone = new THREE.Mesh(new THREE.ConeGeometry(0.022, 0.06, 12), m);
+    cone.position.copy(end);
+    cone.quaternion.setFromUnitVectors(new THREE.Vector3(0, 1, 0), dir);
+    tube.renderOrder = cone.renderOrder = 11;
+    group.add(tube, cone);
+  };
+  if (plan.sim) {
+    for (const g of simGuides(simOf(plan))) dashed([g.a[0], g.a[1], g.a[2] + 0.006], [g.b[0], g.b[1], g.b[2] + 0.006], g.valley ? accent : new THREE.Color(MOUNTAIN), !g.valley);
+    for (const p of simArrows(simOf(plan))) arrow(p, accent);
+  } else {
+    plan.moves.forEach((mv, mi) => {
+      const { line, path } = moveGuides(plan, mi);
+      const mountain = !mv.spin && mv.u[2] < 0;
+      const color = mountain ? new THREE.Color(MOUNTAIN) : accent;
+      if (line) dashed(line[0], line[1], color, mountain);
+      if (path.length > 2) arrow(path, color);
+    });
+  }
+}
 
 // plan의 진행률 t 상태를 dir 방향에서 본 그림
-export function snapshot(model, plan, t, dir, size = 320, key) {
+export function snapshot(model, plan, t, dir, size = 320, key, withGuides = false) {
   if (key && cache.has(key)) return cache.get(key);
-  const { renderer, scene, paper, camera } = ctx();
+  const { renderer, scene, paper, camera, guides } = ctx();
   renderer.setSize(size, size, false);
   if (paper.model !== model) { paper.setModel(model); paper.model = model; }
   const loops = paper.update(plan, t);
-  const fit = fitCamera(camera, toVecs(loops), dir, 1, 1.12);
+  guides.visible = withGuides;
+  if (withGuides) drawGuides(guides, model, plan);
+  const pts = toVecs(loops);
+  if (withGuides) guides.traverse((o) => { if (o.isMesh || o.isLine) { o.geometry.computeBoundingSphere(); const s = o.geometry.boundingSphere; pts.push(s.center.clone().addScaledVector(new THREE.Vector3(1, 1, 0).normalize(), s.radius * 0.5)); } });
+  const fit = fitCamera(camera, pts, dir, 1, 1.12);
   camera.position.copy(fit.pos);
   camera.lookAt(fit.target);
   renderer.render(scene, camera);
@@ -37,6 +86,12 @@ export function snapshot(model, plan, t, dir, size = 320, key) {
 // 단계 i를 시작하기 직전 모습 (작은 도해용, 정면에서)
 export function stepThumb(model, plans, i) {
   return snapshot(model, plans[i], 0, [0, 0, 1], 160, `${model.id}:s${i}`);
+}
+
+// 인쇄 도면용: 접는 선·화살표까지 그린 큰 그림
+export function diagram(model, plans, i) {
+  const dir = model.steps[i].view && model.steps[i].view[2] > 0.5 ? [model.steps[i].view[0] * 0.5, model.steps[i].view[1] * 0.5, 1] : [0.12, -0.25, 1];
+  return snapshot(model, plans[i], 0, dir, 420, `${model.id}:d${i}`, true);
 }
 
 // 완성 모습

@@ -6,7 +6,7 @@ import { LineMaterial } from 'three/addons/lines/LineMaterial.js';
 import { buildModel, moveGuides } from './engine.js';
 import { simGuides, simArrows } from './sim.js';
 import { PaperMesh, addLights, fitCamera, loopsOf, simOf, toVecs } from './paper.js';
-import { finalThumb, stepThumb } from './thumbs.js';
+import { finalThumb, stepThumb, diagram } from './thumbs.js';
 import { MODELS } from './models/index.js';
 
 // 개발 중인 작품: 주소에 ?dev 를 붙이면 보인다
@@ -193,6 +193,7 @@ function openModel(m, startStep = 0) {
     $('modelName').textContent = m.name;
     $('modelLevel').replaceWith(Object.assign(meter(m.level), { id: 'modelLevel' }));
     $('paperInfo').textContent = `${m.paper}, ${N}단계`;
+    $('printLink').href = `#/print/${m.id}`;
     document.title = `${m.name} 접기 - 종이접기 교실`;
     const list = $('stepList');
     list.innerHTML = '';
@@ -292,7 +293,51 @@ function resize() {
 new ResizeObserver(resize).observe(stage);
 
 // ---------- 화면 전환 (#/  ·  #/m/작품/단계) ----------
+// 인쇄용 도면: 단계마다 접는 선·화살표가 그려진 그림과 설명
+function renderPrint(m) {
+  const plans = plansOf(m);
+  $('pName').textContent = `${m.name} 접는 방법`;
+  $('pInfo').textContent = `${m.paper} · 난이도 ${m.level} · ${m.steps.length}단계`;
+  $('printBack').href = `#/m/${m.id}`;
+  document.title = `${m.name} 도면 - 종이접기 교실`;
+  const ol = $('pSteps');
+  ol.innerHTML = '';
+  const items = m.steps.map((s, i) => {
+    const li = document.createElement('li');
+    li.innerHTML = `<div class="pic"><span class="n">${i + 1}</span><img alt="" /></div><p></p>`;
+    li.querySelector('p').textContent = s.text;
+    li.querySelector('img').alt = `${i + 1}단계 그림`;
+    ol.appendChild(li);
+    return li;
+  });
+  const fin = document.createElement('li');
+  fin.className = 'final';
+  fin.innerHTML = `<div class="pic"><img alt="완성 모습" /></div><p></p>`;
+  fin.querySelector('p').textContent = m.done;
+  ol.appendChild(fin);
+  document.documentElement.style.setProperty('--accent', m.accent);
+  // 그림은 하나씩 차례로 (화면이 멈추지 않게)
+  let k = 0;
+  const next = () => {
+    if (location.hash !== `#/print/${m.id}`) return;
+    if (k < items.length) { items[k].querySelector('img').src = diagram(m, plans, k); k++; setTimeout(next, 10); }
+    else fin.querySelector('img').src = finalThumb(m, plans);
+  };
+  setTimeout(next, 30);
+}
+$('printBtn').onclick = () => window.print();
+
 function route() {
+  const pm = location.hash.match(/^#\/print\/([\w-]+)/);
+  const printTarget = pm && MODELS.find((x) => x.id === pm[1]);
+  $('print').hidden = !printTarget;
+  if (printTarget) {
+    $('gallery').hidden = true;
+    $('viewer').hidden = true;
+    running = false;
+    renderPrint(printTarget);
+    return;
+  }
   const m = location.hash.match(/^#\/m\/([\w-]+)(?:\/(\d+))?/);
   const target = m && MODELS.find((x) => x.id === m[1]);
   $('gallery').hidden = !!target;
