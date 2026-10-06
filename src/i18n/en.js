@@ -244,6 +244,21 @@ export const enModels = {
       'Outside reverse fold the left end into a slightly raised tail. Your dinosaur is done!',
     ],
   },
+  heron: {
+    name: 'Heron', desc: 'Make the kite twice to get very slim, then reverse fold the neck, head and tail. A sleek water bird.', paper: 'Square origami paper',
+    done: 'Your heron is done! Draw a red dot on top of its head.',
+    steps: [
+      'Place the paper colored side down as a diamond. Fold it in half vertically and unfold to make a center line.',
+      'Fold the two lower edges to the center line to make a kite.',
+      'Turn the paper over.',
+      'Fold the two lower edges to the center line again to make it slimmer.',
+      'Fold the paper in half backward along the center line.',
+      'Lay it down with the fold at the bottom. The thin end points right.',
+      'Outside reverse fold the thin end up at an angle. This is the neck.',
+      'Reverse fold the tip of the neck forward for the head and long beak.',
+      'Outside reverse fold the left end up into a tail. Your heron is done!',
+    ],
+  },
   masu: {
     name: 'Masu Box', desc: 'Pre-crease the paper flat, then raise the walls and tuck in the corners to build a 3D box.', paper: 'Square origami paper',
     done: 'Your masu box is done! Fold a slightly bigger sheet the same way to make a lid.',

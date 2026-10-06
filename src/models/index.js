@@ -19,8 +19,9 @@ import { frame } from './frame.js';
 import { duck } from './duck.js';
 import { tulip } from './tulip.js';
 import { dino } from './dino.js';
+import { heron } from './heron.js';
 import { crane, bird } from './crane.js';
 import { masu } from './masu.js';
 import { lily } from './lily.js';
 
-export const MODELS = [dog, cat, flower, cup, house, penguin, cicada, kabuto, hat, airplane, glider, envelope, swan, owl, whale, heart, frame, duck, tulip, dino, masu, bird, crane, lily].sort((a, b) => a.level - b.level);
+export const MODELS = [dog, cat, flower, cup, house, penguin, cicada, kabuto, hat, airplane, glider, envelope, swan, owl, whale, heart, frame, duck, tulip, dino, heron, masu, bird, crane, lily].sort((a, b) => a.level - b.level);
