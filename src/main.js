@@ -272,6 +272,18 @@ function updateUI() {
   $('fold').hidden = done && !!nextM;
   if (nextM) { $('nextModel').href = `#/m/${nextM.id}`; $('nextModel').textContent = `다음 작품: ${nextM.name}`; }
   $('badge').textContent = done ? '완성' : `${step + 1}/${N}`;
+  // 이 단계를 마치면 되는 모양 (다음 단계 시작 그림, 마지막 단계는 완성 그림)
+  const peek = $('resultPeek');
+  peek.hidden = done;
+  if (!done) {
+    const img = peek.querySelector('img');
+    const want = `${model.id}:${step}`;
+    if (img.dataset.k !== want) {
+      img.dataset.k = want;
+      img.alt = `${step + 1}단계를 마친 모습`;
+      img.src = step < N - 1 ? stepThumb(model, plans, step + 1) : finalThumb(model, plans);
+    }
+  }
   $('stepText').textContent = done ? model.done : model.steps[step].text;
   $('prev').disabled = step === 0 && t === 0;
   $('fold').disabled = done || phase !== 'idle';

@@ -122,6 +122,11 @@ button, select, input { font: inherit; color: inherit; }
 #stepList li.now .num { color: var(--accent); }
 #stepList li.done .num { color: var(--ink); }
 
+/* 이 단계를 마치면 되는 모양 */
+.peek { margin: 0 0 0 auto; flex: none; text-align: center; }
+.peek img { width: 64px; height: 64px; display: block; border-radius: 4px; background: var(--mat); border: 1px solid var(--rule); }
+.peek figcaption { font-size: 11.5px; color: var(--muted); margin-top: 3px; }
+
 /* 완성 뒤 다음 작품, 접어 본 작품 표시 */
 .next-model { padding: 11px 18px; border-radius: 10px; background: var(--accent); color: #fff; font-weight: 600; text-decoration: none; }
 .next-model:hover { filter: brightness(1.08); }
