@@ -110,6 +110,17 @@ export const enModels = {
       'Open both wings so they are at right angles to the body. Done!',
     ],
   },
+  envelope: {
+    name: 'Envelope', desc: 'Fold the four corners in turn so they overlap into an envelope with a flap. Practice laying each layer exactly on the last.', paper: 'Square origami paper',
+    done: 'Your envelope is done! Tuck a note under the flap.',
+    steps: [
+      'Place the paper colored side down as a diamond. Fold it in half top to bottom and unfold to make a center line.',
+      'Fold the bottom corner up to a little above the center line.',
+      'Fold the right corner in a little past the middle.',
+      'Fold the left corner in over the right flap.',
+      'Fold the top corner down to close the flap. Your envelope is done!',
+    ],
+  },
   swan: {
     name: 'Swan', desc: 'Two kite folds make a long, thin neck. Finish with an outside reverse fold.', paper: 'Square origami paper',
     done: 'Your swan is done! Tilt the neck forward a little for an elegant look.',
