@@ -5,7 +5,9 @@ const R = Math.SQRT1_2;
 const page = (filter, toward = 1) => ({ line: [[0, -1], [0, 1]], side: [filter.sideX ?? 0.1, -0.3], filter, toward });
 const pageTurn = (pred, sideX) => ({ line: [[0, -1], [0, 1]], side: [sideX, -0.3], filter: pred });
 
-export const lily = {
+// swaps[i]: i번째 날개 펼쳐 누르기에서 두 겹의 역할을 바꾼다 (개발용 탐색)
+const pick = (sw, a, b) => (sw ? { outer: b, inner: a } : { outer: a, inner: b });
+export const makeLily = (swaps = [1, 1, 1, 1]) => ({
   id: 'lily',
   name: '백합',
   level: 10,
@@ -27,32 +29,29 @@ export const lily = {
       text: '오른쪽 날개를 세워 틈을 벌리고, 가운데 선에 맞춰 펼쳐 눌러요.',
       sim: true,
       moves: squashFlap({ V: [0, 0], hd: [0, -1], sd: [1, -1], size: R, faceTag: 'sqA',
-        outer: (c) => !c.tags.has('f2') && !c.tags.has('f1') && !c.tags.has('faceB') && c.x > 0,
-        inner: (c) => c.tags.has('faceB') && c.x > 0 }),
+        ...pick(swaps[0], (c) => !c.tags.has('f2') && !c.tags.has('f1') && !c.tags.has('faceB') && c.x > 0, (c) => c.tags.has('faceB') && c.x > 0) }),
     },
     { text: '왼쪽 반을 책장 넘기듯 오른쪽으로 넘겨요.', moves: [pageTurn((c) => (c.tags.has('sqA_in') || c.tags.has('sqA')) && c.x < 0, -0.1)] },
     {
       text: '드러난 왼쪽 날개도 똑같이 펼쳐 눌러요.',
       sim: true,
       moves: squashFlap({ V: [0, 0], hd: [0, -1], sd: [-1, -1], size: R, faceTag: 'sqB',
-        outer: (c) => c.tags.has('f1') && !c.tags.has('f2') && !c.tags.has('faceB') && c.x < 0,
-        inner: (c) => c.tags.has('faceB') && c.tags.has('f1') && c.x < 0 }),
+        ...pick(swaps[1], (c) => c.tags.has('f1') && !c.tags.has('f2') && !c.tags.has('faceB') && c.x < 0, (c) => c.tags.has('faceB') && c.tags.has('f1') && c.x < 0) }),
     },
     { text: '종이를 뒤집어요.', moves: [flip], view: [0, 0.4, 1] },
     {
       text: '이쪽 오른쪽 날개도 펼쳐 눌러요.',
       sim: true,
       moves: squashFlap({ V: [0, 0], hd: [0, -1], sd: [1, -1], size: R, faceTag: 'sqC',
-        outer: (c) => c.tags.has('f2') && c.tags.has('f1') && !c.tags.has('faceA') && c.x > 0,
-        inner: (c) => c.tags.has('f2') && c.tags.has('f1') && c.tags.has('faceA') && c.x > 0 }),
+        ...pick(swaps[2], (c) => c.tags.has('f2') && c.tags.has('f1') && !c.tags.has('faceA') && c.x > 0, (c) => c.tags.has('f2') && c.tags.has('f1') && c.tags.has('faceA') && c.x > 0) }),
     },
     { text: '왼쪽 반을 오른쪽으로 넘겨요.', moves: [pageTurn((c) => (c.tags.has('sqC_in') || c.tags.has('sqC')) && c.x < 0, -0.1)] },
     {
       text: '마지막 날개도 펼쳐 눌러요. 개구리 기본형이 완성돼요.',
       sim: true,
       moves: squashFlap({ V: [0, 0], hd: [0, -1], sd: [-1, -1], size: R, faceTag: 'sqD',
-        outer: (c) => c.tags.has('f2') && !c.tags.has('f1') && !c.tags.has('faceA') && c.x < 0,
-        inner: (c) => c.tags.has('f2') && !c.tags.has('f1') && c.tags.has('faceA') && c.x < 0 }),
+        ...pick(swaps[3], (c) => c.tags.has('f2') && !c.tags.has('f1') && !c.tags.has('faceA') && c.x < 0, (c) => c.tags.has('f2') && !c.tags.has('f1') && c.tags.has('faceA') && c.x < 0) }),
     },
   ],
-};
+});
+export const lily = makeLily();

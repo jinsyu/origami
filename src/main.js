@@ -231,8 +231,13 @@ function updateUI() {
     li.classList.toggle('now', i === step);
     if (i === step) li.setAttribute('aria-current', 'step'); else li.removeAttribute('aria-current');
   });
-  const now = $('stepList').children[step];
-  if (now) now.scrollIntoView({ block: 'nearest', behavior: 'smooth' });
+  // 목록 상자 안에서만 스크롤한다 (페이지 전체가 움직이지 않게)
+  const list = $('stepList'), now = list.children[step];
+  if (now && list.scrollHeight > list.clientHeight + 4) {
+    const top = now.offsetTop - list.offsetTop, bottom = top + now.offsetHeight;
+    if (top < list.scrollTop) list.scrollTo({ top: top - 8, behavior: 'smooth' });
+    else if (bottom > list.scrollTop + list.clientHeight) list.scrollTo({ top: bottom - list.clientHeight + 8, behavior: 'smooth' });
+  }
 }
 
 function prevStep() {
