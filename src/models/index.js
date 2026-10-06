@@ -17,8 +17,8 @@ import { whale } from './whale.js';
 import { heart } from './heart.js';
 import { frame } from './frame.js';
 import { tulip } from './tulip.js';
-import { crane } from './crane.js';
+import { crane, bird } from './crane.js';
 import { masu } from './masu.js';
 import { lily } from './lily.js';
 
-export const MODELS = [dog, cat, flower, cup, house, penguin, cicada, kabuto, hat, airplane, glider, envelope, swan, owl, whale, heart, frame, tulip, masu, crane, lily].sort((a, b) => a.level - b.level);
+export const MODELS = [dog, cat, flower, cup, house, penguin, cicada, kabuto, hat, airplane, glider, envelope, swan, owl, whale, heart, frame, tulip, masu, bird, crane, lily].sort((a, b) => a.level - b.level);

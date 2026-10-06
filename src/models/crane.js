@@ -92,3 +92,32 @@ export const crane = {
     },
   ],
 };
+
+// 날갯짓 새: 학 기본형에서 다리를 가늘게 접지 않고 목과 꼬리를 세운다
+export const bird = {
+  id: 'bird',
+  name: '날갯짓 새',
+  level: 8,
+  desc: '학 기본형에서 목과 꼬리를 바로 세우고 날개를 비스듬히 펴요. 꼬리를 당기면 날개가 움직이는 새예요.',
+  paper: '정사각형 색종이',
+  colors: { front: '#fbf8f1', back: '#e07a2f' },
+  accent: '#b4581a',
+  outline: crane.outline,
+  view: crane.view,
+  finalView: [0.45, 0.75, 1],
+  done: '날갯짓 새 완성! 목 아래를 잡고 꼬리를 살짝 당기면 날개가 퍼덕여요.',
+  steps: [
+    ...crane.steps.slice(0, 14),
+    { text: '오른쪽 다리를 날개 사이로 안쪽 뒤집어 접어 비스듬히 세워요. 목이 돼요.', sim: true, moves: lift(1, 40, 'neck') },
+    { text: '왼쪽 다리도 안쪽 뒤집어 접어 세워요. 꼬리가 돼요.', sim: true, moves: lift(-1, 140, 'tail') },
+    { text: '목 끝을 안쪽 뒤집어 접어 머리를 만들어요.', sim: true, moves: head() },
+    {
+      text: '양쪽 날개를 비스듬히 아래로 펴면 날갯짓 새 완성!',
+      moves: [
+        { line: [[-1, -K], [1, -K]], side: [0, 0.2], filter: (c) => c.tags.has('petalB'), angle: 60, toward: 1 },
+        { line: [[-1, -K], [1, -K]], side: [0, 0.2], filter: (c) => c.tags.has('petalA'), angle: 60, toward: -1 },
+      ],
+      view: [0.35, 0.55, 1],
+    },
+  ],
+};
