@@ -14,9 +14,11 @@ const unkite = (front) => [
 ];
 const s2 = Math.sin(Math.PI / 16), c2 = Math.cos(Math.PI / 16);
 // 다리를 가늘게: 아래 끝에서 11.25° 선을 따라 바깥 변을 가운데로
+// 다리를 가늘게: 아래 끝에서 11.25° 선을 따라 그 면의 바깥쪽 겹을 모두 가운데로 접는다
+// (구속 조건 탐색 결과: 날개 밑동의 옆 조각까지 함께 접혀야 종이가 끊기지 않는다)
 const narrow = (layer) => [
-  { line: [[0, -R], [s2, -R + c2]], side: [0.1, -0.4], filter: (c) => layer(c) && c.y < -K + 1e-3, tag: 'leg' },
-  { line: [[0, -R], [-s2, -R + c2]], side: [-0.1, -0.4], filter: (c) => layer(c) && c.y < -K + 1e-3, tag: 'leg' },
+  { line: [[0, -R], [s2, -R + c2]], side: [0.15, -0.45], filter: layer, tag: 'leg' },
+  { line: [[0, -R], [-s2, -R + c2]], side: [-0.15, -0.45], filter: layer, tag: 'leg' },
 ];
 // 다리를 안쪽으로 뒤집어 세우기 (sx=1 오른쪽 목, -1 왼쪽 꼬리). 등선 = 가늘게 접은 선
 const lift = (sx, deg, tag) => {
@@ -74,6 +76,9 @@ export const crane = {
     ...preAndPetal(not('f2'), has('faceB'), 'petalA', '앞쪽'),
     { text: '종이를 뒤집어요.', moves: [flip], view: [0, 0.4, 1] },
     ...preAndPetal(has('f2'), has('faceA'), 'petalB', '이쪽'),
+    { text: '아래쪽 두 다리의 바깥 변을 가운데 선에 맞춰 접어 가늘게 만들어요.', moves: narrow((c) => c.tags.has('f2')) },
+    { text: '종이를 뒤집어요.', moves: [flip], view: [0, 0.4, 1] },
+    { text: '이쪽 다리도 바깥 변을 가운데 선에 맞춰 접어요.', moves: narrow((c) => !c.tags.has('f2')) },
     { text: '오른쪽 다리를 날개 사이로 안쪽 뒤집어 접어 세워요. 목이 돼요.', sim: true, moves: lift(1, 35, 'neck') },
     { text: '왼쪽 다리도 안쪽 뒤집어 접어 세워요. 꼬리가 돼요.', sim: true, moves: lift(-1, 145, 'tail') },
     { text: '목 끝을 안쪽 뒤집어 접어 머리를 만들어요.', sim: true, moves: head() },

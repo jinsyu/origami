@@ -37,7 +37,7 @@ export const lily = {
   level: 10,
   desc: '물풍선 기본형의 네 날개를 모두 펼쳐 누르고, 네 면을 꽃잎 접기 한 뒤 꽃잎을 펼쳐요. 가장 긴 도전 과제예요.',
   paper: '정사각형 색종이',
-  colors: { front: '#f2a33a', back: '#fbf8f1' },
+  colors: { front: '#f2a33a', back: '#f8d7a4' },
   accent: '#c97a10',
   outline: tulip.outline,
   view: [0.3, -0.45, 1],
