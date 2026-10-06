@@ -160,8 +160,8 @@ function curveOf(sb, t) {
 
 // 펼쳐 누르기의 해석적 경로.
 // 두 겹은 경첩을 축으로 각각 aK(바깥), aF(안쪽)만큼 들린다. 두 겹이 공유하는 등선은
-// 두 겹 사이 가운데 평면에 있어야 하고, 각 겹의 이등분선과 45°를 이뤄야 하므로
-// 경첩 아래 방향과 이루는 각 ψ = 2·atan(cos(Δ/2)) 로 정해진다 (Δ = aF - aK).
+// 두 겹 사이 가운데 평면에 있어야 하고, 각 겹의 이등분선과 γ(경첩-이등분선 각)를 이뤄야 하므로
+// 경첩 방향과 이루는 각 ψ = 2·atan(cos(Δ/2)·tanγ) 로 정해진다 (Δ = aF - aK). γ=45°면 등선이 경첩에 수직인 경우.
 // 각 겹의 등선 쪽 삼각형은 이 등선 방향에 맞도록 이등분선을 축으로 β만큼 돈다.
 function squashPose(sim, t) {
   const { roleIdx, group, p2 } = sim.squash;
@@ -170,15 +170,18 @@ function squashPose(sim, t) {
   const V = OB.mv.o, b0 = OB.mv.d;
   const aF = th * curveOf(H, t), aK = th * curveOf(L, t);
   const hd = norm3(dot3(b0, hd0) > 0 ? hd0 : [-hd0[0], -hd0[1], -hd0[2]]); // 경첩을 따라 날개 쪽
-  const sp0 = norm3(sub3(b0, [hd[0] * dot3(b0, hd), hd[1] * dot3(b0, hd), hd[2] * dot3(b0, hd)])); // 등선 방향
+  const cg = Math.min(1, dot3(b0, hd)), gamma = Math.acos(cg);               // 경첩-이등분선 각 γ
+  const sp0 = norm3(sub3(b0, [hd[0] * cg, hd[1] * cg, hd[2] * cg]));           // 경첩에 수직, 등선 쪽
+  const c2g = Math.cos(2 * gamma), s2g = Math.sin(2 * gamma);
+  const spine0 = [hd[0] * c2g + sp0[0] * s2g, hd[1] * c2g + sp0[1] * s2g, hd[2] * c2g + sp0[2] * s2g]; // 원래 등선 방향
   const m = (aK + aF) / 2, D = aF - aK;
-  const psi = 2 * Math.atan(Math.cos(D / 2));
+  const psi = 2 * Math.atan(Math.cos(D / 2) * Math.tan(gamma));
   const um = rotDir(sp0, hd0, m);
   const s = norm3([hd[0] * Math.cos(psi) + um[0] * Math.sin(psi), hd[1] * Math.cos(psi) + um[1] * Math.sin(psi), hd[2] * Math.cos(psi) + um[2] * Math.sin(psi)]);
   const betaFor = (a, sign) => {
     const sl = rotDir(s, hd0, -a);
     const pp = (v) => norm3(sub3(v, [b0[0] * dot3(v, b0), b0[1] * dot3(v, b0), b0[2] * dot3(v, b0)]));
-    const u = pp(sp0), w = pp(sl);
+    const u = pp(spine0), w = pp(sl);
     let beta = Math.atan2(dot3(b0, cross3(u, w)), dot3(u, w));
     if (Math.abs(Math.abs(beta) - Math.PI) < 1e-3 || (sign && Math.sign(beta) !== sign && Math.abs(beta) > Math.PI / 2)) beta = sign * Math.PI;
     return beta;

@@ -44,3 +44,24 @@ export const petal = (R, face, front, tag) => {
     { line: [[-1, -K], [1, -K]], side: [0, -1], filter: face, toward: 1, at: [0.2, 1], tag },
   ];
 };
+
+// 일반 펼쳐 누르기: 꼭짓점 V에서 경첩 방향 hd(날개 쪽으로), 등선 방향 sd 가 만나는 날개를 누른다.
+// 경첩과 등선이 이루는 각의 이등분선을 따라 등선 쪽 삼각형을 접고, 안쪽 겹은 경첩 건너편으로 넘긴다.
+export const squashFlap = ({ V, hd, sd, outer, inner, faceTag, size = 1 }) => {
+  const nrm = (v) => { const l = Math.hypot(v[0], v[1]); return [v[0] / l, v[1] / l]; };
+  const h = nrm(hd), s = nrm(sd), b = nrm([h[0] + s[0], h[1] + s[1]]);
+  const perp = nrm([s[0] - h[0] * (s[0] * h[0] + s[1] * h[1]), s[1] - h[1] * (s[0] * h[0] + s[1] * h[1])]); // 경첩에 수직, 날개 쪽
+  const at = (d, k) => [V[0] + d[0] * k, V[1] + d[1] * k];
+  const refl = (d) => { const k = 2 * (d[0] * perp[0] + d[1] * perp[1]); return [d[0] - perp[0] * k, d[1] - perp[1] * k]; };
+  const hinge = [V, at(h, 1)];
+  const flapSide = at(nrm([b[0] + perp[0] * 0.3, b[1] + perp[1] * 0.3]), size * 0.3);
+  const spineSide = at(nrm([b[0] + s[0], b[1] + s[1]]), size * 0.3);
+  const b2 = refl(b), spineSide2 = at(refl(nrm([b[0] + s[0], b[1] + s[1]])), size * 0.3);
+  return [
+    { line: hinge, side: flapSide, filter: outer, toward: 1, transient: true, curve: 'peak', peak: 1 / 3, role: 'lift' },
+    { line: hinge, side: flapSide, filter: inner, toward: 1, role: 'hinge', tag: `${faceTag}_in` },
+    { line: [V, at(b, 1)], side: spineSide, filter: outer, toward: 1, at: [0.33, 0.95], role: 'obis', tag: faceTag },
+    // 안쪽 겹은 경첩을 건너간 뒤이므로 위치가 아니라 표시로 고른다
+    { line: [V, at(b2, 1)], side: spineSide2, filter: (c) => c.tags.has(`${faceTag}_in`), toward: 1, at: [0.33, 0.95], role: 'ibis', tag: faceTag },
+  ];
+};
