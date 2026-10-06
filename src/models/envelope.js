@@ -5,7 +5,7 @@ const R = Math.SQRT1_2;
 export const envelope = {
   id: 'envelope',
   name: '편지 봉투',
-  level: 4,
+  level: 2,
   desc: '네 모서리를 차례로 접어 겹치면 덮개가 있는 봉투가 돼요. 먼저 접은 장 위에 다음 장을 정확히 얹는 연습이에요.',
   paper: '정사각형 색종이',
   colors: { front: '#fbf8f1', back: '#7b9acc' },

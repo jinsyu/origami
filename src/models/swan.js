@@ -9,7 +9,7 @@ const NECK_LINE = [[-0.08, 0], [-0.08 - 0.643, 0.766]]; // 목을 세우는 선 
 export const swan = {
   id: 'swan',
   name: '백조',
-  level: 5,
+  level: 6,
   desc: '연 모양 접기를 두 번 해서 가늘고 긴 목을 만들어요. 마지막에 목을 바깥으로 뒤집어 세워요.',
   paper: '정사각형 색종이',
   colors: { front: '#fbfaf6', back: '#5b8fd6' },

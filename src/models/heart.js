@@ -6,7 +6,7 @@ const flip = { spin: { a: [0, 0, 0], b: [0, 1, 0], angle: 180 } };
 export const heart = {
   id: 'heart',
   name: '하트',
-  level: 6,
+  level: 4,
   desc: '반듯한 띠를 만든 뒤 양쪽을 접어 올리고 모서리를 둥글게 다듬어요. 정확하게 맞춰 접는 힘이 필요해요.',
   paper: '정사각형 색종이',
   colors: { front: '#fbf8f1', back: '#d63c5e' },

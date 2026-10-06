@@ -97,7 +97,7 @@ export const crane = {
 export const bird = {
   id: 'bird',
   name: '날갯짓 새',
-  level: 8,
+  level: 9,
   desc: '학 기본형에서 목과 꼬리를 바로 세우고 날개를 비스듬히 펴요. 꼬리를 당기면 날개가 움직이는 새예요.',
   paper: '정사각형 색종이',
   colors: { front: '#fbf8f1', back: '#e07a2f' },

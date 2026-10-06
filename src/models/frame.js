@@ -7,7 +7,7 @@ const flip = { spin: { a: [0, 0, 0], b: [0, 1, 0], angle: 180 } };
 export const frame = {
   id: 'frame',
   name: '액자',
-  level: 6,
+  level: 4,
   desc: '네 모서리를 가운데로 모으는 방석 접기를 앞뒤로 두 번 해서 흰 테두리가 있는 액자를 만들어요. 겹이 많아 꼼꼼함이 필요해요.',
   paper: '정사각형 색종이',
   colors: { front: '#7a4fb5', back: '#fbf8f1' },

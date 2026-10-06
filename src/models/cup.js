@@ -9,7 +9,7 @@ const flap = (c) => c.tags.has('flapL') || c.tags.has('flapR');
 export const cup = {
   id: 'cup',
   name: '컵',
-  level: 2,
+  level: 3,
   desc: '양쪽 모서리를 맞은편에 걸쳐 접는 컵. 정확히 맞춰 접는 연습에 좋아요.',
   paper: '정사각형 색종이',
   colors: { front: '#fbf8f1', back: '#2f8f9d' },

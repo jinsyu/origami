@@ -8,7 +8,7 @@ const WING = [[H, 0], [-H, 0.2]]; // 뒤집은 뒤의 날개 접는 선
 export const airplane = {
   id: 'airplane',
   name: '종이비행기',
-  level: 4,
+  level: 5,
   desc: '가운데 선에 맞춰 접고 날개를 펴는 뾰족한 비행기. 접은 뒤 직접 날려 보세요.',
   paper: '정사각형 색종이',
   colors: { front: '#fbf8f1', back: '#3b78c4' },
