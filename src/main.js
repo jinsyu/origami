@@ -222,13 +222,16 @@ function buildGuides(p) {
     }
     for (const path of simArrows(simOf(p))) pts.push(...arrow(path, color));
   } else {
-    p.moves.forEach((mv, mi) => {
-      const { line, path } = moveGuides(p, mi);
+    const gs = p.moves.map((mv, mi) => ({ mv, ...moveGuides(p, mi) }));
+    // 화살표는 많이 움직이는 것 2개까지만 (여러 동작이 겹치면 읽기 어려움)
+    const lenOf = (path) => path.reduce((a, q, i) => (i ? a + Math.hypot(q[0] - path[i - 1][0], q[1] - path[i - 1][1], q[2] - path[i - 1][2]) : 0), 0);
+    const keep = new Set(gs.map((g, i) => [i, lenOf(g.path)]).sort((a, b) => b[1] - a[1]).slice(0, 2).map(([i]) => i));
+    gs.forEach(({ mv, line, path }, i) => {
       // 보는 쪽(+z)으로 접으면 골짜기, 뒤로 접으면 산
       const isMountain = !mv.spin && mv.u[2] < 0;
       if (isMountain) mountain = true;
       if (line) dashed(line[0], line[1], isMountain ? new THREE.Color(MOUNTAIN) : color, isMountain);
-      if (path.length > 2) pts.push(...arrow(path, isMountain ? new THREE.Color(MOUNTAIN) : color));
+      if (keep.has(i) && path.length > 2) pts.push(...arrow(path, isMountain ? new THREE.Color(MOUNTAIN) : color));
     });
   }
   $('legend').hidden = !mountain && !p.sim;

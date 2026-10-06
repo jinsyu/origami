@@ -67,12 +67,14 @@ function drawGuides(group, model, plan) {
     for (const g of simGuides(simOf(plan))) dashed([g.a[0], g.a[1], g.a[2] + 0.006], [g.b[0], g.b[1], g.b[2] + 0.006], g.valley ? accent : new THREE.Color(MOUNTAIN), !g.valley);
     for (const p of simArrows(simOf(plan))) arrow(p, accent);
   } else {
-    plan.moves.forEach((mv, mi) => {
-      const { line, path } = moveGuides(plan, mi);
+    const gs = plan.moves.map((mv, mi) => ({ mv, ...moveGuides(plan, mi) }));
+    const lenOf = (path) => path.reduce((a, q, i) => (i ? a + Math.hypot(q[0] - path[i - 1][0], q[1] - path[i - 1][1], q[2] - path[i - 1][2]) : 0), 0);
+    const keep = new Set(gs.map((g, i) => [i, lenOf(g.path)]).sort((a, b) => b[1] - a[1]).slice(0, 2).map(([i]) => i));
+    gs.forEach(({ mv, line, path }, i) => {
       const mountain = !mv.spin && mv.u[2] < 0;
       const color = mountain ? new THREE.Color(MOUNTAIN) : accent;
       if (line) dashed(line[0], line[1], color, mountain);
-      if (path.length > 2) arrow(path, color);
+      if (keep.has(i) && path.length > 2) arrow(path, color);
     });
   }
 }
