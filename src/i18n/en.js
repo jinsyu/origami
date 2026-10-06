@@ -10,6 +10,25 @@ export const enModels = {
       'Fold the remaining layer behind to make the chin.',
     ],
   },
+  cat: {
+    name: 'Cat Face', desc: 'Fold a triangle and lift both ends up into pointy ears. Done in three folds.', paper: 'Square origami paper',
+    done: 'Your cat face is done! Draw the eyes and whiskers.',
+    steps: [
+      'Place the paper colored side down as a diamond. Fold the top corner down to the bottom corner.',
+      'Fold both side corners up at an angle. The tips poke up as ears.',
+      'Fold the bottom tip behind a little to round off the chin.',
+    ],
+  },
+  flower: {
+    name: 'Tulip Flower', desc: 'Fold a triangle, then fold both ends up so they cross. The petals open into a tulip.', paper: 'Square origami paper',
+    done: 'Your tulip flower is done! Draw a green stem below it.',
+    steps: [
+      'Place the paper colored side down as a diamond. Fold the bottom corner up to the top corner.',
+      'Fold the right corner up at an angle so its tip sticks out above and to the left of the top.',
+      'Fold the left corner up the same way so the petals cross.',
+      'Turn the paper over. Your tulip flower is done!',
+    ],
+  },
   cup: {
     name: 'Cup', desc: 'Fold each corner across to the opposite edge. Great practice for folding precisely.', paper: 'Square origami paper',
     done: 'Your cup is done! Open the top a little.',
@@ -19,6 +38,25 @@ export const enModels = {
       'Fold the left corner the same way so it touches the right edge.',
       'Fold the front layer of the top corner down toward you.',
       'Fold the remaining layer down behind. Your cup is done!',
+    ],
+  },
+  house: {
+    name: 'House', desc: 'Fold two corners to the center line for a pointed roof. Practice folding to a line.', paper: 'Square origami paper',
+    done: 'Your house is done! Draw windows and a door.',
+    steps: [
+      'Place the paper colored side down. Fold it in half vertically and unfold to make a center line.',
+      'Fold the two top corners down to the center line. This is the pointed roof.',
+      'Fold the bottom edge up a little to make a base strip. Your house is done!',
+    ],
+  },
+  penguin: {
+    name: 'Penguin', desc: 'Fold the sides in for black wings and a white belly, then fold the top twice for the head and beak. Your first mountain fold too.', paper: 'Square origami paper',
+    done: 'Your penguin is done! Draw the eyes and stand it up.',
+    steps: [
+      'Place the paper colored side down as a diamond. Fold both side corners in close to the middle. These are the black wings.',
+      'Fold the top corner down. This is the head.',
+      'Fold that tip back up a little. This is the beak.',
+      'Fold the bottom corner behind so it can stand. Your penguin is done!',
     ],
   },
   cicada: {
@@ -33,6 +71,18 @@ export const enModels = {
       'Turn the paper over.',
       'Fold both sides in at an angle to shape the body.',
       'Turn it back over. Your cicada is done!',
+    ],
+  },
+  kabuto: {
+    name: 'Samurai Helmet', desc: 'Lift both flaps and bend them outward into horns. Practice folding the front and back layers separately.', paper: 'Square origami paper',
+    done: 'Your samurai helmet is done! Fold a big sheet and you can wear it.',
+    steps: [
+      'Place the paper colored side down as a diamond. Fold the top corner down to the bottom corner.',
+      'Fold both side corners down to the bottom corner. You get a diamond.',
+      'Fold the bottom tips of those two flaps up to the top.',
+      'Bend the tips outward at an angle. These are the horns.',
+      'Fold the front layer at the bottom up to just below the horns. This is the brim.',
+      'Fold the remaining back layer behind. Your helmet is done!',
     ],
   },
   airplane: {
