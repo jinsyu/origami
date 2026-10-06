@@ -4,64 +4,14 @@
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
   <title>종이접기 교실</title>
+  <meta name="description" content="색종이 한 장으로 따라 접는 3D 종이접기. 쉬운 강아지부터 학까지, 한 단계씩 움직이는 그림으로 배워요." />
+  <meta name="theme-color" content="#e6ece4" />
+  <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Cpath d='M8 56 32 8l24 48z' fill='%23d9483b'/%3E%3Cpath d='M32 8v48H8z' fill='%23b8392e'/%3E%3C/svg%3E" />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Gowun+Dodum&display=swap" />
   <link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/static/pretendard.min.css" />
-  <style>
-    :root { --accent: #2f7d4a; --ink: #2b2622; --muted: #8a8177; --line: #e6dfd2; --card: #fffdf9; }
-    * { box-sizing: border-box; }
-    html, body { height: 100%; }
-    body {
-      margin: 0; color: var(--ink);
-      font-family: Pretendard, system-ui, -apple-system, sans-serif;
-      background: radial-gradient(ellipse at 40% 30%, #fbf8f2 0%, #efe8dc 70%, #e8dfd0 100%);
-      display: grid; grid-template-rows: auto 1fr; height: 100vh; overflow: hidden;
-    }
-    header { display: flex; align-items: center; gap: 16px; padding: 14px 22px; }
-    header h1 { margin: 0; font-size: 19px; font-weight: 800; letter-spacing: -0.02em; }
-    header h1 b { color: var(--accent); transition: color .3s; }
-    #tabs { display: flex; gap: 4px; background: #e9e2d5; padding: 4px; border-radius: 12px; }
-    .tab { border: 0; background: transparent; padding: 7px 14px; border-radius: 9px; font: inherit; font-weight: 600; color: var(--muted); cursor: pointer; }
-    .tab.on { background: #fff; color: var(--ink); box-shadow: 0 1px 3px rgba(0,0,0,.08); }
-    #paperInfo { margin-left: auto; color: var(--muted); font-size: 14px; }
-
-    main { display: grid; grid-template-columns: 1fr 340px; min-height: 0; gap: 0; }
-    .left { display: grid; grid-template-rows: auto 1fr auto; min-height: 0; padding: 0 0 18px 22px; }
-    .instruction { display: flex; gap: 14px; align-items: flex-start; padding: 6px 4px 0; min-height: 64px; }
-    #badge { flex: none; background: var(--accent); color: #fff; font-weight: 800; font-size: 15px; padding: 6px 12px; border-radius: 999px; transition: background .3s; }
-    #stepText { font-size: 21px; font-weight: 600; line-height: 1.45; letter-spacing: -0.01em; }
-    #stage { position: relative; min-height: 0; }
-    #view { position: absolute; inset: 0; width: 100%; height: 100%; display: block; touch-action: none; cursor: grab; }
-    .hint { position: absolute; right: 8px; bottom: 6px; font-size: 12px; color: var(--muted); pointer-events: none; }
-
-    .controls { background: var(--card); border: 1px solid var(--line); border-radius: 16px; padding: 12px 16px; box-shadow: 0 6px 20px rgba(60,40,10,.06); }
-    #progress { width: 100%; accent-color: var(--accent); margin: 0 0 10px; }
-    .btns { display: flex; gap: 8px; flex-wrap: wrap; }
-    .btns button { font: inherit; font-weight: 600; padding: 10px 16px; border-radius: 11px; border: 1px solid var(--line); background: #fff; color: var(--ink); cursor: pointer; }
-    .btns button:hover:not(:disabled) { border-color: #cfc5b4; }
-    .btns button:disabled { opacity: .4; cursor: default; }
-    #fold { background: var(--accent); border-color: var(--accent); color: #fff; min-width: 120px; }
-    #restart { margin-left: auto; }
-
-    aside { border-left: 1px solid var(--line); background: rgba(255,253,249,.6); min-height: 0; display: flex; flex-direction: column; margin-left: 18px; }
-    aside h2 { font-size: 14px; color: var(--muted); font-weight: 700; margin: 16px 20px 8px; }
-    #stepList { list-style: none; margin: 0; padding: 0 12px 16px; overflow-y: auto; }
-    #stepList li { display: flex; gap: 12px; padding: 10px 10px; border-radius: 12px; cursor: pointer; line-height: 1.45; font-size: 15px; color: var(--muted); }
-    #stepList li:hover { background: #f4eee4; }
-    #stepList .num { flex: none; width: 26px; height: 26px; border-radius: 50%; border: 1.5px solid #d6ccbb; display: grid; place-items: center; font-size: 13px; font-weight: 700; }
-    #stepList li.done .num { background: #e9e2d5; border-color: #e9e2d5; }
-    #stepList li.now { background: #fff; color: var(--ink); box-shadow: 0 1px 4px rgba(0,0,0,.07); }
-    #stepList li.now .num { background: var(--accent); border-color: var(--accent); color: #fff; }
-
-    @media (max-width: 860px) {
-      body { height: auto; overflow: auto; grid-template-rows: auto auto; }
-      header { flex-wrap: wrap; padding: 12px 16px; }
-      #paperInfo { margin-left: 0; width: 100%; }
-      main { grid-template-columns: 1fr; }
-      .left { padding: 0 16px 16px; grid-template-rows: auto 56vh auto; }
-      #stepText { font-size: 18px; }
-      aside { margin: 0 16px 24px; border: 1px solid var(--line); border-radius: 16px; }
-      #stepList { max-height: none; }
-    }
-  </style>
+  <link rel="stylesheet" href="src/style.css" />
   <script type="importmap">
     { "imports": {
       "three": "https://cdn.jsdelivr.net/npm/three@0.169.0/build/three.module.js",
@@ -70,33 +20,69 @@
   </script>
 </head>
 <body>
-  <header>
-    <h1>종이접기 <b>교실</b></h1>
-    <div id="tabs"></div>
-    <span id="paperInfo"></span>
-  </header>
-  <main>
-    <div class="left">
-      <div class="instruction"><span id="badge"></span><span id="stepText"></span></div>
-      <div id="stage">
-        <canvas id="view"></canvas>
-        <span class="hint">드래그: 돌려 보기 · 스크롤: 확대</span>
+  <a class="skip" href="#main">본문으로 건너뛰기</a>
+
+  <!-- 작품 목록 -->
+  <section id="gallery" class="view" hidden>
+    <header class="g-head">
+      <h1 class="brand">종이접기 교실</h1>
+      <p class="lede">색종이 한 장을 준비하세요. 접는 선과 방향을 먼저 보여 주고, 한 단계씩 천천히 접어 보여 줘요.</p>
+    </header>
+    <main id="main" class="g-main">
+      <h2 class="g-title">쉬운 것부터 차례로</h2>
+      <ol id="cards" class="cards"></ol>
+    </main>
+    <footer class="g-foot">
+      <p>마우스로 끌면 종이를 돌려 볼 수 있어요. 키보드 ←·→로 단계를 넘기고 스페이스로 접어요.</p>
+    </footer>
+  </section>
+
+  <!-- 접기 화면 -->
+  <section id="viewer" class="view" hidden>
+    <header class="v-head">
+      <a class="back" href="#/">작품 목록</a>
+      <div class="v-title">
+        <h1 id="modelName"></h1>
+        <span id="modelLevel" class="meter" aria-label=""></span>
       </div>
-      <div class="controls">
-        <input id="progress" type="range" min="0" max="1" step="0.001" value="0" aria-label="접는 정도" />
-        <div class="btns">
-          <button id="prev">◀ 이전</button>
-          <button id="fold">이 단계 접기</button>
-          <button id="auto">▶ 자동 재생</button>
-          <button id="restart">↺ 처음부터</button>
+      <span id="paperInfo" class="paper-info"></span>
+    </header>
+    <div class="v-body">
+      <div class="v-left">
+        <div class="instruction" aria-live="polite">
+          <span id="badge" class="badge"></span>
+          <p id="stepText"></p>
+        </div>
+        <div id="stage" class="stage matgrid">
+          <canvas id="view" aria-label="종이접기 3D 화면"></canvas>
+          <div class="legend" id="legend" hidden>
+            <span><i class="lg valley"></i>골짜기 접기</span>
+            <span><i class="lg mountain"></i>산 접기</span>
+          </div>
+        </div>
+        <div class="controls">
+          <input id="progress" type="range" min="0" max="1" step="0.001" value="0" aria-label="이 단계에서 접은 정도" />
+          <div class="btns">
+            <button id="prev" type="button">이전 단계</button>
+            <button id="fold" type="button" class="primary">이 단계 접기</button>
+            <button id="auto" type="button">처음부터 끝까지 보기</button>
+            <label class="speed">속도
+              <select id="speed">
+                <option value="0.6">느리게</option>
+                <option value="1" selected>보통</option>
+                <option value="1.6">빠르게</option>
+              </select>
+            </label>
+          </div>
         </div>
       </div>
+      <aside class="v-steps">
+        <h2>접는 순서</h2>
+        <ol id="stepList"></ol>
+      </aside>
     </div>
-    <aside>
-      <h2>접는 순서</h2>
-      <ol id="stepList"></ol>
-    </aside>
-  </main>
+  </section>
+
   <script type="module" src="src/main.js"></script>
   <script defer src="/_vercel/insights/script.js"></script>
 </body>
