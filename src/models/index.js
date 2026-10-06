@@ -10,6 +10,7 @@ import { kabuto } from './kabuto.js';
 import { hat } from './hat.js';
 import { airplane } from './airplane.js';
 import { envelope } from './envelope.js';
+import { glider } from './glider.js';
 import { swan } from './swan.js';
 import { heart } from './heart.js';
 import { tulip } from './tulip.js';
@@ -17,4 +18,4 @@ import { crane } from './crane.js';
 import { masu } from './masu.js';
 import { lily } from './lily.js';
 
-export const MODELS = [dog, cat, flower, cup, house, penguin, cicada, kabuto, hat, airplane, envelope, swan, heart, tulip, masu, crane, lily].sort((a, b) => a.level - b.level);
+export const MODELS = [dog, cat, flower, cup, house, penguin, cicada, kabuto, hat, airplane, glider, envelope, swan, heart, tulip, masu, crane, lily].sort((a, b) => a.level - b.level);

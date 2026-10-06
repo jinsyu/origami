@@ -110,6 +110,21 @@ export const enModels = {
       'Open both wings so they are at right angles to the body. Done!',
     ],
   },
+  glider: {
+    name: 'Glider', desc: 'A wide-winged plane with a blunt nose that keeps the weight up front. It glides slowly and stays up long.', paper: 'Square origami paper',
+    done: 'Your glider is done! Push it gently forward, level, and watch it glide.',
+    steps: [
+      'Place the paper colored side down. Fold it in half and unfold to make a center line.',
+      'Fold the two top corners to the center line.',
+      'Fold the pointed top down to make a blunt nose.',
+      'Fold the paper in half backward along the center line, keeping the folds outside.',
+      'Lay the plane on its side with the blunt nose facing left.',
+      'Fold the front wing down.',
+      'Turn the plane over.',
+      'Fold the other wing down the same way.',
+      'Open both wings so they are at right angles to the body. Done!',
+    ],
+  },
   envelope: {
     name: 'Envelope', desc: 'Fold the four corners in turn so they overlap into an envelope with a flap. Practice laying each layer exactly on the last.', paper: 'Square origami paper',
     done: 'Your envelope is done! Tuck a note under the flap.',
