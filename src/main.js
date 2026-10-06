@@ -9,7 +9,11 @@ import { PaperMesh, addLights, fitCamera, loopsOf, simOf, toVecs } from './paper
 import { finalThumb, stepThumb } from './thumbs.js';
 import { MODELS } from './models/index.js';
 
-if (location.hash.startsWith('#dev')) MODELS.push((await import('./models/_test.js')).test);
+// 개발 중인 작품: 주소에 ?dev 를 붙이면 보인다
+if (new URLSearchParams(location.search).has('dev')) {
+  MODELS.push((await import('./models/_test.js')).test);
+  MODELS.sort((a, b) => a.level - b.level);
+}
 
 const FOLD_SEC = 2.2;   // 한 단계 접는 시간 (보통 속도)
 const WAIT_SEC = 0.9;   // 접기 전 접는 선·화살표를 보여 주는 시간

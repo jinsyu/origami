@@ -145,7 +145,7 @@ function selectMove(cur, m, mi) {
     if (Math.abs(t) > 1e-6) { sg = Math.sign(t); break outer; }
   }
   const angle = m.angle ?? 180;
-  const mv = { o, d, n, u, theta: (sg * angle * Math.PI) / 180, shift: 0, flat: angle >= 179, unfold: !!m.unfold, fixedShift: m.shift };
+  const mv = { o, d, n, u, theta: (sg * angle * Math.PI) / 180, shift: 0, flat: angle >= 179, unfold: !!m.unfold, fixedShift: m.shift, insert: m.insert };
 
   // 뒤집어 접기 경로: 날개(flap)가 등선을 축으로 책처럼 펼쳐졌다 반대로 닫히면서(180°),
   // 동시에 접는 선과 등선이 만나는 점을 중심으로 평면 안에서 2(α-β)만큼 돈다.
@@ -173,19 +173,65 @@ function selectMove(cur, m, mi) {
   return { cur: next, mv };
 }
 
-// 완전히 접히는 경우, 접힌 층이 겹치는 층 위로 오도록 올리는 양
+const uvKey = (v) => `${Math.round(v[0] * 1e6)},${Math.round(v[1] * 1e6)}`;
+
+// 완전히 접히는 경우, 접힌 층을 어느 높이에 둘지 정한다
+//  - 기본: 겹치는 층들보다 toward 쪽 바깥에 놓는다
+//  - insert: k  → 겹치는 층 가운데 위에서 k번째 층 바로 아래에 끼워 넣는다 (안으로 접어 넣기)
+//  - 다시 펴기(접었던 조각이 이웃과 다시 평평하게 이어짐)는 자동으로 이웃과 같은 높이에 맞춘다
 function computeShift(cur, mv, mi) {
   if (!mv.flat || mv.unfold || mv.spin) return 0;
   if (mv.fixedShift !== undefined) return mv.fixedShift * GAP;
+  const moved = cur.filter((q) => q.owner === mi), stat = cur.filter((q) => q.owner === -1);
+  const rot = moved.map((q) => q.p.map((p) => rotate(p, mv.o, mv.d, mv.theta)));
+
+  // 다시 펴기 감지: 접힘선 위의 변을 공유하는 고정 조각과 면 방향이 같아지면 같은 높이로
+  // (꼭짓점 하나만 같은 경우는 제외: 종이 중심처럼 여러 층이 한 점을 공유할 수 있다)
+  const onAxis = (p) => Math.abs(dot(sub(p, mv.o), mv.n)) < 1e-6;
+  const segOverlap = (a1, a2, b1, b2) => {
+    const dx = a2[0] - a1[0], dy = a2[1] - a1[1], L = Math.hypot(dx, dy);
+    if (L < 1e-9) return false;
+    const cr = (p) => (dx * (p[1] - a1[1]) - dy * (p[0] - a1[0])) / L;
+    if (Math.abs(cr(b1)) > 1e-6 || Math.abs(cr(b2)) > 1e-6) return false;
+    const t = (p) => (dx * (p[0] - a1[0]) + dy * (p[1] - a1[1])) / L;
+    return Math.min(L, Math.max(t(b1), t(b2))) - Math.max(0, Math.min(t(b1), t(b2))) > 1e-6;
+  };
+  let rs = 0, rc = 0;
+  moved.forEach((q, qi) => {
+    const nq = polyNormal(rot[qi]);
+    for (let k = 0; k < q.p.length; k++) {
+      const k2 = (k + 1) % q.p.length;
+      if (!onAxis(q.p[k]) || !onAxis(q.p[k2])) continue;
+      for (const s2 of stat) {
+        if (dot(polyNormal(s2.p), nq) < 0.99) continue;
+        for (let j = 0; j < s2.uv.length; j++) {
+          const j2 = (j + 1) % s2.uv.length;
+          if (!segOverlap(q.uv[k], q.uv[k2], s2.uv[j], s2.uv[j2])) continue;
+          rs += (centroid(s2.p)[2] - centroid(rot[qi])[2]) * mv.u[2]; // 높이 차이만큼 toward 방향으로
+          rc++;
+        }
+      }
+    }
+  });
+  if (rc && !mv.insert) return rs / rc;
+
   const proj = (pts) => pts.map((p) => [dot(p, mv.d), dot(p, mv.n)]);
-  const sp = cur.filter((q) => q.owner === -1).map((q) => ({ h: Math.max(...q.p.map((p) => dot(p, mv.u))), pp: proj(q.p) }));
-  let need = GAP * 0.5;
-  for (const q of cur) {
-    if (q.owner !== mi) continue;
-    const r = q.p.map((p) => rotate(p, mv.o, mv.d, mv.theta));
+  const sp = stat.map((q) => ({ h: Math.max(...q.p.map((p) => dot(p, mv.u))), z: centroid(q.p)[2], pp: proj(q.p) }));
+  const hit = new Set();
+  let need = GAP * 0.5, zmax = -Infinity;
+  moved.forEach((q, qi) => {
+    const r = rot[qi];
     const lo = Math.min(...r.map((p) => dot(p, mv.u)));
+    zmax = Math.max(zmax, ...r.map((p) => p[2]));
     const rp = proj(r);
-    for (const s of sp) if (overlap(rp, s.pp)) need = Math.max(need, s.h - lo + GAP);
+    sp.forEach((s2, si) => { if (overlap(rp, s2.pp)) { hit.add(si); need = Math.max(need, s2.h - lo + GAP); } });
+  });
+  if (mv.insert) {
+    const zs = [...new Set([...hit].map((si) => Math.round(sp[si].z * 1e7) / 1e7))].sort((x, y) => y - x);
+    const k = mv.insert;
+    if (!zs.length) return need;
+    const zt = k < zs.length ? (zs[k - 1] + zs[k]) / 2 : zs[zs.length - 1] - GAP / 2;
+    return (zt - zmax) * mv.u[2];
   }
   return need;
 }
