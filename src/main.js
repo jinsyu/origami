@@ -9,6 +9,40 @@ import { PaperMesh, addLights, fitCamera, loopsOf, simOf, toVecs } from './paper
 import { finalThumb, stepThumb, diagram } from './thumbs.js';
 import { MODELS } from './models/index.js';
 import { createHero } from './hero.js';
+import { enModels, enUI } from './i18n/en.js';
+
+// ---------- 언어 (한국어 / English) ----------
+const langKey = 'origami.lang';
+const LANG = (() => {
+  let saved = null;
+  try { saved = localStorage.getItem(langKey); } catch { /* 저장소 사용 불가 */ }
+  if (saved === 'ko' || saved === 'en') return saved;
+  return (navigator.language || 'ko').toLowerCase().startsWith('ko') ? 'ko' : 'en';
+})();
+const EN = LANG === 'en';
+const KO = {
+  title: '종이접기 교실', full: '크게 보기', unfull: '작게 보기', stop: '멈추기', replay: '처음부터 다시 보기', auto: '끝까지 이어서 보기',
+  done: '완성', folded: '접어 봤어요', next: (n) => `다음 작품: ${n}`, stepsCount: (n) => `${n}단계`, level: (l) => `난이도 ${l}`,
+  printTitle: (n) => `${n} 접는 방법`,
+};
+const T = EN ? enUI : KO;
+if (EN) {
+  document.documentElement.lang = 'en';
+  // 작품 문구를 영어로 바꾼다
+  for (const m of MODELS) {
+    const e = enModels[m.id];
+    if (!e) continue;
+    Object.assign(m, { name: e.name, desc: e.desc, paper: e.paper, done: e.done });
+    m.steps.forEach((st, i) => { if (e.steps[i]) st.text = e.steps[i]; });
+  }
+  // 화면 고정 문구 (data-en)
+  document.querySelectorAll('[data-en]').forEach((el) => { el.textContent = el.dataset.en; });
+  document.querySelectorAll('[data-en-aria]').forEach((el) => el.setAttribute('aria-label', el.dataset.enAria));
+}
+document.querySelectorAll('.lang-btn').forEach((b) => {
+  b.textContent = EN ? '한국어' : 'English';
+  b.onclick = () => { try { localStorage.setItem(langKey, EN ? 'ko' : 'en'); } catch { /* 저장 불가 */ } location.reload(); };
+});
 
 // 개발 중인 작품: 주소에 ?dev 를 붙이면 보인다
 if (new URLSearchParams(location.search).has('dev')) {
@@ -34,7 +68,7 @@ const plansOf = (m) => { if (!planCache.has(m.id)) planCache.set(m.id, buildMode
 function meter(level) {
   const el = document.createElement('span');
   el.className = 'meter';
-  el.setAttribute('aria-label', `난이도 10단계 중 ${level}`);
+  el.setAttribute('aria-label', EN ? `Difficulty ${level} of 10` : `난이도 10단계 중 ${level}`);
   el.innerHTML = Array.from({ length: 10 }, (_, i) => `<i class="${i < level ? 'on' : ''}"></i>`).join('');
   return el;
 }
@@ -46,14 +80,14 @@ function refreshDone() {
     const pic = li.querySelector('.pic'), facts = li.querySelector('.facts');
     let mark = pic.querySelector('.check'), badge = facts.querySelector('.done-badge');
     if (has && !mark) { mark = document.createElement('span'); mark.className = 'check'; mark.setAttribute('aria-hidden', 'true'); pic.appendChild(mark); }
-    if (has && !badge) { badge = document.createElement('span'); badge.className = 'done-badge'; badge.textContent = '접어 봤어요'; facts.appendChild(badge); }
+    if (has && !badge) { badge = document.createElement('span'); badge.className = 'done-badge'; badge.textContent = T.folded; facts.appendChild(badge); }
     if (!has) { mark?.remove(); badge?.remove(); }
   });
 }
 
 // 첫 화면 시연 (갤러리가 보일 때만 돌린다)
 const hero = createHero($('heroCanvas'), MODELS, plansOf, (m) => {
-  $('heroCaption').textContent = `${m.name} · 난이도 ${m.level}`;
+  $('heroCaption').textContent = `${m.name} · ${T.level(m.level)}`;
   $('heroLink').href = `#/m/${m.id}`;
 });
 
@@ -69,9 +103,9 @@ function renderGallery() {
       <div class="meta"><h3></h3><p></p><div class="facts"><span class="steps"></span></div></div></a>`;
     li.querySelector('h3').textContent = m.name;
     li.querySelector('p').textContent = m.desc;
-    li.querySelector('.steps').textContent = `${m.steps.length}단계`;
+    li.querySelector('.steps').textContent = T.stepsCount(m.steps.length);
     li.querySelector('.facts').prepend(meter(m.level));
-    li.querySelector('img').alt = `${m.name} 완성 모습`;
+    li.querySelector('img').alt = EN ? `Finished ${m.name}` : `${m.name} 완성 모습`;
     ol.appendChild(li);
     queue.push([m, li.querySelector('img')]);
   }
@@ -235,9 +269,9 @@ function openModel(m, startStep = 0) {
     document.documentElement.style.setProperty('--accent', m.accent);
     $('modelName').textContent = m.name;
     $('modelLevel').replaceWith(Object.assign(meter(m.level), { id: 'modelLevel' }));
-    $('paperInfo').textContent = `${m.paper}, ${N}단계`;
+    $('paperInfo').textContent = `${m.paper}, ${T.stepsCount(N)}`;
     $('printLink').href = `#/print/${m.id}`;
-    document.title = `${m.name} 접기 - 종이접기 교실`;
+    document.title = `${m.name} - ${T.title}`;
     const list = $('stepList');
     list.innerHTML = '';
     m.steps.forEach((s, i) => {
@@ -270,8 +304,8 @@ function updateUI() {
   const nextM = MODELS[MODELS.indexOf(model) + 1];
   $('nextModel').hidden = !done || !nextM;
   $('fold').hidden = done && !!nextM;
-  if (nextM) { $('nextModel').href = `#/m/${nextM.id}`; $('nextModel').textContent = `다음 작품: ${nextM.name}`; }
-  $('badge').textContent = done ? '완성' : `${step + 1}/${N}`;
+  if (nextM) { $('nextModel').href = `#/m/${nextM.id}`; $('nextModel').textContent = T.next(nextM.name); }
+  $('badge').textContent = done ? T.done : `${step + 1}/${N}`;
   // 이 단계를 마치면 되는 모양 (다음 단계 시작 그림, 마지막 단계는 완성 그림)
   const peek = $('resultPeek');
   peek.hidden = done;
@@ -280,14 +314,14 @@ function updateUI() {
     const want = `${model.id}:${step}`;
     if (img.dataset.k !== want) {
       img.dataset.k = want;
-      img.alt = `${step + 1}단계를 마친 모습`;
+      img.alt = EN ? `After step ${step + 1}` : `${step + 1}단계를 마친 모습`;
       img.src = step < N - 1 ? stepThumb(model, plans, step + 1) : finalThumb(model, plans);
     }
   }
   $('stepText').textContent = done ? model.done : model.steps[step].text;
   $('prev').disabled = step === 0 && t === 0;
   $('fold').disabled = done || phase !== 'idle';
-  $('auto').textContent = autoAll && phase !== 'idle' ? '멈추기' : done ? '처음부터 다시 보기' : '끝까지 이어서 보기';
+  $('auto').textContent = autoAll && phase !== 'idle' ? T.stop : done ? T.replay : T.auto;
   [...$('stepList').children].forEach((li, i) => {
     li.classList.toggle('done', i < step);
     li.classList.toggle('now', i === step);
@@ -356,23 +390,23 @@ new ResizeObserver(resize).observe(stage);
 // 인쇄용 도면: 단계마다 접는 선·화살표가 그려진 그림과 설명
 function renderPrint(m) {
   const plans = plansOf(m);
-  $('pName').textContent = `${m.name} 접는 방법`;
-  $('pInfo').textContent = `${m.paper} · 난이도 ${m.level} · ${m.steps.length}단계`;
+  $('pName').textContent = T.printTitle(m.name);
+  $('pInfo').textContent = `${m.paper} · ${T.level(m.level)} · ${T.stepsCount(m.steps.length)}`;
   $('printBack').href = `#/m/${m.id}`;
-  document.title = `${m.name} 도면 - 종이접기 교실`;
+  document.title = `${m.name} - ${T.title}`;
   const ol = $('pSteps');
   ol.innerHTML = '';
   const items = m.steps.map((s, i) => {
     const li = document.createElement('li');
     li.innerHTML = `<div class="pic"><span class="n">${i + 1}</span><img alt="" /></div><p></p>`;
     li.querySelector('p').textContent = s.text;
-    li.querySelector('img').alt = `${i + 1}단계 그림`;
+    li.querySelector('img').alt = EN ? `Step ${i + 1}` : `${i + 1}단계 그림`;
     ol.appendChild(li);
     return li;
   });
   const fin = document.createElement('li');
   fin.className = 'final';
-  fin.innerHTML = `<div class="pic"><img alt="완성 모습" /></div><p></p>`;
+  fin.innerHTML = `<div class="pic"><img alt="${EN ? 'Finished' : '완성 모습'}" /></div><p></p>`;
   fin.querySelector('p').textContent = m.done;
   ol.appendChild(fin);
   document.documentElement.style.setProperty('--accent', m.accent);
@@ -391,7 +425,7 @@ const fullBtn = $('fullBtn');
 if (!document.documentElement.requestFullscreen) fullBtn.hidden = true;
 fullBtn.onclick = () => (document.fullscreenElement ? document.exitFullscreen() : $('viewer').requestFullscreen());
 document.addEventListener('fullscreenchange', () => {
-  fullBtn.textContent = document.fullscreenElement ? '작게 보기' : '크게 보기';
+  fullBtn.textContent = document.fullscreenElement ? T.unfull : T.full;
   setTimeout(resize, 50);
 });
 
@@ -417,7 +451,7 @@ function route() {
     running = true;
   } else {
     running = false;
-    document.title = '종이접기 교실';
+    document.title = T.title;
     renderGallery();
   }
   if (!target) hero.start(); else hero.stop();
