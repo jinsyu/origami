@@ -50,6 +50,7 @@ export function foldAngle(PA, PB, k) {
   return Math.atan2(dot(cross(nA, nB), e), c);
 }
 
+const cxyz = (q) => { const c = centroid(q.p); return { x: c[0], y: c[1], z: c[2] }; };
 const clonePoly = (q) => ({ p: q.p.map((v) => v.slice()), uv: q.uv, e: q.e, tags: new Set(q.tags), owner: -1, hist: q.hist });
 
 // 볼록 다각형을 평면(o, n)으로 둘로 자른다. 걸치지 않으면 null
@@ -99,6 +100,15 @@ function overlap(A, B) {
 
 // 동작 하나: 접힘선으로 자르고, 접힐 다각형을 고르고, 회전축·방향을 정한다
 function selectMove(cur, m, mi) {
+  // 3차원 축 회전: 이미 나뉜 조각을 조건으로만 골라 임의의 축(a→b)으로 돌린다 (입체 조립용)
+  if (m.axis3) {
+    for (const q of cur) if (q.owner === -1 && (!m.filter || m.filter({ ...cxyz(q), uv: centroid(q.uv), tags: q.tags }))) q.owner = mi;
+    const mem = cur.filter((q) => q.owner === mi);
+    if (m.tag) mem.forEach((q) => q.tags.add(m.tag));
+    const d = norm(sub(m.axis3.b, m.axis3.a));
+    const off = m.offset || [0, 0, 0], ol = Math.hypot(...off);
+    return { cur, mv: { o: m.axis3.a, d, u: ol ? mul(off, 1 / ol) : [0, 0, 1], n: [0, 0, 0], theta: (m.axis3.angle * Math.PI) / 180, shift: ol, spin: true } };
+  }
   if (m.spin) {
     for (const q of cur) if (q.owner === -1) q.owner = mi;
     const d = norm(sub(m.spin.b, m.spin.a));
@@ -180,7 +190,8 @@ const uvKey = (v) => `${Math.round(v[0] * 1e6)},${Math.round(v[1] * 1e6)}`;
 //  - insert: k  → 겹치는 층 가운데 위에서 k번째 층 바로 아래에 끼워 넣는다 (안으로 접어 넣기)
 //  - 다시 펴기(접었던 조각이 이웃과 다시 평평하게 이어짐)는 자동으로 이웃과 같은 높이에 맞춘다
 function computeShift(cur, mv, mi) {
-  if (!mv.flat || mv.unfold || mv.spin) return 0;
+  if (mv.spin) return mv.shift || 0; // 전체 돌리기는 0, 3차원 축 회전은 지정한 이동량
+  if (!mv.flat || mv.unfold) return 0;
   if (mv.fixedShift !== undefined) return mv.fixedShift * GAP;
   const moved = cur.filter((q) => q.owner === mi), stat = cur.filter((q) => q.owner === -1);
   const rot = moved.map((q) => q.p.map((p) => rotate(p, mv.o, mv.d, mv.theta)));

@@ -8,7 +8,8 @@ import { foldAngle, rotate } from './engine.js';
 
 const ease = (x) => (x <= 0 ? 0 : x >= 1 ? 1 : x * x * (3 - 2 * x));
 const wrap = (a) => a - 2 * Math.PI * Math.round(a / (2 * Math.PI));
-const RELAX_ITERS = 14;
+const RELAX_ITERS = 40;
+const PULL = 0.02;
 
 export function prepareSim(plan) {
   const polys = plan.polys;
@@ -209,47 +210,74 @@ function squashPose(sim, t) {
 }
 
 // 진행률 t에서 다각형별 고리 꼭짓점 위치
-export function simPose(sim, t) {
-  if (t <= 0) return sim.start;
-  if (t >= 1) return sim.end;
-  const fs = sim.subs.map((s) => {
-    const e = ease((t - s.at[0]) / Math.max(1e-6, s.at[1] - s.at[0]));
-    // peak: p 시점까지는 함께 올라가고(비율 p), 그 뒤 제자리로 돌아옴
-    if (s.curve === 'peak') return e <= s.peak ? e : (s.peak * (1 - e)) / (1 - s.peak);
-    return s.curve === 'updown' ? Math.min(e, 1 - e) : e; // updown: 중간에 절반까지 갔다가 돌아옴
-  });
+// 운동학 경로(이완 전)에서 다각형별 고리 꼭짓점 위치
+function kinematic(sim, t) {
+  const fs = sim.subs.map((s) => curveOf(s, t));
   let kin = sim.start.map((L, pi) => L.map((p) => chain(p, sim.member[pi], sim.subs, fs)));
   if (sim.squash) {
     const A = squashPose(sim, t), { c0, c1 } = sim.squash;
     kin = kin.map((L, pi) => (A[pi] ? A[pi].map((p, li) => [0, 1, 2].map((c) => p[c] + c0[pi][li][c] * (1 - t) + c1[pi][li][c] * t)) : L));
   }
+  return kin;
+}
 
-  // 이완: 같은 종이 위치를 합치고 변 길이를 유지
-  const NV = sim.NV, x = new Float64Array(NV * 3), cnt = new Float64Array(NV);
-  sim.loops.forEach((L, pi) => L.forEach((it, li) => {
-    const p = kin[pi][li];
-    x[it.w * 3] += p[0]; x[it.w * 3 + 1] += p[1]; x[it.w * 3 + 2] += p[2]; cnt[it.w]++;
-  }));
-  for (let i = 0; i < NV; i++) { const c = cnt[i] || 1; x[i * 3] /= c; x[i * 3 + 1] /= c; x[i * 3 + 2] /= c; }
-  const avg = Float64Array.from(x);
-  for (let it = 0; it < RELAX_ITERS; it++) {
-    for (const [i, j, rest] of sim.dist) {
-      const dx = x[j * 3] - x[i * 3], dy = x[j * 3 + 1] - x[i * 3 + 1], dz = x[j * 3 + 2] - x[i * 3 + 2];
-      const L = Math.hypot(dx, dy, dz) || 1e-9, c = ((L - rest) / L) * 0.5;
-      x[i * 3] += dx * c; x[i * 3 + 1] += dy * c; x[i * 3 + 2] += dz * c;
-      x[j * 3] -= dx * c; x[j * 3 + 1] -= dy * c; x[j * 3 + 2] -= dz * c;
+// 이완은 시간 순서대로 미리 계산한다. 이전 프레임의 이완 결과에서 이어서 풀어야
+// 찢김이 큰 순간에도 해가 갑자기 다른 모양으로 튀지 않는다.
+const FRAMES = 96;
+function bake(sim) {
+  const NV = sim.NV, LIM = 0.012;
+  const frames = [sim.start];
+  let prevX = null, prevAvg = null;
+  for (let f = 1; f < FRAMES; f++) {
+    const t = f / FRAMES;
+    const kin = kinematic(sim, t);
+    const avg = new Float64Array(NV * 3), cnt = new Float64Array(NV);
+    sim.loops.forEach((L, pi) => L.forEach((it, li) => {
+      const p = kin[pi][li];
+      avg[it.w * 3] += p[0]; avg[it.w * 3 + 1] += p[1]; avg[it.w * 3 + 2] += p[2]; cnt[it.w]++;
+    }));
+    for (let i = 0; i < NV; i++) { const c = cnt[i] || 1; avg[i * 3] /= c; avg[i * 3 + 1] /= c; avg[i * 3 + 2] /= c; }
+    // 이전 이완 결과 + (이번 평균 - 이전 평균) 에서 시작
+    const x = Float64Array.from(avg);
+    if (prevX) for (let i = 0; i < x.length; i++) x[i] = prevX[i] + (avg[i] - prevAvg[i]);
+    for (let it = 0; it < RELAX_ITERS; it++) {
+      // 운동학 경로 쪽으로 약하게 끌어당겨 프레임이 지날수록 모양이 떠내려가지 않게
+      for (let i = 0; i < x.length; i++) x[i] += (avg[i] - x[i]) * PULL;
+      for (const [i, j, rest] of sim.dist) {
+        const dx = x[j * 3] - x[i * 3], dy = x[j * 3 + 1] - x[i * 3 + 1], dz = x[j * 3 + 2] - x[i * 3 + 2];
+        const L = Math.hypot(dx, dy, dz);
+        if (L < 1e-6) continue;
+        const c = ((L - rest) / L) * 0.5;
+        x[i * 3] += dx * c; x[i * 3 + 1] += dy * c; x[i * 3 + 2] += dz * c;
+        x[j * 3] -= dx * c; x[j * 3 + 1] -= dy * c; x[j * 3 + 2] -= dz * c;
+      }
     }
+    prevX = x; prevAvg = avg;
+    // 층 간격처럼 작은 차이는 살리고, 이음매 벌어짐은 없앤다. 시작·끝 근처에서는 이완을 줄인다
+    const w = Math.min(1, Math.min(t, 1 - t) * 25);
+    frames.push(sim.loops.map((L, pi) => L.map((it, li) => {
+      const p = kin[pi][li], o = [0, 0, 0];
+      for (let c = 0; c < 3; c++) {
+        const off = Math.max(-LIM, Math.min(LIM, p[c] - avg[it.w * 3 + c]));
+        o[c] = p[c] + (x[it.w * 3 + c] + off - p[c]) * w;
+      }
+      return o;
+    })));
   }
-  // 층 간격처럼 작은 차이는 살리고, 이음매 벌어짐은 없앤다. 시작·끝에서는 이완 0
-  const w = Math.min(1, Math.min(t, 1 - t) * 25);
-  const LIM = 0.012;
-  return sim.loops.map((L, pi) => L.map((it, li) => {
-    const p = kin[pi][li], o = [];
-    for (let c = 0; c < 3; c++) {
-      const off = Math.max(-LIM, Math.min(LIM, p[c] - avg[it.w * 3 + c]));
-      o.push(p[c] + (x[it.w * 3 + c] + off - p[c]) * w);
-    }
-    return o;
+  frames.push(sim.end);
+  sim.frames = frames;
+}
+
+// 진행률 t에서 다각형별 고리 꼭짓점 위치 (미리 계산한 프레임 사이를 보간)
+export function simPose(sim, t) {
+  if (t <= 0) return sim.start;
+  if (t >= 1) return sim.end;
+  if (!sim.frames) bake(sim);
+  const f = t * FRAMES, i = Math.floor(f), r = f - i;
+  const A = sim.frames[i], B = sim.frames[i + 1];
+  return A.map((L, pi) => L.map((p, li) => {
+    const q = B[pi][li];
+    return [p[0] + (q[0] - p[0]) * r, p[1] + (q[1] - p[1]) * r, p[2] + (q[2] - p[2]) * r];
   }));
 }
 
