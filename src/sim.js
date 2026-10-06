@@ -55,8 +55,7 @@ export function prepareSim(plan) {
   const end = polys.map((q, pi) => loops[pi].map((it) => posAt(q, it, H - 1)));
 
   // 각 면이 참여한 하위 동작 목록
-  const movedAt = (q, h) => q.hist[h].some((p, i) => Math.abs(p[0] - q.hist[h - 1][i][0]) + Math.abs(p[1] - q.hist[h - 1][i][1]) + Math.abs(p[2] - q.hist[h - 1][i][2]) > 1e-9);
-  const member = polys.map((q) => { const m = []; for (let h = 1; h < H; h++) if (movedAt(q, h)) m.push(h - 1); return m; });
+  const member = polys.map((q) => plan.subs.map((_, k) => k).filter((k) => q.tags.has(`__s${k}`)));
 
   // 변 길이 제약 (고리의 변 + 고리 안 대각선 일부로 면 모양 유지)
   const dist = [], seen = new Set();
@@ -96,7 +95,24 @@ export function prepareSim(plan) {
     guides.push({ a: P[A.k], b: P[(A.k + 1) % P.length], valley: d < 0 });
   }
 
-  return { loops, nCorner, NV: nCorner, member, subs: plan.subs, start, end, dist, guides };
+  // 펼쳐 누르기 묶음(역할: lift/hinge/obis/ibis)이 있으면 해석적 경로를 쓴다
+  const roleIdx = {};
+  plan.subs.forEach((sb, k) => { if (sb.role) roleIdx[sb.role] = k; });
+  let squash = null;
+  if (['lift', 'hinge', 'obis', 'ibis'].every((r) => r in roleIdx)) {
+    const tag = (r) => `__s${roleIdx[r]}`;
+    const group = polys.map((q) => (q.tags.has(tag('hinge')) ? 'in' : q.tags.has(tag('lift')) ? 'out' : null));
+    const p2 = polys.map((q) => q.tags.has(tag('obis')) || q.tags.has(tag('ibis')));
+    squash = { roleIdx, group, p2 };
+  }
+  const sim = { loops, nCorner, NV: nCorner, member, subs: plan.subs, start, end, dist, guides, squash };
+  if (squash) {
+    // 해석적 경로의 시작·끝을 실제 상태와 맞추기 위한 보정값
+    const A0 = squashPose(sim, 0), A1 = squashPose(sim, 1);
+    squash.c0 = start.map((L, pi) => L.map((p, li) => (A0[pi] ? sub3(p, A0[pi][li]) : [0, 0, 0])));
+    squash.c1 = end.map((L, pi) => L.map((p, li) => (A1[pi] ? sub3(p, A1[pi][li]) : [0, 0, 0])));
+  }
+  return sim;
 }
 
 // 하위 동작 k를 비율 f만큼 적용 (회전 후 층 간격 이동)
@@ -121,20 +137,89 @@ function chain(p, mem, subs, fs) {
     const k = mem[a];
     if (fs[k] === 0) continue;
     let z = y;
-    for (let b = 0; b < a; b++) z = applyMove(z, subs[mem[b]].mv, 1);
+    // 일시 동작(transient)은 끝나면 제자리이므로 앞선 동작의 '완료 상태'에서는 빼고 계산한다
+    for (let b = 0; b < a; b++) if (!subs[mem[b]].mv.transient) z = applyMove(z, subs[mem[b]].mv, 1);
     z = applyMove(z, subs[k].mv, fs[k]);
-    for (let b = a - 1; b >= 0; b--) z = undoMove(z, subs[mem[b]].mv);
+    for (let b = a - 1; b >= 0; b--) if (!subs[mem[b]].mv.transient) z = undoMove(z, subs[mem[b]].mv);
     y = z;
   }
   return y;
+}
+
+const sub3 = (a, b) => [a[0] - b[0], a[1] - b[1], a[2] - b[2]];
+const dot3 = (a, b) => a[0] * b[0] + a[1] * b[1] + a[2] * b[2];
+const cross3 = (a, b) => [a[1] * b[2] - a[2] * b[1], a[2] * b[0] - a[0] * b[2], a[0] * b[1] - a[1] * b[0]];
+const norm3 = (a) => { const l = Math.hypot(a[0], a[1], a[2]) || 1; return [a[0] / l, a[1] / l, a[2] / l]; };
+const rotDir = (v, axis, th) => rotate(v, [0, 0, 0], axis, th);
+
+function curveOf(sb, t) {
+  const e = ease((t - sb.at[0]) / Math.max(1e-6, sb.at[1] - sb.at[0]));
+  if (sb.curve === 'peak') return e <= sb.peak ? e : (sb.peak * (1 - e)) / (1 - sb.peak);
+  return sb.curve === 'updown' ? Math.min(e, 1 - e) : e;
+}
+
+// 펼쳐 누르기의 해석적 경로.
+// 두 겹은 경첩을 축으로 각각 aK(바깥), aF(안쪽)만큼 들린다. 두 겹이 공유하는 등선은
+// 두 겹 사이 가운데 평면에 있어야 하고, 각 겹의 이등분선과 45°를 이뤄야 하므로
+// 경첩 아래 방향과 이루는 각 ψ = 2·atan(cos(Δ/2)) 로 정해진다 (Δ = aF - aK).
+// 각 겹의 등선 쪽 삼각형은 이 등선 방향에 맞도록 이등분선을 축으로 β만큼 돈다.
+function squashPose(sim, t) {
+  const { roleIdx, group, p2 } = sim.squash;
+  const H = sim.subs[roleIdx.hinge], OB = sim.subs[roleIdx.obis], L = sim.subs[roleIdx.lift];
+  const ho = H.mv.o, hd0 = H.mv.d, th = H.mv.theta;
+  const V = OB.mv.o, b0 = OB.mv.d;
+  const aF = th * curveOf(H, t), aK = th * curveOf(L, t);
+  const hd = norm3(dot3(b0, hd0) > 0 ? hd0 : [-hd0[0], -hd0[1], -hd0[2]]); // 경첩을 따라 날개 쪽
+  const sp0 = norm3(sub3(b0, [hd[0] * dot3(b0, hd), hd[1] * dot3(b0, hd), hd[2] * dot3(b0, hd)])); // 등선 방향
+  const m = (aK + aF) / 2, D = aF - aK;
+  const psi = 2 * Math.atan(Math.cos(D / 2));
+  const um = rotDir(sp0, hd0, m);
+  const s = norm3([hd[0] * Math.cos(psi) + um[0] * Math.sin(psi), hd[1] * Math.cos(psi) + um[1] * Math.sin(psi), hd[2] * Math.cos(psi) + um[2] * Math.sin(psi)]);
+  const betaFor = (a, sign) => {
+    const sl = rotDir(s, hd0, -a);
+    const pp = (v) => norm3(sub3(v, [b0[0] * dot3(v, b0), b0[1] * dot3(v, b0), b0[2] * dot3(v, b0)]));
+    const u = pp(sp0), w = pp(sl);
+    let beta = Math.atan2(dot3(b0, cross3(u, w)), dot3(u, w));
+    if (Math.abs(Math.abs(beta) - Math.PI) < 1e-3 || (sign && Math.sign(beta) !== sign && Math.abs(beta) > Math.PI / 2)) beta = sign * Math.PI;
+    return beta;
+  };
+  // 끝(β=±π)에서의 부호는 열려 있는 중간 상태의 방향을 따른다
+  if (sim.squash.signK === undefined) {
+    const save = sim.squash; save.signK = 0; save.signF = 0;
+    const mid = squashPose(sim, 0.75);
+    save.signK = mid.signK; save.signF = mid.signF;
+  }
+  const bK = betaFor(aK, sim.squash.signK), bF = betaFor(aF, sim.squash.signF);
+  const out = sim.start.map((Lp, pi) => {
+    const g = group[pi];
+    if (!g) return null;
+    const a = g === 'in' ? aF : aK, b = g === 'in' ? bF : bK;
+    return Lp.map((x) => {
+      let y = x;
+      if (p2[pi]) y = rotate(y, V, b0, b);
+      return rotate(y, ho, hd0, a);
+    });
+  });
+  out.signK = Math.sign(bK) || 1;
+  out.signF = Math.sign(bF) || 1;
+  return out;
 }
 
 // 진행률 t에서 다각형별 고리 꼭짓점 위치
 export function simPose(sim, t) {
   if (t <= 0) return sim.start;
   if (t >= 1) return sim.end;
-  const fs = sim.subs.map((s) => ease((t - s.at[0]) / Math.max(1e-6, s.at[1] - s.at[0])));
-  const kin = sim.start.map((L, pi) => L.map((p) => chain(p, sim.member[pi], sim.subs, fs)));
+  const fs = sim.subs.map((s) => {
+    const e = ease((t - s.at[0]) / Math.max(1e-6, s.at[1] - s.at[0]));
+    // peak: p 시점까지는 함께 올라가고(비율 p), 그 뒤 제자리로 돌아옴
+    if (s.curve === 'peak') return e <= s.peak ? e : (s.peak * (1 - e)) / (1 - s.peak);
+    return s.curve === 'updown' ? Math.min(e, 1 - e) : e; // updown: 중간에 절반까지 갔다가 돌아옴
+  });
+  let kin = sim.start.map((L, pi) => L.map((p) => chain(p, sim.member[pi], sim.subs, fs)));
+  if (sim.squash) {
+    const A = squashPose(sim, t), { c0, c1 } = sim.squash;
+    kin = kin.map((L, pi) => (A[pi] ? A[pi].map((p, li) => [0, 1, 2].map((c) => p[c] + c0[pi][li][c] * (1 - t) + c1[pi][li][c] * t)) : L));
+  }
 
   // 이완: 같은 종이 위치를 합치고 변 길이를 유지
   const NV = sim.NV, x = new Float64Array(NV * 3), cnt = new Float64Array(NV);

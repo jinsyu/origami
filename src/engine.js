@@ -207,19 +207,28 @@ function planStep(polys, step) {
 
 // 복합 단계: 하위 동작을 차례로 적용해 최종 상태를 만든다 (각 상태의 위치를 hist에 기록)
 function planSeqStep(polys, step) {
-  let cur = polys.map((q) => ({ ...clonePoly(q), hist: [q.p.map((v) => v.slice())] }));
+  let cur = polys.map((q) => {
+    const c = { ...clonePoly(q), hist: [q.p.map((v) => v.slice())] };
+    for (const t of [...c.tags]) if (t.startsWith('__s')) c.tags.delete(t); // 이전 단계의 하위 동작 표시는 지운다
+    return c;
+  });
   const subs = [];
-  step.moves.forEach((m) => {
+  step.moves.forEach((m, k) => {
     cur.forEach((q) => { q.owner = -1; });
     const r = selectMove(cur, m, 0);
     cur = r.cur;
     const mv = r.mv;
-    mv.shift = computeShift(cur, mv, 0);
+    // transient: 움직이는 도중에만 들렸다가 제자리로 돌아오는 동작 (최종 상태에는 영향 없음)
+    mv.transient = !!m.transient;
+    mv.shift = mv.transient ? 0 : computeShift(cur, mv, 0);
     for (const q of cur) {
-      if (q.owner === 0) q.p = q.p.map((p) => moveTo(p, mv, 1));
+      if (q.owner === 0) {
+        q.tags.add(`__s${k}`);
+        if (!mv.transient) q.p = q.p.map((p) => moveTo(p, mv, 1));
+      }
       q.hist = [...q.hist, q.p.map((v) => v.slice())];
     }
-    subs.push({ mv, at: m.at || [0, 1] });
+    subs.push({ mv, at: m.at || [0, 1], curve: m.curve || (mv.transient ? 'updown' : 'ease'), peak: m.peak ?? 0.5, role: m.role });
   });
   cur.forEach((q) => { q.owner = -1; });
   return { polys: cur, moves: [], subs, sim: true, edges: edgeList(cur) };

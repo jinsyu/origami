@@ -7,23 +7,7 @@
 //  - 안쪽 겹: 등선 쪽 삼각형을 이등분선으로 접어 올린 뒤, 겹 전체를 경첩 건너편으로 펼친다.
 // 이렇게 하면 경첩과 등선이 모두 이어진 채로 날개가 삼각형으로 눌린다.
 const H = 0.5;
-const has = (t) => (c) => c.tags.has(t);
-const not = (t) => (c) => !c.tags.has(t);
-const and = (...fs) => (c) => fs.every((f) => f(c));
-const flip = { spin: { a: [0, 0, 0], b: [0, 1, 0], angle: 180 } };
-
-// sx: 날개가 있는 쪽 (-1 왼쪽, 1 오른쪽). outer/inner: 바깥·안쪽 겹 고르기
-const squash = (sx, outer, inner) => {
-  const bis = [[0, 0], [sx * H, -H]];       // 꼭짓점 (0,0)의 이등분선
-  const spineSide = [sx * 0.4, -0.05];      // 등선(윗변) 쪽
-  return [
-    { line: bis, side: spineSide, filter: outer, toward: -1, shift: 0.5 },
-    { line: bis, side: spineSide, filter: inner, toward: 1 },
-    { line: [[0, -1], [0, 1]], side: [sx * 0.2, -0.2], filter: inner, toward: 1 },
-  ];
-};
-
-// 앞 날개의 아래 양 끝을 꼭대기 바깥 위쪽 점 (±0.12, 0.08)로 접어 올린다 (접는 선 = 두 점의 수직이등분선)
+import { has, not, and, flip, squash } from './parts/folds.js';
 const petals = (front) => [
   { line: [[0.31, -0.21], [0.89, 0.17]], side: [0.45, -0.48], filter: (c) => front(c) && c.x > 0, tag: 'petal' },
   { line: [[-0.31, -0.21], [-0.89, 0.17]], side: [-0.45, -0.48], filter: (c) => front(c) && c.x < 0, tag: 'petal' },
