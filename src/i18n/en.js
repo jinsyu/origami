@@ -190,6 +190,19 @@ export const enModels = {
       'Turn it over. Your heart is done!',
     ],
   },
+  frame: {
+    name: 'Picture Frame', desc: 'Fold the four corners to the center on both sides to make a frame with a white border. Lots of layers, so fold carefully.', paper: 'Square origami paper',
+    done: 'Your picture frame is done! Draw a picture or stick a photo in the middle.',
+    steps: [
+      'Place the paper colored side up. Fold it in half diagonally and unfold.',
+      'Fold it in half along the other diagonal and unfold too. You get an X.',
+      'Fold all four corners to the center point. This is a blintz fold.',
+      'Fold the four tips at the center back outward a little. Colored triangles appear.',
+      'Turn the paper over.',
+      'Fold the four corners to the center point again.',
+      'Turn it back over. Your picture frame is done!',
+    ],
+  },
   tulip: {
     name: 'Tulip Bud', desc: 'Squash the flaps into a triangle base, then fold the tips up into a bud. Learn the squash fold.', paper: 'Square origami paper',
     done: 'Your tulip bud is done! Draw a stem or put it on a straw.',
