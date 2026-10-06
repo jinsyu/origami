@@ -291,7 +291,12 @@ function openModel(m, startStep = 0) {
       li.tabIndex = 0;
       li.innerHTML = `<span class="num">${i + 1}</span><img alt="" /><span class="txt"></span>`;
       li.querySelector('.txt').textContent = s.text;
-      li.onclick = () => { autoAll = false; enterStep(i, false); };
+      li.onclick = () => {
+        autoAll = false;
+        enterStep(i, false);
+        // 한 줄 배치(모바일)에서는 목록이 화면 아래에 있으므로 안내문과 접기 화면으로 올려 준다
+        if (matchMedia('(max-width: 900px)').matches) $('viewer').querySelector('.instruction').scrollIntoView({ block: 'start', behavior: matchMedia('(prefers-reduced-motion: reduce)').matches ? 'auto' : 'smooth' });
+      };
       li.onkeydown = (e) => { if (e.key === 'Enter') li.onclick(); };
       list.appendChild(li);
     });
@@ -441,7 +446,17 @@ document.addEventListener('fullscreenchange', () => {
   setTimeout(resize, 50);
 });
 
+// 화면이 바뀌면 맨 위에서 시작하고, 갤러리로 돌아오면 보던 위치로 되돌린다
+if ('scrollRestoration' in history) history.scrollRestoration = 'manual';
+let lastView = null, galleryY = 0;
+function scrollFor(view) {
+  if (view === lastView) return;
+  lastView = view;
+  scrollTo(0, view === 'gallery' ? galleryY : 0);
+}
+
 function route() {
+  if (lastView === 'gallery') galleryY = scrollY; // 갤러리를 숨기기 전에 위치를 기억
   const pm = location.hash.match(/^#\/print\/([\w-]+)/);
   const printTarget = pm && MODELS.find((x) => x.id === pm[1]);
   $('print').hidden = !printTarget;
@@ -451,6 +466,7 @@ function route() {
     $('viewer').hidden = true;
     running = false;
     renderPrint(printTarget);
+    scrollFor(`print:${printTarget.id}`);
     return;
   }
   const m = location.hash.match(/^#\/m\/([\w-]+)(?:\/(\d+))?/);
@@ -467,6 +483,7 @@ function route() {
     renderGallery();
   }
   if (!target) hero.start(); else hero.stop();
+  scrollFor(target ? `m:${target.id}` : 'gallery');
 }
 window.addEventListener('hashchange', route);
 route();
