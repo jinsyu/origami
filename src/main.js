@@ -78,6 +78,14 @@ function renderGallery() {
   // 완성 그림: 미리 만들어 둔 이미지(thumbs/작품.webp)를 쓰고, 없으면 3D로 그린다.
   // 주소에 ?live 를 붙이면 항상 새로 그린다 (작품을 고친 뒤 썸네일을 다시 만들 때)
   const live = new URLSearchParams(location.search).has('live');
+  // ?live&save : 새로 그린 그림을 scripts/thumb-server.mjs 로 보내 thumbs/ 에 저장 (개발용)
+  const save = live && new URLSearchParams(location.search).has('save');
+  const saveThumb = (m, img) => img.decode().then(() => {
+    const c = document.createElement('canvas');
+    c.width = img.naturalWidth; c.height = img.naturalHeight;
+    c.getContext('2d').drawImage(img, 0, 0);
+    return fetch(`http://localhost:5199/${m.id}.webp`, { method: 'POST', body: c.toDataURL('image/webp', 0.9) });
+  }).catch(() => console.warn('썸네일 저장 실패: scripts/thumb-server.mjs 가 켜져 있는지 확인하세요'));
   const render = [];
   for (const [m, img] of queue) {
     if (live) { render.push([m, img]); continue; }
@@ -89,6 +97,7 @@ function renderGallery() {
     if (!job) return;
     const [m, img] = job;
     img.src = finalThumb(m, plansOf(m));
+    if (save) saveThumb(m, img);
     setTimeout(next, 16);
   };
   if (live) setTimeout(next, 50);
