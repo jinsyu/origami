@@ -145,7 +145,32 @@ function selectMove(cur, m, mi) {
     if (Math.abs(t) > 1e-6) { sg = Math.sign(t); break outer; }
   }
   const angle = m.angle ?? 180;
-  return { cur: next, mv: { o, d, n, u, theta: (sg * angle * Math.PI) / 180, shift: 0, flat: angle >= 179, unfold: !!m.unfold, fixedShift: m.shift } };
+  const mv = { o, d, n, u, theta: (sg * angle * Math.PI) / 180, shift: 0, flat: angle >= 179, unfold: !!m.unfold, fixedShift: m.shift };
+
+  // 뒤집어 접기 경로: 날개(flap)가 등선을 축으로 책처럼 펼쳐졌다 반대로 닫히면서(180°),
+  // 동시에 접는 선과 등선이 만나는 점을 중심으로 평면 안에서 2(α-β)만큼 돈다.
+  // 두 회전을 합치면 접는 선을 축으로 한 180° 회전과 같으므로 끝 상태는 동일하다.
+  if (m.spine) {
+    const a = [m.spine[0][0], m.spine[0][1]];
+    let sd = [m.spine[1][0] - a[0], m.spine[1][1] - a[1]];
+    const sl = Math.hypot(sd[0], sd[1]); sd = [sd[0] / sl, sd[1] / sl];
+    const den = d[0] * sd[1] - d[1] * sd[0];
+    const s = ((a[0] - o[0]) * sd[1] - (a[1] - o[1]) * sd[0]) / den;
+    const P = [o[0] + d[0] * s, o[1] + d[1] * s, o[2]];
+    const ref = m.side || [P[0] + sd[0], P[1] + sd[1]];
+    if ((ref[0] - P[0]) * sd[0] + (ref[1] - P[1]) * sd[1] < 0) sd = [-sd[0], -sd[1]];
+    const s3 = [sd[0], sd[1], 0];
+    let sg2 = 1;
+    outer2: for (const q of mem) for (const p of q.p) {
+      const t = dot(cross(s3, sub(p, P)), u);
+      if (Math.abs(t) > 1e-6) { sg2 = Math.sign(t); break outer2; }
+    }
+    const alpha = Math.atan2(d[1], d[0]), beta = Math.atan2(sd[1], sd[0]);
+    let delta = 2 * (alpha - beta);
+    delta -= 2 * Math.PI * Math.round(delta / (2 * Math.PI));
+    mv.rev = { P, s: s3, ths: sg2 * Math.PI, delta };
+  }
+  return { cur: next, mv };
 }
 
 // 완전히 접히는 경우, 접힌 층이 겹치는 층 위로 오도록 올리는 양

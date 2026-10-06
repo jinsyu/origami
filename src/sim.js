@@ -100,11 +100,19 @@ export function prepareSim(plan) {
 }
 
 // 하위 동작 k를 비율 f만큼 적용 (회전 후 층 간격 이동)
+// 뒤집어 접기(rev)는 등선 축 회전 + 평면 안 회전으로 움직인다 (engine.js 참고)
+const Z = [0, 0, 1];
 const applyMove = (p, mv, f) => {
-  const r = rotate(p, mv.o, mv.d, mv.theta * f);
+  let r;
+  if (mv.rev) r = rotate(rotate(p, mv.rev.P, mv.rev.s, mv.rev.ths * f), mv.rev.P, Z, mv.rev.delta * f);
+  else r = rotate(p, mv.o, mv.d, mv.theta * f);
   return [r[0] + mv.u[0] * mv.shift * f, r[1] + mv.u[1] * mv.shift * f, r[2] + mv.u[2] * mv.shift * f];
 };
-const undoMove = (p, mv) => rotate([p[0] - mv.u[0] * mv.shift, p[1] - mv.u[1] * mv.shift, p[2] - mv.u[2] * mv.shift], mv.o, mv.d, -mv.theta);
+const undoMove = (p, mv) => {
+  const q = [p[0] - mv.u[0] * mv.shift, p[1] - mv.u[1] * mv.shift, p[2] - mv.u[2] * mv.shift];
+  if (mv.rev) return rotate(rotate(q, mv.rev.P, Z, -mv.rev.delta), mv.rev.P, mv.rev.s, -mv.rev.ths);
+  return rotate(q, mv.o, mv.d, -mv.theta);
+};
 
 // 운동학 연쇄: x_t = M1(f1) ∘ M2'(f2) ∘ … (Mk'는 이전 동작 기준으로 되돌려 표현한 k번째 회전)
 function chain(p, mem, subs, fs) {
