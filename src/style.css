@@ -38,6 +38,10 @@ button, select, input { font: inherit; color: inherit; }
 /* ---------- 작품 목록 ---------- */
 #gallery { min-height: 100vh; }
 .g-head { max-width: 1120px; margin: 0 auto; padding: 64px 24px 28px; }
+.g-head { display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 420px); gap: 32px; align-items: center; }
+.hero { position: relative; display: block; aspect-ratio: 1; border-radius: 4px; overflow: hidden; color: var(--ink); text-decoration: none; }
+.hero canvas { position: absolute; inset: 0; width: 100%; height: 100%; display: block; }
+.hero-cap { position: absolute; left: 14px; bottom: 12px; font-family: var(--display); font-size: 20px; background: rgba(251, 250, 246, .85); padding: 4px 10px; border-radius: 4px; }
 .brand { font-family: var(--display); font-weight: 400; font-size: clamp(40px, 6vw, 68px); line-height: 1.05; margin: 0 0 18px; letter-spacing: -0.01em; }
 .lede { font-size: 19px; line-height: 1.6; color: var(--ink-soft); max-width: 34em; margin: 0; }
 .g-main { max-width: 1120px; margin: 0 auto; padding: 8px 24px 40px; }
@@ -141,6 +145,8 @@ button, select, input { font: inherit; color: inherit; }
 }
 
 @media (max-width: 900px) {
+  .g-head { grid-template-columns: 1fr; }
+  .hero { max-width: 420px; }
   .p-steps { grid-template-columns: repeat(2, 1fr); }
   .p-sheet { padding: 20px 16px; }
   #viewer { height: auto; min-height: 100vh; }

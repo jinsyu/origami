@@ -8,6 +8,7 @@ import { simGuides, simArrows } from './sim.js';
 import { PaperMesh, addLights, fitCamera, loopsOf, simOf, toVecs } from './paper.js';
 import { finalThumb, stepThumb, diagram } from './thumbs.js';
 import { MODELS } from './models/index.js';
+import { createHero } from './hero.js';
 
 // 개발 중인 작품: 주소에 ?dev 를 붙이면 보인다
 if (new URLSearchParams(location.search).has('dev')) {
@@ -49,6 +50,12 @@ function refreshDone() {
     if (!has) { mark?.remove(); badge?.remove(); }
   });
 }
+
+// 첫 화면 시연 (갤러리가 보일 때만 돌린다)
+const hero = createHero($('heroCanvas'), MODELS, plansOf, (m) => {
+  $('heroCaption').textContent = `${m.name} · 난이도 ${m.level}`;
+  $('heroLink').href = `#/m/${m.id}`;
+});
 
 function renderGallery() {
   const ol = $('cards');
@@ -356,6 +363,7 @@ function route() {
   const printTarget = pm && MODELS.find((x) => x.id === pm[1]);
   $('print').hidden = !printTarget;
   if (printTarget) {
+    hero.stop();
     $('gallery').hidden = true;
     $('viewer').hidden = true;
     running = false;
@@ -375,6 +383,7 @@ function route() {
     document.title = '종이접기 교실';
     renderGallery();
   }
+  if (!target) hero.start(); else hero.stop();
 }
 window.addEventListener('hashchange', route);
 route();

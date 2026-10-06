@@ -34,8 +34,14 @@
   <!-- 작품 목록 -->
   <section id="gallery" class="view" hidden>
     <header class="g-head">
-      <h1 class="brand">종이접기 교실</h1>
-      <p class="lede">색종이 한 장을 준비하세요. 접는 선과 방향을 먼저 보여 주고, 한 단계씩 천천히 접어 보여 줘요.</p>
+      <div class="g-intro">
+        <h1 class="brand">종이접기 교실</h1>
+        <p class="lede">색종이 한 장을 준비하세요. 접는 선과 방향을 먼저 보여 주고, 한 단계씩 천천히 접어 보여 줘요.</p>
+      </div>
+      <a id="heroLink" class="hero matgrid" href="#/" aria-label="시연 중인 작품 접으러 가기">
+        <canvas id="heroCanvas" aria-hidden="true"></canvas>
+        <span id="heroCaption" class="hero-cap"></span>
+      </a>
     </header>
     <main id="main" class="g-main">
       <h2 class="g-title">쉬운 것부터 차례로</h2>
