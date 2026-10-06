@@ -295,3 +295,39 @@ export function seamError(sim, posed) {
 }
 
 export const simGuides = (sim) => sim.guides;
+
+// 움직임 화살표: 가장 멀리 움직이는 꼭짓점들의 실제 경로 (서로 떨어진 것 최대 n개)
+export function simArrows(sim, n = 2) {
+  if (!sim.frames) bake(sim);
+  const cand = [];
+  sim.loops.forEach((L, pi) => L.forEach((_, li) => {
+    const a = sim.start[pi][li], b = sim.end[pi][li];
+    // 경로 길이 (프레임을 따라 잰 거리)
+    let len = 0;
+    for (let f = 1; f < sim.frames.length; f++) {
+      const p = sim.frames[f - 1][pi][li], q = sim.frames[f][pi][li];
+      len += Math.hypot(q[0] - p[0], q[1] - p[1], q[2] - p[2]);
+    }
+    if (len > 0.08) cand.push({ pi, li, len, a, b });
+  }));
+  cand.sort((x, y) => y.len - x.len);
+  const picked = [];
+  for (const c of cand) {
+    if (picked.length >= n) break;
+    if (picked.some((p) => Math.hypot(p.a[0] - c.a[0], p.a[1] - c.a[1]) < 0.15 || Math.hypot(p.b[0] - c.b[0], p.b[1] - c.b[1]) < 0.12)) continue;
+    picked.push(c);
+  }
+  // 출발점 - 가장 높이 뜬 지점 - 도착점을 잇는 단순한 호 (실제 경로가 휘돌아도 읽기 쉽게)
+  return picked.map((c) => {
+    let top = null, tz = -Infinity;
+    for (let f = 1; f < sim.frames.length; f++) { const p = sim.frames[f][c.pi][c.li]; if (p[2] > tz) { tz = p[2]; top = p; } }
+    const a = c.a, b = c.b;
+    const mid = [(a[0] + b[0]) / 2 * 0.5 + top[0] * 0.5, (a[1] + b[1]) / 2 * 0.5 + top[1] * 0.5, Math.max(top[2], (a[2] + b[2]) / 2) + 0.03];
+    const path = [];
+    for (let k = 0; k <= 24; k++) {
+      const t = k / 24, u = 1 - t;
+      path.push([0, 1, 2].map((i) => u * u * a[i] + 2 * u * t * mid[i] + t * t * b[i] + (i === 2 ? 0.006 : 0)));
+    }
+    return path;
+  });
+}

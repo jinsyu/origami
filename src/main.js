@@ -4,7 +4,7 @@ import { Line2 } from 'three/addons/lines/Line2.js';
 import { LineGeometry } from 'three/addons/lines/LineGeometry.js';
 import { LineMaterial } from 'three/addons/lines/LineMaterial.js';
 import { buildModel, moveGuides } from './engine.js';
-import { simGuides } from './sim.js';
+import { simGuides, simArrows } from './sim.js';
 import { PaperMesh, addLights, fitCamera, loopsOf, simOf, toVecs } from './paper.js';
 import { finalThumb, stepThumb } from './thumbs.js';
 import { MODELS } from './models/index.js';
@@ -134,6 +134,7 @@ function buildGuides(p) {
       dashed([g.a[0], g.a[1], g.a[2] + 0.006], [g.b[0], g.b[1], g.b[2] + 0.006], g.valley ? color : new THREE.Color(MOUNTAIN), !g.valley);
       if (!g.valley) mountain = true;
     }
+    for (const path of simArrows(simOf(p))) pts.push(...arrow(path, color));
   } else {
     p.moves.forEach((mv, mi) => {
       const { line, path } = moveGuides(p, mi);
