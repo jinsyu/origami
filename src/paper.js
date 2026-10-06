@@ -49,11 +49,12 @@ function paperTexture() {
 }
 
 export function addLights(scene) {
-  scene.add(new THREE.HemisphereLight('#ffffff', '#cfd6cc', 1.55));
-  const key = new THREE.DirectionalLight('#fffaf0', 1.6);
+  // 그늘진 면도 종이 색이 그대로 읽히도록 바닥광을 밝게, 주광 대비는 낮게 둔다
+  scene.add(new THREE.HemisphereLight('#ffffff', '#ece9e2', 1.9));
+  const key = new THREE.DirectionalLight('#fffaf0', 1.15);
   key.position.set(-1.2, 1.4, 2.6);
   scene.add(key);
-  const fill = new THREE.DirectionalLight('#eef3ff', 0.55);
+  const fill = new THREE.DirectionalLight('#eef3ff', 0.75);
   fill.position.set(1.6, -1, 1.2);
   scene.add(fill);
   const rim = new THREE.DirectionalLight('#ffffff', 0.7);

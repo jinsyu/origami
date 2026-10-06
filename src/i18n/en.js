@@ -85,7 +85,7 @@ export const enModels = {
     name: 'Tulip Bud', desc: 'Squash the flaps into a triangle base, then fold the tips up into a bud. Learn the squash fold.', paper: 'Square origami paper',
     done: 'Your tulip bud is done! Draw a stem or put it on a straw.',
     steps: [
-      'Place the paper colored side up. Fold the top half down.',
+      'Place the paper white side up. Fold the top half down.',
       'Fold the right half over to the left to make a small square.',
       'Lift the top flap, open the pocket and press it flat into a triangle. This is a squash fold.',
       'Turn the paper over.',
@@ -114,7 +114,7 @@ export const enModels = {
     name: 'Crane', desc: 'Petal fold both sides of the square base, then reverse fold the neck and tail. The classic origami model.', paper: 'Square origami paper',
     done: 'Your crane is done! Spread the wings and puff up the body.',
     steps: [
-      'Place the paper colored side up as a diamond. Fold the top corner down to the bottom corner.',
+      'Place the paper white side up as a diamond. Fold the top corner down to the bottom corner.',
       'Fold the right corner over to the left corner.',
       'Lift the top flap, open the pocket and squash it into a diamond.',
       'Turn the paper over.',
@@ -141,7 +141,7 @@ export const enModels = {
     name: 'Lily', desc: 'Squash all four flaps of the waterbomb base, petal fold all four faces and open the petals. The longest challenge.', paper: 'Square origami paper',
     done: 'Your lily is done! Curl the petal tips around a pencil to open the flower.',
     steps: [
-      'Place the paper colored side up. Fold the top half down.',
+      'Place the paper white side up. Fold the top half down.',
       'Fold the right half over to the left to make a small square.',
       'Lift the top flap, open the pocket and press it flat into a triangle.',
       'Turn the paper over.',
