@@ -22,7 +22,6 @@ import { masu } from './masu.js';
 import { roofhouse } from './roofhouse.js';
 import { fox } from './fox.js';
 import { panda } from './panda.js';
-import { boat } from './boat.js';
 import { rabbit } from './rabbit.js';
 import { watermelon } from './watermelon.js';
 import { motorboat } from './motorboat.js';
@@ -39,4 +38,4 @@ import { ufo } from './ufo.js';
 import { octopus } from './octopus.js';
 import { piano } from './piano.js';
 
-export const MODELS = [dog, cat, flower, cup, bookmark, house, cicada, kabuto, hat, airplane, glider, envelope, whale, heart, frame, duck, tulip, heron, masu, roofhouse, crane, fox, panda, boat, rabbit, watermelon, motorboat, fuji, chick, pig, koala, car, goldfish, mouse, pencil, icecream, ufo, octopus, piano].sort((a, b) => a.level - b.level);
+export const MODELS = [dog, cat, flower, cup, bookmark, house, cicada, kabuto, hat, airplane, glider, envelope, whale, heart, frame, duck, tulip, heron, masu, roofhouse, crane, fox, panda, rabbit, watermelon, motorboat, fuji, chick, pig, koala, car, goldfish, mouse, pencil, icecream, ufo, octopus, piano].sort((a, b) => a.level - b.level);
