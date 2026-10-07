@@ -21,7 +21,7 @@ const LANG = (() => {
 })();
 const EN = LANG === 'en';
 const KO = {
-  title: '종이접기 교실', fold: '이 단계 접기', draw: '이 단계 그리기', full: '크게 보기', unfull: '작게 보기', stop: '멈추기', replay: '처음부터 다시 보기', auto: '끝까지 이어서 보기',
+  title: '종이접기 교실', pencils: '연필, 색연필', fold: '이 단계 접기', draw: '이 단계 그리기', full: '크게 보기', unfull: '작게 보기', stop: '멈추기', replay: '처음부터 다시 보기', auto: '끝까지 이어서 보기',
   startBtn: (n) => `${n}부터 시작하기`, continueBtn: (n, i) => `${n} ${i}단계부터 이어서 접기`,
   done: '완성', folded: '접어 봤어요', resume: (i) => `${i}단계부터 이어서`, next: (n) => `다음 작품: ${n}`, stepsCount: (n) => `${n}단계`, level: (l) => ['입문', '초급', '중급', '고급'][l - 1],
   printTitle: (n) => `${n} 접는 방법`,
@@ -331,6 +331,9 @@ function saveResume(id, i) {
   try { localStorage.setItem(resumeKey, JSON.stringify(r)); if (i) localStorage.setItem('origami.last', id); } catch { /* 무시 */ }
 }
 
+// 준비물: 꾸미기 단계가 있으면 연필·색연필도 챙기게 한다
+const supplies = (m) => (m.steps.some((s) => s.draw) ? `${m.paper}, ${T.pencils}` : m.paper);
+
 function openModel(m, startStep = 0) {
   if (m !== model) {
     model = m;
@@ -340,7 +343,7 @@ function openModel(m, startStep = 0) {
     document.documentElement.style.setProperty('--accent', m.accent);
     $('modelName').textContent = m.name;
     $('modelLevel').replaceWith(Object.assign(meter(m.level), { id: 'modelLevel' }));
-    $('paperInfo').textContent = `${m.paper}, ${T.stepsCount(N)}`;
+    $('paperInfo').textContent = `${supplies(m)}, ${T.stepsCount(N)}`;
     $('printLink').href = `#/print/${m.id}`;
     document.title = `${m.name} - ${T.title}`;
     const list = $('stepList');
@@ -504,7 +507,7 @@ new ResizeObserver(resize).observe(stage);
 function renderPrint(m) {
   const plans = plansOf(m);
   $('pName').textContent = T.printTitle(m.name);
-  $('pInfo').textContent = `${m.paper} · ${T.level(m.level)} · ${T.stepsCount(m.steps.length)}`;
+  $('pInfo').textContent = `${supplies(m)} · ${T.level(m.level)} · ${T.stepsCount(m.steps.length)}`;
   $('printBack').href = `#/m/${m.id}`;
   document.title = `${m.name} - ${T.title}`;
   const ol = $('pSteps');
