@@ -440,7 +440,7 @@ export const enModels = {
       'Fold the bottom tips of those two flaps up to the top.',
       'Bend the tips outward at an angle. These are the horns.',
       'Fold the front layer at the bottom up to just below the horns. This is the brim.',
-      'Fold the remaining back layer behind. Your helmet is done!',
+      'Fold the remaining back layer behind, then gently open the bottom. Your helmet is done!',
     ],
   },
   hat: {

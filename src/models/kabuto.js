@@ -3,6 +3,15 @@
 const R = Math.SQRT1_2;
 const has = (t) => (c) => c.tags.has(t);
 const flap = (c) => c.tags.has('flapR') || c.tags.has('flapL');
+// 마지막에 아래 입구를 벌린다 (머리에 쓰는 자리): 앞쪽 겹은 앞으로, 뒤쪽 겹은 뒤로.
+// 꼭대기(접힌 선)와 양옆(날개가 감싼 곳)은 붙어 있고 아래 가운데가 가장 많이 벌어진다
+const open = (p, e) => {
+  const [x, y, z] = p;
+  const half = R + Math.min(0, y); // 그 높이에서 몸통 반폭
+  const gx = half > 0 ? Math.max(0, 1 - (x / half) ** 2) : 0, gy = Math.max(0, Math.min(1, -y / 0.5)) ** 1.5;
+  const sd = Math.tanh((z - 0.0007) / 0.0003);
+  return [x, y, z + 0.08 * e * gx * gy * sd];
+};
 
 export const kabuto = {
   id: 'kabuto',
@@ -34,6 +43,6 @@ export const kabuto = {
       ],
     },
     { text: '아래쪽 앞의 한 장을 뿔 바로 아래까지 접어 올려요. 투구의 챙이 돼요.', moves: [{ line: [[-1, -0.5], [1, -0.5]], side: [0, -R], filter: (c) => has('front')(c) && !flap(c) }] },
-    { text: '남은 뒷장은 뒤로 접어 넣어요. 투구 완성!', moves: [{ line: [[-1, -0.5], [1, -0.5]], side: [0, -R], filter: (c) => !has('front')(c) && !flap(c), toward: -1 }] },
+    { text: '남은 뒷장은 뒤로 접어 넣고, 아래 입구를 살짝 벌리면 투구 완성!', deform: open, moves: [{ line: [[-1, -0.5], [1, -0.5]], side: [0, -R], filter: (c) => !has('front')(c) && !flap(c), toward: -1 }] },
   ],
 };
