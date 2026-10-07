@@ -4,6 +4,15 @@ const R = Math.SQRT1_2;
 const M = R * (1 - Math.SQRT1_2);            // 접는 선 위의 점 (≈0.207)
 const C = M * (1 - Math.tan(Math.PI / 8));   // 접는 선이 아랫변과 만나는 점 (≈0.121)
 const TOP = 2 * M;                   // 접힌 날개 윗변 높이 (≈0.414)
+// 마지막에 입구를 벌린다: 앞쪽 겹(주머니 앞, z>0.0007)은 앞으로, 뒤쪽 겹은 뒤로.
+// 옆 가장자리와 바닥은 붙어 있고 위쪽 가운데가 가장 많이 벌어진다
+const open = (p, e) => {
+  const [x, y, z] = p;
+  const half = C + ((0.293 - C) * Math.max(0, y)) / TOP; // 그 높이에서 컵 반폭
+  const gx = Math.max(0, 1 - (x / half) ** 2), gy = Math.max(0, Math.min(1, y / TOP)) ** 1.5;
+  const sd = Math.tanh((z - 0.0007) / 0.0003);
+  return [x, y, z + 0.07 * e * gx * gy * sd];
+};
 const flap = (c) => c.tags.has('flapL') || c.tags.has('flapR');
 
 export const cup = {
@@ -17,7 +26,7 @@ export const cup = {
   outline: [[0, -R], [R, 0], [0, R], [-R, 0]],
   view: [0.3, -0.45, 1],
   finalView: [0.25, -0.3, 1],
-  done: '컵 완성! 입구를 살짝 벌려 보세요.',
+  done: '컵 완성! 벌린 입구로 작은 물건을 담아 보세요.',
   steps: [
     {
       text: '색깔 면이 아래로 가게 마름모로 놓고, 아래 꼭짓점을 위 꼭짓점에 맞춰 반으로 접어요.',
@@ -36,7 +45,8 @@ export const cup = {
       moves: [{ line: [[-1, TOP], [1, TOP]], side: [0, 1], filter: (c) => c.tags.has('front') && !flap(c) }],
     },
     {
-      text: '남은 한 장은 뒤로 접어 내리면 컵 완성!',
+      text: '남은 한 장은 뒤로 접어 내리고, 입구를 살짝 벌리면 컵 완성!',
+      deform: open,
       moves: [{ line: [[-1, TOP], [1, TOP]], side: [0, 1], filter: (c) => !c.tags.has('front') && !flap(c), toward: -1 }],
     },
   ],

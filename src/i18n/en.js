@@ -384,13 +384,13 @@ export const enModels = {
   },
   cup: {
     name: 'Cup', desc: 'Fold each corner across to the opposite edge. Great practice for folding precisely.', paper: 'Square origami paper',
-    done: 'Your cup is done! Open the top a little.',
+    done: 'Your cup is done! Put small things in through the open top.',
     steps: [
       'Place the paper colored side down as a diamond. Fold the bottom corner up to the top corner.',
       'Fold the right corner so it touches the left edge. The folded top edge should be level with the bottom.',
       'Fold the left corner the same way so it touches the right edge.',
       'Fold the front layer of the top corner down toward you.',
-      'Fold the remaining layer down behind. Your cup is done!',
+      'Fold the remaining layer down behind, then gently open the top. Your cup is done!',
     ],
   },
   house: {

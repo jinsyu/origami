@@ -314,8 +314,8 @@ function planCrossUnfold(polys, step) {
 }
 
 // 단순 단계에서 진행률 t(0~1)일 때 각 다각형의 꼭짓점 위치
-export function pose(plan, t) {
-  if (plan.parts) return t < 0.5 ? pose(plan.parts[0], t * 2) : pose(plan.parts[1], t * 2 - 1);
+export function pose(plan, t, raw = false) {
+  if (plan.parts) return t < 0.5 ? pose(plan.parts[0], t * 2, raw) : pose(plan.parts[1], t * 2 - 1, raw);
   if (plan.sim) return t < 0.5 ? plan.polys.map((q) => q.hist[0]) : plan.polys.map((q) => q.p);
   const e = t * t * (3 - 2 * t);
   const out = plan.polys.map((q) => {
@@ -326,7 +326,7 @@ export function pose(plan, t) {
     return q.p.map((p) => add(rotate(p, mv.o, mv.d, mv.theta * f), mul(mv.u, s)));
   });
   // deform(p, e): 위치에 따라 꼭짓점을 옮기는 연속 변형 (부풀리기). 같은 점은 같이 움직여 끊기지 않는다
-  return plan.deform ? out.map((L) => L.map((p) => plan.deform(p, e))) : out;
+  return plan.deform && !raw ? out.map((L) => L.map((p) => plan.deform(p, e))) : out;
 }
 
 // 단계의 시작·끝 상태

@@ -23,6 +23,21 @@ function metaOf(p) {
   return p._meta;
 }
 
+// 부풀리기 단계에서 부채꼴 삼각형 하나를 나누는 수
+const SUB = 12;
+// 삼각형 (가운데, a, b)를 S×S 개로 나눈 작은 삼각형들의 무게 (가운데·a·b 비율)
+const subCache = new Map();
+function subTris(S) {
+  if (subCache.has(S)) return subCache.get(S);
+  const W = (i, j) => [1 - (i + j) / S, i / S, j / S], out = [];
+  for (let i = 0; i < S; i++) for (let j = 0; j < S - i; j++) {
+    out.push([W(i, j), W(i + 1, j), W(i, j + 1)]);
+    if (i + j + 1 < S) out.push([W(i + 1, j), W(i + 1, j + 1), W(i, j + 1)]);
+  }
+  subCache.set(S, out);
+  return out;
+}
+
 // 종이 질감 (미세한 섬유 무늬)
 let sharedTex = null;
 function paperTexture() {
@@ -166,7 +181,10 @@ export class PaperMesh {
     this.plan = p;
     this.setupInk(p);
     const meta = metaOf(p);
-    const tris = meta.uv.reduce((s, L) => s + L.length, 0);
+    // 부풀리기(deform) 단계는 면을 잘게 나눠 곡면으로 휘게 한다
+    const S = p.deform ? SUB : 1, bt = subTris(S);
+    this.S = S;
+    const tris = meta.uv.reduce((s, L) => s + L.length, 0) * bt.length;
     const geo = new THREE.BufferGeometry();
     geo.setAttribute('position', new THREE.BufferAttribute(new Float32Array(tris * 9), 3));
     geo.setAttribute('normal', new THREE.BufferAttribute(new Float32Array(tris * 9), 3));
@@ -175,7 +193,10 @@ export class PaperMesh {
     const put = (v) => { uv[k++] = (v[0] - this.uvMin[0]) * this.uvScale; uv[k++] = (v[1] - this.uvMin[1]) * this.uvScale; };
     for (const L of meta.uv) {
       const c = [L.reduce((a, v) => a + v[0], 0) / L.length, L.reduce((a, v) => a + v[1], 0) / L.length];
-      for (let i = 0; i < L.length; i++) { put(c); put(L[i]); put(L[(i + 1) % L.length]); }
+      for (let i = 0; i < L.length; i++) {
+        const a = L[i], b = L[(i + 1) % L.length];
+        for (const T of bt) for (const w of T) put([0, 1].map((j) => c[j] * w[0] + a[j] * w[1] + b[j] * w[2]));
+      }
     }
     geo.setAttribute('uv', new THREE.BufferAttribute(uv, 2));
     // 앞면·뒷면 메시는 위치·법선·uv를 함께 쓰고 색만 따로 가진다
@@ -183,7 +204,7 @@ export class PaperMesh {
     let ci = 0;
     for (const L of meta.uv) {
       const cs = this.sheetColors[Math.min(this.sheetColors.length - 1, sheetOfU(L.reduce((a, v) => a + v[0], 0) / L.length))];
-      for (let i = 0; i < L.length * 3; i++, ci += 3) {
+      for (let i = 0; i < L.length * 3 * bt.length; i++, ci += 3) {
         colF[ci] = cs.front.r; colF[ci + 1] = cs.front.g; colF[ci + 2] = cs.front.b;
         colB[ci] = cs.back.r; colB[ci + 1] = cs.back.g; colB[ci + 2] = cs.back.b;
       }
@@ -196,7 +217,7 @@ export class PaperMesh {
     if (this.back.geometry !== this.front.geometry) this.back.geometry.dispose();
     this.front.geometry = geo;
     this.back.geometry = geoB;
-    const n = p.edges.length * 6;
+    const n = p.edges.length * 6 * S;
     for (const l of [this.dark, this.light]) {
       l.geometry.dispose();
       l.geometry = new THREE.BufferGeometry();
@@ -211,19 +232,26 @@ export class PaperMesh {
     const normals = loops.map(polyNormal);
     const geo = this.front.geometry;
     const P = geo.attributes.position.array, Nn = geo.attributes.normal.array;
+    const S = this.S, bt = subTris(S);
+    // 잘게 나눌 때는 변형 전 위치에서 나눈 뒤 점마다 변형한다
+    const base = S > 1 ? pose(p, t, true) : loops, e = t * t * (3 - 2 * t);
+    const fx = S > 1 ? (v) => p.deform(v, e) : (v) => v;
     let k = 0;
-    loops.forEach((pts, qi) => {
+    base.forEach((pts, qi) => {
       const nn = normals[qi];
       const c = [0, 1, 2].map((i) => pts.reduce((a, v) => a + v[i], 0) / pts.length);
       for (let i = 0; i < pts.length; i++) {
-        // 부풀린 면은 평평하지 않으므로 삼각형마다 법선을 구한다 (평평하면 다각형 법선과 같다)
-        const a = pts[i], b = pts[(i + 1) % pts.length];
-        const tn = cross(sub(a, c), sub(b, c)), tl = Math.hypot(...tn);
-        const n3 = tl > 1e-9 ? [tn[0] / tl, tn[1] / tl, tn[2] / tl] : nn;
-        for (const v of [c, a, b]) {
-          P[k] = v[0]; P[k + 1] = v[1]; P[k + 2] = v[2];
-          Nn[k] = n3[0]; Nn[k + 1] = n3[1]; Nn[k + 2] = n3[2];
-          k += 3;
+        const a0 = pts[i], b0 = pts[(i + 1) % pts.length];
+        for (const T of bt) {
+          const V = T.map((w) => fx([0, 1, 2].map((j) => c[j] * w[0] + a0[j] * w[1] + b0[j] * w[2])));
+          // 부풀린 면은 평평하지 않으므로 삼각형마다 법선을 구한다 (평평하면 다각형 법선과 같다)
+          const tn = cross(sub(V[1], V[0]), sub(V[2], V[0])), tl = Math.hypot(...tn);
+          const n3 = tl > 1e-12 ? [tn[0] / tl, tn[1] / tl, tn[2] / tl] : nn;
+          for (const v of V) {
+            P[k] = v[0]; P[k + 1] = v[1]; P[k + 2] = v[2];
+            Nn[k] = n3[0]; Nn[k + 1] = n3[1]; Nn[k + 2] = n3[2];
+            k += 3;
+          }
         }
       }
     });
@@ -244,7 +272,16 @@ export class PaperMesh {
       }
       const arr = dark ? D : L;
       let o = dark ? di : li;
-      arr[o++] = a[0]; arr[o++] = a[1]; arr[o++] = a[2]; arr[o++] = b[0]; arr[o++] = b[1]; arr[o++] = b[2];
+      if (S > 1) {
+        // 휜 면을 따라가도록 선도 잘게 나눈다
+        const bp = base[ed.i], a0 = bp[cs[ed.k]], b0 = bp[cs[(ed.k + 1) % cs.length]];
+        for (let s2 = 0; s2 < S; s2++) {
+          const u = fx(a0.map((x, j) => x + (b0[j] - x) * (s2 / S))), w = fx(a0.map((x, j) => x + (b0[j] - x) * ((s2 + 1) / S)));
+          arr[o++] = u[0]; arr[o++] = u[1]; arr[o++] = u[2]; arr[o++] = w[0]; arr[o++] = w[1]; arr[o++] = w[2];
+        }
+      } else {
+        arr[o++] = a[0]; arr[o++] = a[1]; arr[o++] = a[2]; arr[o++] = b[0]; arr[o++] = b[1]; arr[o++] = b[2];
+      }
       if (dark) di = o; else li = o;
     }
     this.dark.geometry.setDrawRange(0, di / 3);
