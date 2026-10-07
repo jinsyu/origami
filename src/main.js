@@ -22,7 +22,7 @@ const LANG = (() => {
 const EN = LANG === 'en';
 const KO = {
   title: '종이접기 교실', full: '크게 보기', unfull: '작게 보기', stop: '멈추기', replay: '처음부터 다시 보기', auto: '끝까지 이어서 보기',
-  done: '완성', folded: '접어 봤어요', next: (n) => `다음 작품: ${n}`, stepsCount: (n) => `${n}단계`, level: (l) => `난이도 ${l}`,
+  done: '완성', folded: '접어 봤어요', resume: (i, n) => `이어서 ${i}/${n}`, next: (n) => `다음 작품: ${n}`, stepsCount: (n) => `${n}단계`, level: (l) => `난이도 ${l}`,
   printTitle: (n) => `${n} 접는 방법`,
   bands: [['all', '전체'], ['easy', '처음 (1~3)'], ['mid', '중간 (4~6)'], ['hard', '도전 (7~10)']], bandLabel: '난이도로 보기',
 };
@@ -74,6 +74,7 @@ function meter(level) {
   return el;
 }
 
+function resumeOf(id) { try { return JSON.parse(localStorage.getItem('origami.resume') || '{}')[id] || 0; } catch { return 0; } }
 function refreshDone() {
   const done = readDone();
   document.querySelectorAll('.card').forEach((li) => {
@@ -83,6 +84,11 @@ function refreshDone() {
     if (has && !mark) { mark = document.createElement('span'); mark.className = 'check'; mark.setAttribute('aria-hidden', 'true'); pic.appendChild(mark); }
     if (has && !badge) { badge = document.createElement('span'); badge.className = 'done-badge'; badge.textContent = T.folded; facts.appendChild(badge); }
     if (!has) { mark?.remove(); badge?.remove(); }
+    // 접다 만 작품: 어디까지 접었는지 표시
+    const at = resumeOf(id), m = MODELS.find((x) => x.id === id);
+    let res = facts.querySelector('.resume-badge');
+    if (at && !res) { res = document.createElement('span'); res.className = 'done-badge resume-badge'; facts.appendChild(res); }
+    if (at) res.textContent = T.resume(at + 1, m.steps.length); else res?.remove();
   });
 }
 
@@ -297,7 +303,17 @@ function enterStep(i, play, instant) {
   }
   const want = `#/m/${model.id}${step ? `/${step + 1}` : ''}`;
   if (location.hash !== want) history.replaceState(null, '', want);
+  saveResume(model.id, step < N ? step : 0);
   updateUI();
+}
+
+// 작품마다 마지막으로 보던 단계를 기억해, 다시 열면 그 단계부터 이어서 접는다 (다 접으면 처음부터)
+const resumeKey = 'origami.resume';
+function loadResume() { try { return JSON.parse(localStorage.getItem(resumeKey) || '{}'); } catch { return {}; } }
+function saveResume(id, i) {
+  const r = loadResume();
+  if (i) r[id] = i; else delete r[id];
+  try { localStorage.setItem(resumeKey, JSON.stringify(r)); } catch { /* 무시 */ }
 }
 
 function openModel(m, startStep = 0) {
@@ -506,7 +522,7 @@ function route() {
   $('viewer').hidden = !target;
   if (target) {
     resize();
-    openModel(target, m[2] ? +m[2] - 1 : 0);
+    openModel(target, m[2] ? +m[2] - 1 : loadResume()[target.id] || 0);
     running = true;
   } else {
     running = false;
