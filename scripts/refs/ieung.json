@@ -1,0 +1,17 @@
+{
+  "src": "scripts/refs/ieung.png",
+  "note": "영상 https://www.youtube.com/watch?v=dBbWGqU1pmM 의 10:50 완성 장면 (영상은 45° 돌려 놓음). 분홍 배경을 지우고 검은 면을 색 면(보라)으로, 종이 가장자리에 선(회색)을 그림",
+  "dark": true,
+  "panels": [
+    {
+      "after": 10,
+      "box": [
+        153,
+        107,
+        462,
+        408
+      ],
+      "rot": 45
+    }
+  ]
+}

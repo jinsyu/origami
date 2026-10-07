@@ -1,4 +1,6 @@
 // 영어 문구. 작품별 이름·설명·단계 안내, 화면 문구
+import { hangulEn } from '../models/parts/hangul.js';
+import '../models/hangul.js'; // 자모 작품을 먼저 만들어 hangulEn 을 채운다
 export const enModels = {
   lion: {
     name: 'Lion Face', desc: 'Fold both sides in at an angle and a white mane wraps around the face.', paper: 'Square origami paper (yellow)',
@@ -857,21 +859,7 @@ export const enModels = {
       'Turn it back over. Your picture frame is done!',
     ],
   },
-  giyeok: {
-    name: 'Hangul ㄱ', desc: 'Make a frame with two blintz folds, then fold two sides behind to leave the Korean letter ㄱ (giyeok).', paper: 'Square origami paper',
-    done: 'Your ㄱ is done! Fold other letters too and make a word.',
-    steps: [
-      'Place the paper colored side down. Fold it in half into a triangle and unfold.',
-      'Fold it into a triangle the other way and unfold. You get an X in the middle.',
-      'Fold all four corners to the center point. This is a blintz fold.',
-      'Fold the four tips at the center back out so they touch the outer folded edges.',
-      'Fold the four points of the diamond in so they touch the edges of the white square.',
-      'Fold the top border down along the edge of the white square. This is the stroke across the top of ㄱ.',
-      'Fold the right border inward along the edge of the white square too. This is the stroke down the side of ㄱ.',
-      'Fold the left border behind along the edge of the white square.',
-      'Fold the bottom border behind too. Only the top and right strokes are left, and you have ㄱ.',
-    ],
-  },
+  ...hangulEn, // 한글 자모: parts/hangul.js 에서 함께 만든다
   duck: {
     name: 'Duck', desc: 'Reverse fold the thin end up into a neck, then reverse fold its tip once more for the head and beak. Two reverse folds in a row.', paper: 'Square origami paper',
     done: 'Your duck is done! Draw an eye and float it on water.',
@@ -979,7 +967,7 @@ export const enUI = {
   title: 'Origami Classroom',
   lede: 'Get some origami paper. Each step shows the fold line and direction first, then folds slowly in 3D.',
   ladder: 'From easiest to hardest',
-  bands: [['all', 'All'], ['1', 'Beginner'], ['2', 'Easy'], ['3', 'Intermediate'], ['4', 'Advanced']], bandLabel: 'Filter by level',
+  bands: [['all', 'All'], ['1', 'Beginner'], ['2', 'Easy'], ['3', 'Intermediate'], ['4', 'Advanced'], ['hangul', 'Hangul letters']], bandLabel: 'Filter by level or theme',
   symbols: 'Learn the fold symbols',
   foot: 'Drag to rotate the paper. Use ← → to change steps and Space to play.',
   back: 'All models', print: 'Printable diagram', full: 'Full screen', unfull: 'Exit full screen',

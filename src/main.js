@@ -26,7 +26,7 @@ const KO = {
   startBtn: (n) => `${n}부터 시작하기`, continueBtn: (n, i) => `${n} ${i}단계부터 이어서 접기`,
   done: '완성', folded: '접어 봤어요', resume: (i) => `${i}단계부터 이어서`, next: (n) => `다음 작품: ${n}`, stepsCount: (n) => `${n}단계`, sheetsCount: (n) => `색종이 ${n}장`, level: (l) => ['입문', '초급', '중급', '고급'][l - 1],
   printTitle: (n) => `${n} 접는 방법`,
-  bands: [['all', '전체'], ['1', '입문'], ['2', '초급'], ['3', '중급'], ['4', '고급']], bandLabel: '난이도로 보기',
+  bands: [['all', '전체'], ['1', '입문'], ['2', '초급'], ['3', '중급'], ['4', '고급'], ['hangul', '한글 자모']], bandLabel: '난이도·주제로 보기',
 };
 const T = EN ? enUI : KO;
 if (EN) {
@@ -104,9 +104,11 @@ const hero = createHero($('heroCanvas'), MODELS, plansOf, (m) => {
 const bandKey = 'origami.band';
 let band = 'all';
 try { band = localStorage.getItem(bandKey) || 'all'; } catch { /* 저장소 사용 불가 */ }
-if (!['all', '1', '2', '3', '4'].includes(band)) band = 'all';
+if (!['all', '1', '2', '3', '4', 'hangul'].includes(band)) band = 'all';
+// 난이도 구간이 아닌 주제 묶음(작품의 group): 그 묶음만 보인다
+const inBand = (key, level, group) => key === 'all' || (key === 'hangul' ? group === key : String(level) === key);
 function applyBand() {
-  [...$('cards').children].forEach((li) => { li.hidden = band !== 'all' && li.dataset.band !== band; });
+  [...$('cards').children].forEach((li) => { li.hidden = !inBand(band, li.dataset.band, li.dataset.group); });
   $('bands').querySelectorAll('button').forEach((b) => b.setAttribute('aria-pressed', String(b.dataset.band === band)));
 }
 function renderBands() {
@@ -117,7 +119,7 @@ function renderBands() {
     const b = document.createElement('button');
     b.type = 'button';
     b.dataset.band = key;
-    const n = key === 'all' ? MODELS.length : MODELS.filter((m) => String(m.level) === key).length;
+    const n = MODELS.filter((m) => inBand(key, m.level, m.group)).length;
     b.innerHTML = `<span></span><small>${n}</small>`;
     b.querySelector('span').textContent = label;
     b.onclick = () => { band = key; try { localStorage.setItem(bandKey, band); } catch { /* 무시 */ } applyBand(); };
@@ -148,6 +150,7 @@ function renderGallery() {
     li.className = 'card';
     li.dataset.id = m.id;
     li.dataset.band = String(m.level);
+    if (m.group) li.dataset.group = m.group;
     li.innerHTML = `<a href="#/m/${m.id}"><div class="pic matgrid"><span class="lv" aria-hidden="true">${T.level(m.level)}</span><img alt="" /></div>
       <div class="meta"><h3></h3><p></p><div class="facts"><span class="steps"></span></div></div></a>`;
     li.querySelector('h3').textContent = m.name;
