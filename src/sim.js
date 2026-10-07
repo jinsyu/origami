@@ -107,6 +107,10 @@ export function prepareSim(plan) {
     squash = { roleIdx, group, p2 };
   }
   const sim = { loops, nCorner, NV: nCorner, member, subs: plan.subs, start, end, dist, guides, squash, tearOk: plan.tearOk };
+  // swing: 뒤집어 접기를 '겹을 책처럼 벌리기' 대신 '날개를 평면 안에서 돌리며 앞뒤 겹이 등선 쪽으로 좁아졌다 자리를 바꾸기'로 보여 준다.
+  // 벌어진 틈으로 안쪽 면이 보이지 않아 겉면 색이 유지된다. 끝 상태는 같다.
+  const rv = plan.swing && plan.subs.find((s) => s.mv.rev);
+  if (rv) sim.swing = { P: rv.mv.rev.P, delta: rv.mv.rev.delta };
   // 꽃잎 접기 묶음(역할: plift, ptop/psec R·L)이 있으면 옆 조각 각도를 들어 올리는 각도에 맞춰 푼다
   if (['plift', 'ptopR', 'ptopL', 'psecR', 'psecL'].every((r) => r in roleIdx)) solvePetal(sim, roleIdx);
   if (squash) {
@@ -359,6 +363,13 @@ function bake(sim) {
 export function simPose(sim, t) {
   if (t <= 0) return sim.start;
   if (t >= 1) return sim.end;
+  if (sim.swing) {
+    const { P, delta } = sim.swing, e = ease(t);
+    return sim.start.map((L, pi) => (sim.member[pi].length ? L.map((p, li) => {
+      const r = rotate(p, P, Z, delta * e), r1 = rotate(p, P, Z, delta), q = sim.end[pi][li];
+      return [r[0] + e * (q[0] - r1[0]), r[1] + e * (q[1] - r1[1]), p[2] + e * (q[2] - p[2])];
+    }) : L));
+  }
   if (!sim.frames) bake(sim);
   const f = t * FRAMES, i = Math.floor(f), r = f - i;
   const A = sim.frames[i], B = sim.frames[i + 1];

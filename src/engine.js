@@ -384,7 +384,7 @@ function planSeqStep(polys, step) {
     subs.push({ mv, at: m.at || [0, 1], curve: m.curve || (mv.transient ? 'updown' : 'ease'), peak: m.peak ?? 0.5, role: m.role });
   });
   cur.forEach((q) => { q.owner = -1; });
-  return { polys: cur, moves: [], subs, sim: true, tearOk: !!step.tearOk, edges: edgeList(cur) };
+  return { polys: cur, moves: [], subs, sim: true, tearOk: !!step.tearOk, swing: !!step.swing, edges: edgeList(cur) };
 }
 
 // 서로 엇갈리는 두 '접었다 펴기'를 한 단계에서 하면, 동시에 움직일 때 한 조각이 한 동작에만 속해
