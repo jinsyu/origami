@@ -3,7 +3,12 @@
 // 위 변을 가늘게 접어 연필심 띠를 만들고, 양옆을 가운데로 접은 뒤 위 모서리를 접어 뾰족한 끝을 만든다.
 const H = 0.5, T = 0.4375, B = 0.1875; // 띠를 접은 뒤 위 변, 모서리 접기 아래 끝
 
-export const pencil = {
+export const pencilParams = { sh: 0.11, ta: 0.01 };
+
+export function makePencil({ sh, ta } = pencilParams) {
+  return {
+  params: { sh, ta },
+  make: makePencil,
   id: 'pencil',
   name: '연필',
   level: 2,
@@ -37,9 +42,12 @@ export const pencil = {
     {
       text: '바깥 위 모서리를 점선에서 뒤로 접어 뾰족한 연필 끝을 만들면 완성!',
       moves: [
-        { line: [[0.25, B - 0.04], [0.03, T]], side: [0.25, T], toward: -1 },
-        { line: [[-0.25, B - 0.04], [-0.03, T]], side: [-0.25, T], toward: -1 },
+        { line: [[0.25, sh], [ta, T]], side: [0.25, T], toward: -1 },
+        { line: [[-0.25, sh], [-ta, T]], side: [-0.25, T], toward: -1 },
       ],
     },
   ],
 };
+}
+
+export const pencil = makePencil();
