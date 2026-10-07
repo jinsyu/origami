@@ -20,9 +20,9 @@ import { heron } from './heron.js';
 import { crane } from './crane.js';
 import { masu } from './masu.js';
 import { roofhouse } from './roofhouse.js';
-import { top } from './top.js';
 import { fox } from './fox.js';
 import { panda } from './panda.js';
 import { boat } from './boat.js';
+import { top2 } from './top2.js';
 
-export const MODELS = [dog, cat, flower, cup, bookmark, house, cicada, kabuto, hat, airplane, glider, envelope, whale, heart, frame, duck, tulip, heron, masu, roofhouse, crane, top, fox, panda, boat].sort((a, b) => a.level - b.level);
+export const MODELS = [dog, cat, flower, cup, bookmark, house, cicada, kabuto, hat, airplane, glider, envelope, whale, heart, frame, duck, tulip, heron, masu, roofhouse, crane, fox, panda, boat, top2].sort((a, b) => a.level - b.level);

@@ -33,20 +33,23 @@ export const enModels = {
       'Color the cheeks pink with a colored pencil, and you are done!',
     ],
   },
-  top: {
-    name: 'Cushion Spinning Top', desc: 'Fold the four corners to the center three times for a sturdy top. Color it, add a toothpick and give it a spin.', paper: 'Square origami paper, a toothpick',
-    done: 'Your spinning top is done! Twist the toothpick between your fingers and watch the colors blend.',
+  top2: {
+    name: 'Ddakji Spinning Top', desc: 'Fold two sheets into strips, weave them together like ddakji, and push a toothpick through the center to spin it.', paper: '2 sheets of square origami paper, a toothpick',
+    done: 'Your spinning top is done! Pinch the top of the toothpick and twist to spin it. The two colors blend together.',
     steps: [
-      'Place the paper colored side down. Fold in half along a diagonal and unfold.',
-      'Fold and unfold along the other diagonal too. Where the two lines cross is the center.',
-      'Fold all four corners to the center point. This is the cushion fold.',
-      'Fold the four new corners to the center once more.',
-      'Turn the paper over.',
-      'Fold the four corners to the center on this side too, pressing firmly. This makes a thick top body.',
-      'With colored pencils, color rings of different colors around the center.',
+      'Place both sheets colored side down. Fold the top edge down to the bottom edge.',
+      'Fold the bottom edge up to the top edge once more to make a long thin strip.',
+      'On the red strip, fold the right end up at an angle and the left end down.',
+      'Fold the blue strip the same way: right end up, left end down.',
+      'Turn the blue strip sideways and lay it across the red strip in a cross.',
+      'Fold the top end of the red strip underneath down over the blue strip.',
+      'Fold the right end of the blue strip over to the left.',
+      'Fold the bottom end of the red strip up over it.',
+      'Fold the left end of the blue strip to the right, tucking its tip under the first red flap.',
       'Push a toothpick through the center so it pokes out a little on both sides, and you are done!',
     ],
   },
+
   dog: {
     name: 'Dog Face', desc: 'Four folds make a puppy with floppy ears. Perfect for a first fold.', paper: 'Square origami paper',
     done: 'Your dog face is done! Give it a name and show your friends.',
