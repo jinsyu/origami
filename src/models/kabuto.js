@@ -15,7 +15,12 @@ const open = (p, e) => {
   return [x, y, z * (1 + 3 * e * gx * gy) + 0.08 * e * gx * gy * sd];
 };
 
-export const kabuto = {
+export const kabutoParams = { y6: -0.386 };
+
+export function makeKabuto({ y6 } = kabutoParams) {
+  return {
+  params: { y6 },
+  make: makeKabuto,
   id: 'kabuto',
   name: '투구',
   level: 2,
@@ -44,7 +49,11 @@ export const kabuto = {
         { line: [[0, -R / 2], [-0.16, -0.05]], side: [-0.02, -0.02], filter: (c) => has('up')(c) && c.x < 0, tag: 'horn' },
       ],
     },
-    { text: '아래쪽 앞의 한 장을 뿔 바로 아래까지 접어 올려요. 투구의 챙이 돼요.', moves: [{ line: [[-1, -0.5], [1, -0.5]], side: [0, -R], filter: (c) => has('front')(c) && !flap(c) }] },
-    { text: '남은 뒷장은 뒤로 접어 넣고, 아래 입구를 살짝 벌리면 투구 완성!', deform: open, moves: [{ line: [[-1, -0.5], [1, -0.5]], side: [0, -R], filter: (c) => !has('front')(c) && !flap(c), toward: -1 }] },
+    { text: '아래쪽 앞의 한 장을 뿔 바로 아래까지 접어 올려요.', moves: [{ line: [[-1, -0.5], [1, -0.5]], side: [0, -R], filter: (c) => has('front')(c) && !flap(c) }] },
+    { text: '아래 띠를 점선에서 한 번 더 접어 올려요. 하얀 챙이 돼요.', moves: [{ line: [[-1, y6], [1, y6]], side: [0, y6 - 0.03], filter: (c) => has('front')(c) && !flap(c) }] },
+    { text: '남은 뒷장도 챙 높이에서 뒤로 접어 넣고, 아래 입구를 살짝 벌리면 투구 완성!', deform: open, moves: [{ line: [[-1, y6], [1, y6]], side: [0, -R], filter: (c) => !has('front')(c) && !flap(c), toward: -1 }] },
   ],
 };
+}
+
+export const kabuto = makeKabuto();

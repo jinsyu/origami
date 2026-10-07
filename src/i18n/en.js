@@ -763,8 +763,9 @@ export const enModels = {
       'Fold both side corners down to the bottom corner. You get a diamond.',
       'Fold the bottom tips of those two flaps up to the top.',
       'Bend the tips outward at an angle. These are the horns.',
-      'Fold the front layer at the bottom up to just below the horns. This is the brim.',
-      'Fold the remaining back layer behind, then gently open the bottom. Your helmet is done!',
+      'Fold the front layer at the bottom up to just below the horns.',
+      'Fold the bottom band up once more along the dotted line. This is the white brim.',
+      'Fold the remaining back layer behind at the height of the brim and tuck it in. Open the bottom a little, and your samurai helmet is done!',
     ],
   },
   hat: {
