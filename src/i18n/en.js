@@ -1,5 +1,17 @@
 // 영어 문구. 작품별 이름·설명·단계 안내, 화면 문구
 export const enModels = {
+  lion: {
+    name: 'Lion Face', desc: 'Fold both sides in at an angle and a white mane wraps around the face.', paper: 'Square origami paper (yellow)',
+    done: 'Your lion face is done!',
+    steps: [
+      'Place the paper colored side up as a diamond. Fold in half both ways and unfold to make creases.',
+      'Fold the bottom corner up a little.',
+      'Fold the left side in along the slanted dotted line. A white mane appears.',
+      'Fold the right side the same way.',
+      'Fold the top behind along the dotted line.',
+      'Draw the eyes, nose and whiskers with a pencil, and you are done!',
+    ],
+  },
   sandwich: {
     name: 'Sandwich', desc: 'Fold the bottom up a little short of the top to leave a strip of filling, then fold in half for a triangle sandwich.', paper: 'Square origami paper (pink)',
     done: 'Your sandwich is done! Fold several colors to fill a lunch box.',
