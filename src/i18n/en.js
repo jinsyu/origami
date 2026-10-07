@@ -1,5 +1,24 @@
 // 영어 문구. 작품별 이름·설명·단계 안내, 화면 문구
 export const enModels = {
+  crab: {
+    name: 'Crab', desc: 'From the waterbomb base, inside reverse fold both ends for claws and fold the bottom for legs.', paper: 'Square origami paper',
+    done: 'Your crab is done!',
+    steps: [
+      'Place the paper white side up. Fold the top half down.',
+      'Fold the right half over to the left to make a small square.',
+      'Lift the top flap, open the pocket and squash it flat into a triangle.',
+      'Turn the paper over.',
+      'Squash the other flap the same way. The waterbomb base is done.',
+      'Turn it so the point faces down.',
+      'Inside reverse fold the left end up along the dotted line. This is a claw.',
+      'Inside reverse fold the right end the same way.',
+      'Turn the paper over.',
+      'Fold the bottom point up along the dotted line.',
+      'Fold both top corners of the front flaps down along the dotted lines. These are the legs.',
+      'Turn the paper over.',
+      'Draw round eyes below the claws with a pencil, and you are done!',
+    ],
+  },
   foxcub: {
     name: 'Fox Cub', desc: 'A full-body fox with its head and tail raised by squash folds and reverse folds.', paper: 'Square origami paper',
     done: 'Your fox cub is done!',
