@@ -364,10 +364,12 @@ export function simPose(sim, t) {
   if (t <= 0) return sim.start;
   if (t >= 1) return sim.end;
   if (sim.swing) {
-    const { P, delta } = sim.swing, e = ease(t);
+    // 앞뒤 겹이 자리를 바꾸는(면이 뒤집히는) 보정은 가운데 짧은 구간에 몰아, 겹마다 뒤집히는 때가 달라
+    // 일부만 먼저 뒤집혀 안쪽 면이 보이는 시간을 줄인다 (앞뒤 겹이 대칭이 아닌 날개)
+    const { P, delta } = sim.swing, e = ease(t), w = ease((e - 0.35) / 0.3);
     return sim.start.map((L, pi) => (sim.member[pi].length ? L.map((p, li) => {
       const r = rotate(p, P, Z, delta * e), r1 = rotate(p, P, Z, delta), q = sim.end[pi][li];
-      return [r[0] + e * (q[0] - r1[0]), r[1] + e * (q[1] - r1[1]), p[2] + e * (q[2] - p[2])];
+      return [r[0] + w * (q[0] - r1[0]), r[1] + w * (q[1] - r1[1]), p[2] + w * (q[2] - p[2])];
     }) : L));
   }
   if (!sim.frames) bake(sim);
