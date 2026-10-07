@@ -115,7 +115,8 @@ export class PaperMesh {
         mesh.scale.set(r, s.ry || r, 1);
         mesh.userData.r = [r, s.ry || r];
       }
-      mesh.renderOrder = s.under ? 2 : 3; // 색칠(under)은 연필 윤곽 아래에
+      // 색칠(under)은 연필 윤곽 아래에, 같은 종류끼리는 그린 순서대로 위에 쌓인다
+      mesh.renderOrder = (s.under ? 2 : 3) + this.ink.children.length * 1e-3;
       this.ink.add(mesh);
       if (!animated) return;
       const w = weight(s) / total;

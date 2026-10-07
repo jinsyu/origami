@@ -1,5 +1,17 @@
 // 영어 문구. 작품별 이름·설명·단계 안내, 화면 문구
 export const enModels = {
+  panda: {
+    name: 'Panda Face', desc: 'Fold it like the cat face, then fold the ear tips down to make them round. Color black ears and eye patches to turn it into a panda.', paper: 'Square origami paper (white side)',
+    done: 'Your panda face is done! Draw some bamboo leaves and it will be happy.',
+    steps: [
+      'Place the paper white side down as a diamond. Fold the top corner down to the bottom corner. The white side shows on the outside.',
+      'Fold both side corners up at an angle to stand the ears up.',
+      'Fold the pointy ear tips down a little to make round ears.',
+      'Fold the bottom tip behind a little to round off the chin.',
+      'With a black colored pencil, color both ears and the patches around the eyes.',
+      'Draw white eyes inside the patches, then draw the nose and mouth with a pencil, and you are done!',
+    ],
+  },
   fox: {
     name: 'Fox Face', desc: 'The pointy tip of a triangle becomes the snout, and lifting both corners makes ears with white insides.', paper: 'Square origami paper',
     done: 'Your fox face is done! Give it a name and show your friends.',
