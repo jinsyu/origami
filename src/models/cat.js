@@ -10,6 +10,7 @@ export const cat = {
   desc: '세모를 접고 양쪽 끝을 위로 올리면 뾰족한 귀가 생겨요. 세 번이면 끝나요.',
   paper: '정사각형 색종이',
   colors: { front: '#fbf8f1', back: '#e08a3c' },
+  pattern: 'stripes',
   accent: '#b4621f',
   outline: [[0, -R], [R, 0], [0, R], [-R, 0]],
   view: [0.3, -0.45, 1],

@@ -10,6 +10,7 @@ export const bookmark = {
   desc: '책 모서리에 쏙 끼우는 책갈피예요. 앞장으로 주머니를 만들고 양쪽 끝을 그 안에 끼워 넣어요. 얼굴을 그려 꾸며 보세요.',
   paper: '정사각형 색종이',
   colors: { front: '#fbf8f1', back: '#2bb3a3' },
+  pattern: 'check',
   accent: '#178a7d',
   outline: [[0, -R], [R, 0], [0, R], [-R, 0]],
   view: [0.3, -0.45, 1],

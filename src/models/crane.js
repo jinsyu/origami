@@ -62,6 +62,7 @@ export const crane = {
   desc: '사각 기본형에서 꽃잎 접기를 앞뒤로 하고, 목과 꼬리를 뒤집어 접어 세워요. 종이접기의 대표 작품이에요.',
   paper: '정사각형 색종이',
   colors: { front: '#fbf8f1', back: '#2e86ab' },
+  pattern: 'waves',
   accent: '#1f6a8a',
   outline: [[0, -R], [R, 0], [0, R], [-R, 0]],
   view: [0.3, -0.45, 1],

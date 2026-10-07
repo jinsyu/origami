@@ -48,6 +48,39 @@ function paperTexture() {
   return sharedTex;
 }
 
+// 무늬 색종이: 색깔 면에만 입힌다. 재질 색과 곱해지므로 바탕은 밝은 회색, 무늬는 흰색으로 그려 색 안에서 밝게 보이게 한다
+const patternCache = new Map();
+function patternTexture(kind) {
+  if (patternCache.has(kind)) return patternCache.get(kind);
+  const c = document.createElement('canvas');
+  c.width = c.height = 256;
+  const g = c.getContext('2d');
+  g.drawImage(paperTexture().image, 0, 0);
+  g.globalCompositeOperation = 'multiply';
+  g.fillStyle = 'rgb(214,214,214)';
+  g.fillRect(0, 0, 256, 256);
+  g.globalCompositeOperation = 'source-over';
+  g.fillStyle = 'rgba(255,255,255,0.95)';
+  g.strokeStyle = 'rgba(255,255,255,0.95)';
+  if (kind === 'dots') {
+    for (let y = 0; y < 256; y += 32) for (let x = (y / 32) % 2 ? 16 : 0; x < 256 + 16; x += 32) { g.beginPath(); g.arc(x, y + 16, 5, 0, Math.PI * 2); g.fill(); }
+  } else if (kind === 'stripes') {
+    g.lineWidth = 9;
+    for (let i = -256; i < 512; i += 32) { g.beginPath(); g.moveTo(i, 0); g.lineTo(i + 256, 256); g.stroke(); }
+  } else if (kind === 'check') {
+    g.globalAlpha = 0.45;
+    for (let i = 0; i < 256; i += 64) { g.fillRect(i, 0, 32, 256); g.fillRect(0, i, 256, 32); }
+  } else if (kind === 'waves') {
+    g.lineWidth = 4;
+    for (let y = 8; y < 256; y += 24) { g.beginPath(); for (let x = 0; x <= 256; x += 4) g.lineTo(x, y + Math.sin((x / 256) * Math.PI * 4) * 6); g.stroke(); }
+  }
+  const tex = new THREE.CanvasTexture(c);
+  tex.wrapS = tex.wrapT = THREE.RepeatWrapping;
+  tex.colorSpace = THREE.SRGBColorSpace;
+  patternCache.set(kind, tex);
+  return tex;
+}
+
 export function addLights(scene) {
   // 그늘진 면도 종이 색이 그대로 읽히도록 바닥광을 밝게, 주광 대비는 낮게 둔다
   scene.add(new THREE.HemisphereLight('#ffffff', '#ece9e2', 1.9));
@@ -82,6 +115,13 @@ export class PaperMesh {
     this.uvScale = 1.6 / Math.max(Math.max(...us) - this.uvMin[0], Math.max(...vs) - this.uvMin[1]);
     this.frontMat.color.set(model.colors.front);
     this.backMat.color.set(model.colors.back);
+    // 무늬는 색깔 면(흰색이 아닌 쪽)에 입힌다
+    const plain = paperTexture();
+    const pat = model.pattern ? patternTexture(model.pattern) : plain;
+    const frontIsWhite = new THREE.Color(model.colors.front).getHSL({}).l > 0.9;
+    this.frontMat.map = frontIsWhite ? plain : pat;
+    this.backMat.map = frontIsWhite ? pat : plain;
+    this.frontMat.needsUpdate = this.backMat.needsUpdate = true;
     this.plan = null;
   }
 

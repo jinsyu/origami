@@ -11,6 +11,7 @@ export const kabuto = {
   desc: '양쪽 날개를 올렸다가 바깥으로 꺾어 뿔을 만드는 옛 장수의 투구예요. 앞뒤 장을 따로 접는 연습이에요.',
   paper: '정사각형 색종이',
   colors: { front: '#fbf8f1', back: '#3d6fb6' },
+  pattern: 'waves',
   accent: '#2b5594',
   outline: [[0, -R], [R, 0], [0, R], [-R, 0]],
   view: [0.3, -0.45, 1],

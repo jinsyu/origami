@@ -9,6 +9,7 @@ export const envelope = {
   desc: '네 모서리를 차례로 접어 겹치면 덮개가 있는 봉투가 돼요. 먼저 접은 장 위에 다음 장을 정확히 얹는 연습이에요.',
   paper: '정사각형 색종이',
   colors: { front: '#fbf8f1', back: '#7b9acc' },
+  pattern: 'dots',
   accent: '#3f63a1',
   outline: [[0, -R], [R, 0], [0, R], [-R, 0]],
   view: [0.3, -0.45, 1],

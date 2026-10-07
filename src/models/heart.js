@@ -10,6 +10,7 @@ export const heart = {
   desc: '반듯한 띠를 만든 뒤 양쪽을 접어 올리고 모서리를 둥글게 다듬어요. 정확하게 맞춰 접는 힘이 필요해요.',
   paper: '정사각형 색종이',
   colors: { front: '#fbf8f1', back: '#d63c5e' },
+  pattern: 'dots',
   accent: '#b82a4b',
   outline: [[-0.5, -0.5], [0.5, -0.5], [0.5, 0.5], [-0.5, 0.5]],
   view: [0.3, -0.45, 1],

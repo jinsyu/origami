@@ -22,6 +22,7 @@ export const tulip = {
   desc: '날개를 벌려 눌러 삼각형 기본형을 만들고, 날개 끝을 모아 꽃봉오리를 만들어요. 펼쳐 누르기를 배워요.',
   paper: '정사각형 색종이',
   colors: { front: '#fbf8f1', back: '#e2557b' },
+  pattern: 'dots',
   accent: '#c43a62',
   outline: [[-H, -H], [H, -H], [H, H], [-H, H]],
   view: [0.3, -0.45, 1],
