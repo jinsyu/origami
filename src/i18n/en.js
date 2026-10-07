@@ -18,7 +18,7 @@ export const enModels = {
     steps: [
       'Place the paper colored side up as a diamond. Fold the bottom corner up along the dotted line a little below the center. A colored strip stays at the top.',
       'Turn the paper over.',
-      'Fold the right half over to the left, and you are done!',
+      'Fold in half to the left along the line just right of the center. A thin edge of bread peeks out. Done!',
     ],
   },
   owl: {
