@@ -1,5 +1,16 @@
 // 영어 문구. 작품별 이름·설명·단계 안내, 화면 문구
 export const enModels = {
+  tv: {
+    name: 'TV', desc: 'Fold the top and sides in narrowly for a frame, then fold the bottom up for the control panel. Draw the buttons.', paper: 'Square origami paper',
+    done: 'Your TV is done! Draw your favorite picture on the screen.',
+    steps: [
+      'Place the paper colored side down. Fold in half both ways and unfold to make creases.',
+      'Fold the top edge down narrowly along the dotted line.',
+      'Fold both side edges in narrowly along the dotted lines.',
+      'Fold the bottom edge up along the dotted line. This is the control panel.',
+      'Draw a round power button and square buttons with a pencil, and you are done!',
+    ],
+  },
   piano: {
     name: 'Piano', desc: 'Fold narrow strips on both sides and a corner at an angle for a grand piano lid, then fold the bottom up for white keys.', paper: 'Square origami paper (black or gray)',
     done: 'Your piano is done! Shall we play do-re-mi?',
