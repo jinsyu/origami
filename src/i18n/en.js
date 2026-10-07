@@ -1,5 +1,16 @@
 // 영어 문구. 작품별 이름·설명·단계 안내, 화면 문구
 export const enModels = {
+  icecream: {
+    name: 'Ice Cream Cone', desc: 'Fold the two bottom edges to the center for the cone, then fold the top down and back up for a pointy swirl of cream.', paper: 'Square origami paper (orange)',
+    done: 'Your ice cream is done! You can draw colorful sprinkles on the cream.',
+    steps: [
+      'Place the paper white side up as a diamond. Fold the two bottom edges to the center line.',
+      'Turn the paper over.',
+      'Fold the top corner down along the dotted line.',
+      'Fold that tip back up along the dotted line.',
+      'Turn the paper over, and you are done!',
+    ],
+  },
   pencil: {
     name: 'Pencil', desc: 'Fold the top into a thin strip for the lead, then fold the corners front and back for a pointy pencil.', paper: 'Square origami paper',
     done: 'Your pencil is done! Fold them in many colors and put them in your pencil case.',
