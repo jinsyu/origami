@@ -29,7 +29,7 @@ export const enModels = {
     steps: [
       'Place the paper colored side down as a diamond. Fold in half both ways and unfold to make creases.',
       'Fold the top corner down along the dotted line.',
-      'Fold the bottom corner up to the center point.',
+      'Fold the bottom corner up until it meets the top corner you folded down.',
       'Fold both side corners to the center line.',
       'Fold the tip of the top triangle up a little to make the beak.',
       'Draw big round eyes and wing marks with a pencil, and you are done!',
