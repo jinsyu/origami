@@ -1,0 +1,100 @@
+{
+  "src": "https://en.origami-club.com/easy/animal-face/koalaface/zu.gif",
+  "note": "회색 종이 도안이라 색 면(앞뒤)을 채도로 가르지 못한다 — 종이 모양만 본다",
+  "panels": [
+    {
+      "label": 1,
+      "after": 0,
+      "box": [
+        20,
+        16,
+        264,
+        254
+      ],
+      "minColor": 0
+    },
+    {
+      "label": 2,
+      "after": 1,
+      "box": [
+        280,
+        16,
+        524,
+        254
+      ],
+      "minColor": 0
+    },
+    {
+      "label": 3,
+      "after": 2,
+      "box": [
+        18,
+        270,
+        266,
+        394
+      ],
+      "minColor": 0
+    },
+    {
+      "label": 4,
+      "after": 3,
+      "box": [
+        256,
+        274,
+        384,
+        394
+      ],
+      "minColor": 0
+    },
+    {
+      "label": 5,
+      "after": 4,
+      "box": [
+        384,
+        250,
+        546,
+        392
+      ],
+      "minColor": 0
+    },
+    {
+      "label": 6,
+      "after": 5,
+      "box": [
+        26,
+        412,
+        184,
+        548
+      ],
+      "minColor": 0
+    },
+    {
+      "label": 8,
+      "after": 7,
+      "box": [
+        40,
+        563,
+        180,
+        686
+      ],
+      "minColor": 0
+    },
+    {
+      "label": "완성",
+      "after": 10,
+      "box": [
+        344,
+        544,
+        548,
+        700
+      ],
+      "minColor": 0
+    }
+  ],
+  "fit": {
+    "et": [
+      -0.12,
+      0.04
+    ]
+  }
+}

@@ -7,10 +7,16 @@ const has = (t) => (c) => c.tags.has(t);
 const ear = (c) => c.tags.has('earL') || c.tags.has('earR');
 const flip = { spin: { a: [0, 0, 0], b: [0, 1, 0], angle: 180 } };
 // 내린 날개만 접는 선: 가운데 선 위 (0,-0.169)에서 날개와 몸통이 이어진 변의 끝 (A,-A)까지
-const UP = [[0, -0.169], [A, -A]]; // 귀 끝이 경첩 끝 바로 위에서 10° 바깥으로 기운 (0.44, 0.14) 에 온다
+const upLine = (u0) => [[0, u0], [A, -A]]; // 귀 끝이 경첩 끝 바로 위에서 10° 바깥으로 기운 (0.44, 0.14) 에 온다
 const mirror = (L) => L.map(([x, y]) => [-x, y]);
 
-export const koala = {
+export const koalaParams = { u0: -0.176, mt: -0.089, et: -0.03 };
+
+export function makeKoala({ u0, mt, et } = koalaParams) {
+  const UP = upLine(u0);
+  return {
+  params: { u0, mt, et },
+  make: makeKoala,
   id: 'koala',
   name: '코알라 얼굴',
   level: 2,
@@ -39,12 +45,12 @@ export const koala = {
         { line: mirror(UP), side: [-0.02, -0.65], filter: has('flapL'), tag: 'earL' },
       ],
     },
-    { text: '두 귀 사이의 작은 꼭짓점을 조금 접어 내려요.', moves: [{ line: [[-1, -0.06], [1, -0.06]], side: [0, -0.01], filter: (c) => !ear(c) }] },
+    { text: '두 귀 사이의 작은 꼭짓점을 조금 접어 내려요.', moves: [{ line: [[-1, mt], [1, mt]], side: [0, -0.01], filter: (c) => !ear(c) }] },
     {
       text: '두 귀의 끝을 조금씩 접어 둥글게 만들어요.',
       moves: [
-        { line: [[0.3, 0.07], [0.6, 0.07]], side: [0.44, 0.13], filter: has('earR') },
-        { line: [[-0.3, 0.07], [-0.6, 0.07]], side: [-0.44, 0.13], filter: has('earL') },
+        { line: [[0.3, et], [0.6, et]], side: [0.44, 0.13], filter: has('earR') },
+        { line: [[-0.3, et], [-0.6, et]], side: [-0.44, 0.13], filter: has('earL') },
       ],
     },
     { text: '종이를 뒤집어요.', moves: [flip], view: [0, 0.4, 1] },
@@ -53,3 +59,6 @@ export const koala = {
     { text: '연필로 눈과 커다란 코를 그리면 완성!', view: [0, -0.1, 1], draw: [...eye(-0.14, -0.19, 0.022), ...eye(0.14, -0.19, 0.022), { dot: [0, -0.3], r: 0.055, ry: 0.075, color: PENCIL }] },
   ],
 };
+}
+
+export const koala = makeKoala();
