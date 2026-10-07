@@ -9,7 +9,7 @@ const top = (c) => c.tags.has('top');
 export const monkey = {
   id: 'monkey',
   name: '원숭이',
-  level: 3,
+  level: 2,
   desc: '반으로 접은 뒤 한쪽을 펼쳐 누르면 하얀 얼굴이 나와요. 눈과 머리카락을 그려 주세요.',
   paper: '정사각형 색종이',
   colors: { front: '#fbf8f1', back: '#e8a067' },

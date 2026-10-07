@@ -8,7 +8,7 @@ const TAIL_LINE = [[0.3, 0], [0.3 + 0.5, 0.866]]; // 눕힌 뒤 좌표, 60°
 export const whale = {
   id: 'whale',
   name: '고래',
-  level: 3,
+  level: 2,
   desc: '연 모양에서 머리를 뭉툭하게 접고, 가는 끝을 바깥으로 뒤집어 꼬리를 세워요.',
   paper: '정사각형 색종이',
   colors: { front: '#fbf8f1', back: '#2f6f9f' },

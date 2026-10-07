@@ -17,7 +17,7 @@ const TIP = [P[0] + nd[0] * L * 0.95, nd[1] * L * 0.95];
 export const duck = {
   id: 'duck',
   name: '오리',
-  level: 3,
+  level: 2,
   desc: '가는 끝을 뒤집어 접어 목을 세우고, 목 끝을 한 번 더 뒤집어 부리를 만들어요. 뒤집어 접기를 두 번 이어서 해요.',
   paper: '정사각형 색종이',
   colors: { front: '#fbf8f1', back: '#e9c46a' },

@@ -7,7 +7,7 @@ const WING_A = [[-H, 0.12], [H, 0.28]];
 export const glider = {
   id: 'glider',
   name: '글라이더',
-  level: 3,
+  level: 2,
   desc: '앞을 뭉툭하게 접어 무게를 앞에 모은 넓은 날개 비행기예요. 천천히 오래 날아요.',
   paper: '정사각형 색종이',
   colors: { front: '#fbf8f1', back: '#e76f51' },

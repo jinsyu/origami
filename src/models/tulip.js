@@ -20,7 +20,7 @@ const petals = (front) => [
 export const tulip = {
   id: 'tulip',
   name: '튤립 꽃봉오리',
-  level: 4,
+  level: 3,
   desc: '날개를 벌려 눌러 삼각형 기본형을 만들고, 날개 끝을 모아 꽃봉오리를 만들어요. 펼쳐 눌러 접기를 배워요.',
   paper: '정사각형 색종이',
   colors: { front: '#fbf8f1', back: '#e2557b' },

@@ -9,7 +9,7 @@ const top = (c) => c.tags.has('top');
 export const elephant = {
   id: 'elephant',
   name: '코끼리',
-  level: 3,
+  level: 2,
   desc: '왼쪽을 비스듬히 접고 반으로 접은 뒤 펼쳐 누르면, 긴 코와 큰 귀가 있는 코끼리 얼굴이 돼요.',
   paper: '정사각형 색종이',
   colors: { front: '#fbf8f1', back: '#5bb8d8' },

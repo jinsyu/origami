@@ -405,6 +405,18 @@ export const enModels = {
       'Color the cheeks and tongue pink with a colored pencil, and you are done!',
     ],
   },
+  neuli: {
+    name: 'Neuli Face', desc: 'Our school friend Neuli! Fold a triangle, stand the ears up and fold the chin to make a wide, cute face.', paper: 'Square origami paper (light yellow or apricot)',
+    done: 'Neuli face is done! You can draw a flower on top of the head too.',
+    steps: [
+      'Place the paper colored side down as a diamond. Fold the top corner down to the bottom corner.',
+      'Fold both side corners up so the tips stand almost straight. These are Neuli\'s ears.',
+      'Fold the bottom tip well behind to make a wide chin.',
+      'Fold the two bottom corners behind a little to round off the face.',
+      'With a pencil, draw the swirl on the forehead, the eyes and a smiling mouth.',
+      'Color the cheeks pink with a colored pencil, and you are done!',
+    ],
+  },
   cat: {
     name: 'Cat Face', desc: 'Fold a triangle and lift both ends up into pointy ears. Done in three folds.', paper: 'Square origami paper',
     done: 'Your cat face is done! Give it a name and show your friends.',

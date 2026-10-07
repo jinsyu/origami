@@ -45,7 +45,7 @@ const flaps = () => {
 export const masu = {
   id: 'masu',
   name: '네모 상자',
-  level: 4,
+  level: 3,
   maxJump: 0.07, // 벽 네 개를 한꺼번에 세우는 큰 입체 조립
   desc: '평면에서 선을 미리 내 두고, 벽을 세우고 모서리를 접어 넣어 입체 상자를 조립해요.',
   paper: '정사각형 색종이',
