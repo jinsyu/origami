@@ -387,12 +387,15 @@ export function simArrows(sim, n = 2) {
   sim.loops.forEach((L, pi) => L.forEach((_, li) => {
     const a = sim.start[pi][li], b = sim.end[pi][li];
     // 경로 길이 (프레임을 따라 잰 거리)
-    let len = 0;
+    // (제자리에서 흔들리다 돌아오는 점은 화살표가 점으로 보이므로 실제로 옮겨 간 점만 고른다)
+    let len = 0, far = 0;
     for (let f = 1; f < sim.frames.length; f++) {
       const p = sim.frames[f - 1][pi][li], q = sim.frames[f][pi][li];
       len += Math.hypot(q[0] - p[0], q[1] - p[1], q[2] - p[2]);
+      far = Math.max(far, Math.hypot(q[0] - a[0], q[1] - a[1], q[2] - a[2]));
     }
-    if (len > 0.08) cand.push({ pi, li, len, a, b });
+    const net = Math.hypot(b[0] - a[0], b[1] - a[1], b[2] - a[2]);
+    if (len > 0.08 && far > 0.08 && net > 0.05) cand.push({ pi, li, len, a, b });
   }));
   cand.sort((x, y) => y.len - x.len);
   const picked = [];
