@@ -8,7 +8,7 @@
 // --img: 그림마다 [도안 | 엔진 | 차이(빨강: 도안에만, 파랑: 엔진에만, 노랑: 색이 다름)] 를 한 장으로 저장
 //
 // 기준 파일 scripts/refs/<id>.json:
-//   { "src": "zu.gif 주소", "panels": [{ "after": 접은 단계 수, "box": [x0, y0, x1, y1], "rot": 도, "note": "" }], "fit": { "이름": [최소, 최대] } }
+//   { "src": "zu.gif 주소", "panels": [{ "after": 접은 단계 수, "box": [x0, y0, x1, y1], "rot": 도, "note": "", "minIou": 0.9 }], "fit": { "이름": [최소, 최대] } }
 //   after = 그 그림이 보여 주는 상태가 몇 단계를 접은 뒤인지 (도안의 n번 그림 = n-1 단계 뒤, 완성 그림 = 접기 단계 전부)
 import { buildModel, rawPose, polyNormal } from '../src/engine.js';
 import { MODELS, DEV } from '../src/models/index.js';
@@ -239,14 +239,15 @@ if (FIT && model.make && ref.fit) {
         if (bv > best) { best = bv; prm = { ...prm, [k]: xs[bi] }; }
       }
     }
-    console.log(`  ${round + 1}회: 점수 ${best.toFixed(4)}`, Object.fromEntries(Object.entries(prm).map(([k, v]) => [k, +v.toFixed(4)])));
+    console.log(`  ${round + 1}회: 점수 ${best.toFixed(4)}`, Object.fromEntries(Object.entries(prm).map(([k, v]) => [k, typeof v === 'number' ? +v.toFixed(4) : v])));
   }
   mdl = model.make(prm);
 }
 console.log(`${model.name} (${id}) 도안 비교`);
 const { res, mean } = evaluate(mdl);
 console.log(`  평균 점수 ${mean.toFixed(3)} (종이 IoU + 0.25×색 일치, 최대 1.25)`);
-const off = res.filter((r) => r.iou < 0.9 || r.color < 0.85);
+// minIou: 도안 그림 자체가 실제로 접히는 모양과 다르게 그려진 그림에만 쓴다 (note 에 이유를 적는다)
+const off = res.filter((r) => r.iou < (r.p.minIou ?? 0.9) || r.color < 0.85);
 if (off.length) console.log(`  ✗ 도안과 다른 그림: ${off.map((r) => r.p.label ?? r.p.after).join(', ')}`);
 process.exitCode = off.length ? 1 : 0;
 

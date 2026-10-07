@@ -1,0 +1,11 @@
+{
+  "src": "https://en.origami-club.com/easy/sea/tadpole/zu.gif",
+  "panels": [
+    { "label": 1, "after": 0, "box": [22, 22, 252, 253] },
+    { "label": 2, "after": 1, "box": [246, 55, 530, 203] },
+    { "label": 3, "after": 2, "box": [40, 284, 193, 430] },
+    { "label": 5, "after": 3, "box": [37, 490, 223, 617] },
+    { "label": "완성", "after": 4, "box": [371, 410, 531, 657], "minIou": 0.87, "note": "도안의 꼬리가 실제 접힌 모양보다 길게 그려짐 (접는 선 위 끝에서 꼬리 끝까지 그림은 0.6, 접으면 0.42)" }
+  ],
+  "fit": { "tailTop": [-0.3, -0.2], "tailSide": [0.15, 0.23] }
+}

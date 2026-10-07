@@ -1,0 +1,17 @@
+{
+  "src": "https://en.origami-club.com/easy/animal-face/tiger-face/zu.gif",
+  "panels": [
+    { "label": 1, "after": 0, "box": [2, 14, 192, 204] },
+    { "label": 2, "after": 1, "box": [199, 13, 387, 205] },
+    { "label": 3, "after": 2, "box": [373, 131, 565, 229] },
+    { "label": 4, "after": 3, "box": [9, 237, 162, 388] },
+    { "label": 5, "after": 4, "box": [161, 238, 295, 391] },
+    { "label": 6, "after": 5, "box": [314, 242, 430, 393] },
+    { "label": 7, "after": 6, "box": [441, 261, 557, 392] },
+    { "label": 8, "after": 7, "box": [22, 417, 137, 551] },
+    { "label": 9, "after": 8, "box": [182, 416, 297, 552] },
+    { "label": 10, "after": 9, "box": [24, 576, 139, 678] },
+    { "label": "완성", "after": 10, "box": [378, 530, 550, 672] }
+  ],
+  "fit": { "earY": [-0.4, -0.28], "earX": [0.2, 0.32], "side": [0.22, 0.3], "top": [-0.2, -0.08], "chin": [-0.6, -0.5] }
+}
