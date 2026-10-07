@@ -40,7 +40,7 @@ export const enModels = {
     done: 'Your yacht is done! Float it on a blue sea.',
     steps: [
       'Place the paper white side up. Fold the top left corner to the bottom right corner along the diagonal.',
-      'Fold the front layer to the left along the dotted line. A white sail appears.',
+      'Fold the front layer to the left so its right edge lines up with the long slanted edge. A white sail appears.',
       'Fold the bottom up along the dotted line. This is the hull.',
     ],
   },

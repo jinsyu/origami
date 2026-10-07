@@ -4,7 +4,12 @@
 const H = 0.5;
 const has = (t) => (c) => c.tags.has(t);
 
-export const yacht = {
+export const yachtParams = { sx: H - (Math.SQRT2 - 1), yl: -0.225, yr: -0.38 };
+
+export function makeYacht({ sx, yl, yr } = yachtParams) {
+  return {
+  params: { sx, yl, yr },
+  make: makeYacht,
   id: 'yacht',
   name: '요트',
   level: 1,
@@ -18,7 +23,10 @@ export const yacht = {
   done: '요트 완성! 파란 바다 위에 띄워 보세요.',
   steps: [
     { text: '흰 면이 위로 오게 놓고, 왼쪽 위 모서리를 오른쪽 아래 모서리에 맞춰 대각선으로 반 접어요.', moves: [{ line: [[-H, -H], [H, H]], side: [-H, H], tag: 'front' }] },
-    { text: '앞의 한 장을 점선에서 왼쪽으로 접어요. 하얀 돛이 생겨요.', moves: [{ line: [[0.03, -H], [H, H]], side: [0.45, -0.3], filter: has('front'), tag: 'sail' }] },
-    { text: '아래쪽을 점선에서 접어 올려요. 배 몸통이 돼요.', moves: [{ line: [[-H, -0.27], [H, -0.33]], side: [0, -H] }] },
+    { text: '앞의 한 장을 왼쪽으로 접어요. 오른쪽 세로 변이 긴 비스듬한 변에 딱 맞게 접으면 하얀 돛이 생겨요.', moves: [{ line: [[sx, -H], [H, H]], side: [0.45, -0.3], filter: has('front'), tag: 'sail' }] },
+    { text: '아래쪽을 점선에서 접어 올려요. 배 몸통이 돼요.', moves: [{ line: [[-H, yl], [H, yr]], side: [0, -H] }] },
   ],
 };
+}
+
+export const yacht = makeYacht();
