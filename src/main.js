@@ -405,7 +405,10 @@ function toggleAuto() {
 $('prev').onclick = prevStep;
 $('fold').onclick = foldStep;
 $('auto').onclick = toggleAuto;
-$('speed').onchange = (e) => { speed = +e.target.value; };
+// 접는 속도는 이 브라우저에 기억해 두고 다음에도 쓴다
+const speedKey = 'origami.speed';
+try { const v = +localStorage.getItem(speedKey); if ([...$('speed').options].some((o) => +o.value === v)) { speed = v; $('speed').value = String(v); } } catch { /* 저장소 사용 불가 */ }
+$('speed').onchange = (e) => { speed = +e.target.value; try { localStorage.setItem(speedKey, String(speed)); } catch { /* 무시 */ } };
 slider.oninput = () => {
   if (!model) return;
   autoAll = false;
