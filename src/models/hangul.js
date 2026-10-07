@@ -191,7 +191,11 @@ export const rieul = letter({
       en: 'Open the short strip cut from the right and fold it again the other way.',
       // 떼어 놓은 자리 x∈[3H/4, 7H/8], 바깥 변 x=7H/8 이 반 접은 선. 펼친 뒤 같은 선에서 뒤로 접는다
       sim: true, tearOk: true, // 잘린 조각만 움직이므로 이웃과 끌어당기지 않게
-      moves: [foldPiece('leg', foldX(7 * H / 8, -1)), foldPiece('leg', { ...foldX(7 * H / 8, 1), toward: -1 })],
+      // 위 겹(반 접혀 올라온 절반)만 오른쪽으로 펼친 뒤, 그 겹을 같은 선에서 뒤로 넘겨 접는다
+      moves: [
+        foldPiece('leg', { ...foldX(7 * H / 8, -1), grab: [13 * H / 16, -H / 4], layers: 'all', half: 'front', tag: 'legOpen' }),
+        foldPiece('leg', { ...foldX(7 * H / 8, 1), toward: -1, filter: (q) => q.tags.has('legOpen') }),
+      ],
     },
     {
       ko: '짧은 띠를 흰 네모 안쪽 왼쪽 아래에 세로로 붙여요.',
@@ -203,37 +207,61 @@ export const rieul = letter({
   ],
 });
 
-// ㅑ: 영상은 말아 접은 띠의 두 칸을 펼쳐 눌러 세우는데, 그 꼭짓점을 영상에서 확정하지 못해 같은 끝 모양을 가위로 만든다.
-// 흰 면 위 → 양옆을 가운데로 두 번 모으고 반 접어 폭 1/8·높이 1 막대 (x∈[-1/8, 0]) → 아래 1/4 을 잘라 막대 높이 3/4 →
-// 잘라 낸 조각을 반으로 잘라 1/8 정사각형 두 개 → 막대 오른쪽에 짧은 획으로 붙인다
-// (막대 높이 기준 위에서 0.21–0.38, 0.54–0.71. 영상 측정 0.19–0.38, 0.54–0.76)
+// ㅑ (영상 순서): 흰 면 위. 양옆을 1/8 접어 넣어 폭 3/4 → 위쪽(약 0.28)을 접어 내렸다가 다시 올리며 양옆 검은 기둥 윗부분을 안쪽으로 접어 넣는다 →
+// 위쪽 흰 부분(흰 기둥 폭)을 두 번 말아 내려 검은 띠(높이 T) → 띠의 두 칸을 위로 세워 짧은 획 →
+// 아래를 두 번 접어 올리고 반을 뒤로 접어 막대 → 뒤집고 시계 방향으로 90° 돌리면 오른쪽 칸이 위쪽 짧은 획이 된다.
+// 치수(영상 측정에 맞춤): 짧은 획 크기·막대 굵기 = 띠 높이 T ≈ 0.14, 칸 가운데 x ≈ -0.125, 0.156 (측정 [-0.22,-0.07], [0.08,0.23])
+// 영상은 칸을 세울 때 칸 양옆 띠를 손으로 눌러 살짝 구겨 넣는다 — 그 꼭짓점은 평평하게 접힐 수 없다(접는 선 사이 각을 건너 더해 180° 가 안 됨).
+// 엔진은 평평한 종이만 다루므로 그 구김 자리만 보이지 않는 이음선(seam)으로 칸을 나눠 세운다. 가위는 쓰지 않는다.
+const YA_TOP = 7 / 32; // 위쪽을 접어 내리는 선 (위 흰 부분 높이 0.28)
+const YA_T = (H - YA_TOP) / 2; // 띠 높이 = 두 번 말기의 한 번 폭
+const YA_B = YA_TOP - YA_T; // 띠 아래 변
+const BAND = 'band', ROLL1 = 'roll1';
+const inBand = (c) => c.tags.has(BAND);
+const tab = (cx, ko, en) => {
+  const c0 = cx - YA_T / 2, c1 = cx + YA_T / 2;
+  return {
+    ko, en, sim: true, tearOk: true,
+    moves: [
+      // 띠의 그 칸만 나눈다 (영상에서 손으로 구겨 넣는 자리)
+      { line: [[c0, -1], [c0, 1]], side: [c0 + 0.01, YA_B + 0.01], angle: 0, seam: true, filter: inBand },
+      { line: [[c1, -1], [c1, 1]], side: [c1 - 0.01, YA_B + 0.01], angle: 0, seam: true, filter: (c) => inBand(c) && c.x > c0 },
+      // 두 번째로 말았던 것을 그 칸만 풀어 위로 세운다
+      { line: [[-1, YA_TOP], [1, YA_TOP]], side: [cx, YA_B + 0.01], filter: (c) => inBand(c) && c.x > c0 && c.x < c1, tag: `tab${cx}` },
+      // 앞에 덮인 첫 번째 말림 겹의 오른쪽 아래 세모를 대각선으로 접어 뒤로 넣는다 → 앞면이 반씩 검정/흰색
+      { line: [[c0, YA_TOP], [c1, YA_TOP + YA_T]], side: [c1 - 0.01, YA_TOP + 0.01], filter: (c) => c.tags.has(`tab${cx}`) && c.tags.has(ROLL1), toward: -1 },
+    ],
+  };
+};
 export const ya = letter({
   id: 'ya', char: 'ㅑ', roman: 'ya', video: '0Ax-hbENp8Q',
-  desc: ['긴 막대를 접은 뒤 아래 끝을 잘라 두 조각으로 나누고, 막대 옆에 붙이면 한글 ㅑ 가 돼요.', 'Fold a long bar, cut off its bottom end, cut that into two pieces and glue them beside the bar to make the Korean letter ㅑ (ya).'],
+  desc: ['위쪽을 말아 접은 띠에서 두 칸을 위로 세우고 막대로 접으면 한글 ㅑ 가 돼요.', 'Roll the top into a band, stand two of its squares up and fold the rest into a bar to make the Korean letter ㅑ (ya).'],
   steps: [
-    { ko: '흰 면이 위로 오게 놓고, 양쪽 끝을 가운데 선에 맞춰 접어요.', en: 'Place the paper white side up and fold both sides to the middle line.', moves: [foldX(H / 2, 1), foldX(-H / 2, -1)] },
-    { ko: '양쪽을 한 번 더 가운데 선에 맞춰 접어요.', en: 'Fold both sides to the middle line once more.', moves: [foldX(H / 4, 1), foldX(-H / 4, -1)] },
-    { ko: '가운데 선에서 반으로 접어 긴 막대를 만들어요.', en: 'Fold it in half along the middle line to make a long bar.', moves: [foldX(0, 1)] },
-    cutPiece({
-      ko: '막대 아래쪽 ¼ 을 가위로 잘라 내요.', en: 'Cut off the bottom quarter of the bar with scissors.',
-      cuts: [{ line: [[-1, -H / 2], [1, -H / 2]], side: [0, -H] }], tag: 'tick', pull: [H / 2, 0],
-    }),
-    cutPiece({
-      ko: '잘라 낸 조각을 반으로 잘라 작은 네모 두 개를 만들어요.', en: 'Cut the piece in half to make two small squares.',
-      cuts: [{ line: [[-1, -3 * H / 4], [1, -3 * H / 4]], side: [0, -H], filter: (c) => c.tags.has(PIECE('tick')) }], tag: 'tick2', pull: [0, -H / 4],
-    }),
+    { ko: '흰 면이 위로 오게 놓고, 위아래로 반 접었다 펴요.', en: 'Place the paper white side up. Fold it in half top to bottom and unfold.', moves: [{ line: [[-1, 0], [1, 0]], side: [0, H], unfold: true }] },
+    { ko: '옆으로도 반 접었다 펴요.', en: 'Fold it in half side to side and unfold.', moves: [{ line: [[0, -1], [0, 1]], side: [H, 0], unfold: true }] },
+    { ko: '양쪽 끝을 조금(⅛) 접어 넣어요. 양옆에 검은 기둥이 생겨요.', en: 'Fold both side edges in a little (1/8). Black columns appear on both sides.', moves: [foldX(3 * H / 4, 1), foldX(-3 * H / 4, -1)] },
+    { ko: '위쪽을 ¼ 보다 조금 더 접어 내려요.', en: 'Fold the top down a little more than a quarter.', moves: [{ ...foldY(YA_TOP, 1), tag: 'topflap' }] },
     {
-      ko: '두 네모를 막대 오른쪽에 짧은 획으로 붙여요. 위에서 조금 내려온 곳과 가운데쯤에 하나씩 붙여요.',
-      en: 'Glue the two squares to the right of the bar as short strokes, one a little below the top and one near the middle.',
-      // 조각 1: x∈[1/8, 1/4], y∈[-3/8, -1/4] → x∈[0, 1/8], y∈[7/32, 11/32]
-      // 조각 2: x∈[1/8, 1/4], y∈[-5/8, -1/2] → x∈[0, 1/8], y∈[-1/32, 3/32]
+      ko: '접은 부분을 다시 올리면서, 양옆 검은 기둥의 윗부분은 안쪽으로 접어 넣어요. 가운데 흰 부분만 위로 남아요.',
+      en: 'Lift the folded part back up, tucking the tops of the black columns inward. Only the white middle stays up.',
+      sim: true, tearOk: true,
       moves: [
-        place('tick', { move: [-H / 4, 19 * H / 16] }),
-        place('tick2', { move: [-H / 4, 19 * H / 16] }),
+        { line: [[-1, YA_TOP], [1, YA_TOP]], side: [0, YA_TOP - 0.05], filter: (c) => c.tags.has('topflap') },
+        // 검은 기둥 윗부분: 흰 기둥 변(x=±1/4)을 따라 흰 덮개 앞으로 접어 넣는다 (영상 9:08 흰 덮개 윗모서리의 검은 조각). 말아 내리면 띠 속에 들어간다
+        { line: [[-1, YA_TOP], [1, YA_TOP]], side: [3 * H / 5, (YA_TOP + H) / 2], angle: 0, seam: true, filter: (c) => Math.abs(c.x) > H / 2 },
+        { line: [[H / 2, -1], [H / 2, 1]], side: [3 * H / 5, (YA_TOP + H) / 2], filter: (c) => c.y > YA_TOP && c.x > H / 2 },
+        { line: [[-H / 2, -1], [-H / 2, 1]], side: [-3 * H / 5, (YA_TOP + H) / 2], filter: (c) => c.y > YA_TOP && c.x < -H / 2 },
       ],
-      torn: true,
-      view: [0, 0, 1],
     },
+    { ko: '위쪽 흰 부분을 반으로 접어 내려요.', en: 'Fold the white top part down in half.', moves: [{ ...foldY(H - YA_T, 1), tag: ROLL1 }] },
+    { ko: '한 번 더 접어 내려 위쪽에 검은 띠를 만들어요.', en: 'Fold it down once more to make a black band along the top.', moves: [{ ...foldY(YA_TOP, 1), filter: (c) => Math.abs(c.x) < H / 2, tag: BAND }] },
+    tab(-H / 4, '띠의 왼쪽 칸 하나를 위로 세워요. 칸 앞쪽 겹을 들어 올리고 대각선으로 접어 넣어요.', 'Stand one square of the band up on the left: lift its front layer and tuck it along the diagonal.'),
+    tab(5 * H / 16, '오른쪽 칸 하나도 같은 방법으로 세워요. 짧은 획 두 개가 돼요.', 'Stand one square on the right the same way. They become the two short strokes.'),
+    { ko: '아래 흰 부분을 띠 바로 밑까지 접어 올려요.', en: 'Fold the white bottom part up to just below the band.', moves: [foldY((-H + YA_B) / 2, -1)] },
+    { ko: '한 번 더 접어 올려요.', en: 'Fold it up once more.', moves: [foldY(((-H + YA_B) / 2 + YA_B) / 2, -1)] },
+    { ko: '길이 방향으로 반을 뒤로 접어 막대를 만들어요.', en: 'Fold it in half lengthwise behind to make a bar.', moves: [{ ...foldY((((-H + YA_B) / 2 + YA_B) / 2 + YA_TOP) / 2, -1), toward: -1 }] },
+    flipOver(),
+    turn(-90, '짧은 획이 오른쪽을 향하게 돌려 세워요.', 'Turn it so the short strokes point to the right.'),
   ],
 });
 
@@ -311,7 +339,6 @@ export const hieut = letter({
   ],
 });
 
-export const HANGUL = [giyeok, nieun, digeut, rieul, mieum, bieup, siot, ieung, jieut, chieut, kieuk, tieut, pieup, hieut, a, i];
-// ㅑ: 지금은 가위로 잘라 붙인 대체 방법이라 영상(펼쳐 누르기)대로 다시 만들 때까지 개발용 목록(?dev)에만 둔다
-// 한글 자모 필터에서 보이는 순서 (ㄱㄴㄷ… 사전 순서; 갤러리 전체는 난이도 순이라 따로 둔다)
+export const HANGUL = [giyeok, nieun, digeut, rieul, mieum, bieup, siot, ieung, jieut, chieut, kieuk, tieut, pieup, hieut, a, ya, i];
+// 한글 자모 순서 (ㄱㄴㄷ… 사전 순서). 전체 목록에서도 이 순서로 끝에 모인다 (models/index.js)
 HANGUL.forEach((m, i) => { m.groupOrder = i; });
