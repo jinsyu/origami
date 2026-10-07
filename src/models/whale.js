@@ -3,9 +3,15 @@
 import { eye, cheek } from './parts/draw.js';
 const R = Math.SQRT1_2;
 const s1 = Math.sin(Math.PI / 8), c1 = Math.cos(Math.PI / 8);
-const TAIL_LINE = [[0.3, 0], [0.3 + 0.5, 0.866]]; // 눕힌 뒤 좌표, 60°
 
-export const whale = {
+export const whaleParams = { tx: 0.486, th: 52.5, hy: 0.5 };
+
+export function makeWhale({ tx, th, hy } = whaleParams) {
+  const a = (th * Math.PI) / 180;
+  const TAIL_LINE = [[tx, 0], [tx + Math.cos(a), Math.sin(a)]]; // 눕힌 뒤 좌표
+  return {
+  params: { tx, th, hy },
+  make: makeWhale,
   id: 'whale',
   name: '고래',
   level: 2,
@@ -26,9 +32,9 @@ export const whale = {
         { line: [[0, -R], [-s1, -R + c1]], side: [-R, 0] },
       ],
     },
-    { text: '위 꼭짓점을 아래로 접어 내려 머리를 뭉툭하게 만들어요.', moves: [{ line: [[-1, 0.3], [1, 0.3]], side: [0, R] }] },
-    { text: '가운데 선을 따라 뒤로 반 접어요.', moves: [{ line: [[0, -1], [0, 1]], side: [-1, 0], toward: -1, tag: 'back' }] },
-    { text: '접힌 쪽이 아래로 오게 눕혀요. 가는 끝이 오른쪽을 향해요.', moves: [{ spin: { a: [0, 0, 0], b: [0, 0, 1], angle: 90 } }] },
+    { text: '위 꼭짓점을 아래로 접어 내려 머리를 뭉툭하게 만들어요.', moves: [{ line: [[-1, hy], [1, hy]], side: [0, R] }] },
+    { text: '가운데 선을 따라 반으로 접어요. 접은 날개가 안쪽으로 들어가요.', moves: [{ line: [[0, -1], [0, 1]], side: [1, 0], toward: 1, tag: 'back' }] },
+    { text: '접힌 쪽이 위로 오게 눕혀요. 가는 끝이 오른쪽을 향해요.', moves: [{ spin: { a: [0, 0, 0], b: [0, 0, 1], angle: 90 } }] },
     {
       text: '가는 끝을 바깥으로 뒤집어 접어 위로 세워요. 꼬리가 돼요.',
       sim: true,
@@ -40,7 +46,10 @@ export const whale = {
     {
       text: '연필로 머리 쪽에 동그란 눈을 그리고, 색연필로 볼을 분홍색으로 칠하면 완성!',
       view: [0, 0.1, 1],
-      draw: [...eye(-0.18, 0.318, 0.02), cheek(-0.2, 0.2, 0.03)],
+      draw: [...eye(-0.36, -0.09, 0.02), cheek(-0.33, -0.19, 0.03)],
     },
   ],
 };
+}
+
+export const whale = makeWhale();

@@ -1,0 +1,17 @@
+{
+  "src": "https://en.origami-club.com/easy/sea/whale/zu.gif",
+  "note": "회색 종이 도안(minColor 0). 앱은 연 모양을 세로로 접어 5단계에서 눕히므로 1~4번은 방향이 달라 완성만 비교",
+  "panels": [
+    {
+      "label": "완성",
+      "after": 7,
+      "box": [
+        278,
+        510,
+        548,
+        664
+      ],
+      "minColor": 0
+    }
+  ]
+}
