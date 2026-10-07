@@ -54,6 +54,11 @@ button, select, input { font: inherit; color: inherit; }
 .bands button:hover { border-color: var(--ink-soft); }
 .bands button[aria-pressed="true"] { background: var(--ink); border-color: var(--ink); color: var(--sheet); }
 .bands button[aria-pressed="true"] small { color: inherit; opacity: .75; }
+.rubric { margin: -10px 0 22px; font-size: 14px; color: var(--ink-soft); }
+.rubric summary { cursor: pointer; width: fit-content; color: var(--muted); }
+.rubric summary:hover { color: var(--ink); }
+.rubric ol { margin: 10px 0 0; padding-left: 1.6em; columns: 2 260px; column-gap: 32px; line-height: 1.7; }
+.rubric li::marker { font-family: var(--display); color: var(--ink); }
 .cards { list-style: none; padding: 0; margin: 0; display: grid; grid-template-columns: repeat(auto-fill, minmax(230px, 1fr)); gap: 22px; }
 .card a { display: block; text-decoration: none; color: inherit; border-radius: 4px; }
 .card .pic { position: relative; aspect-ratio: 1; border-radius: 3px; overflow: hidden; box-shadow: 0 1px 0 rgba(30, 43, 58, 0.08); }
