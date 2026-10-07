@@ -49,5 +49,12 @@ export const foxcub = {
         { line: [[-H, 0], [-Q, -Q]], side: [-H, -Q], tag: 'cl' },
       ],
     },
+    {
+      text: '오른쪽 마름모의 위아래 날개를 점선에서 오른쪽으로 접어요.',
+      moves: [
+        { line: [[0.217, 0.217], [0.262, 0]], side: [0.1, 0.05], filter: (c) => c.y > 0 && (c.tags.has('sqT_in') || c.x > Q), tag: 'earT' },
+        { line: [[0.217, -0.217], [0.262, 0]], side: [0.1, -0.05], filter: (c) => c.y < 0 && (c.tags.has('sqB_in') || c.x > Q), tag: 'earB' },
+      ],
+    },
   ],
 };
