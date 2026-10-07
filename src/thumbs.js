@@ -114,7 +114,8 @@ export function diagram(model, plans, i) {
   const st = model.steps[i], ms = st.moves || [];
   // 좌우 대칭으로 함께 접는 단계는 정면 쪽에서 조금 내려다본다 (화살표가 납작해지지 않게)
   const sym = !st.sim && ms.length === 2 && ms[0].line && ms[1].line && ms[0].line.every((p, k) => Math.abs(p[0] + ms[1].line[k][0]) < 1e-6 && Math.abs(p[1] - ms[1].line[k][1]) < 1e-6);
-  const dir = st.view && st.view[2] > 0.5 ? [st.view[0] * 0.5, st.view[1] * 0.5, 1] : sym ? [0, -0.45, 1] : [0.12, -0.25, 1];
+  // diagramView: 도면에서만 쓰는 시점 (화면 시점으로는 화살표가 납작해지는 단계)
+  const dir = st.diagramView ? st.diagramView : st.view && st.view[2] > 0.5 ? [st.view[0] * 0.5, st.view[1] * 0.5, 1] : sym ? [0, -0.45, 1] : [0.12, -0.25, 1];
   // 꾸미기 단계는 접는 선이 없으므로 다 그린 모습을 보여 준다
   if (model.steps[i].draw) return snapshot(model, plans[i], 1, [0, 0, 1], 420, `${model.id}:d${i}`);
   return snapshot(model, plans[i], 0, dir, 420, `${model.id}:d${i}`, true);
