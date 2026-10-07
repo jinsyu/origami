@@ -7,7 +7,7 @@ const corner = (c) => c.tags.has('cornerL') || c.tags.has('cornerR');
 export const hat = {
   id: 'hat',
   name: '종이 모자',
-  level: 3,
+  level: 2,
   desc: '모서리를 내려 뾰족하게 만들고 아래 띠를 앞뒤로 따로 접어 올리는 모자예요. 큰 종이로 접으면 쓸 수 있어요.',
   paper: '정사각형 색종이',
   colors: { front: '#fbf8f1', back: '#e9b44c' },

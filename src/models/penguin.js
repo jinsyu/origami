@@ -6,7 +6,7 @@ const has = (t) => (c) => c.tags.has(t);
 export const penguin = {
   id: 'penguin',
   name: '펭귄',
-  level: 2,
+  level: 1,
   desc: '양옆을 접으면 검은 날개와 흰 배가, 위 끝을 두 번 접으면 머리와 부리가 생겨요. 산 접기도 처음 해 봐요.',
   paper: '정사각형 색종이',
   colors: { front: '#fbf8f1', back: '#2b2f36' },

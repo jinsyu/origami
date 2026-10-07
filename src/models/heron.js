@@ -21,7 +21,7 @@ const back = (c) => c.tags.has('back');
 export const heron = {
   id: 'heron',
   name: '두루미',
-  level: 7,
+  level: 3,
   desc: '연 모양을 앞뒤로 두 번 접어 가늘게 만든 뒤, 목과 머리와 꼬리를 뒤집어 접는 늘씬한 물새예요.',
   paper: '정사각형 색종이',
   colors: { front: '#fbf8f1', back: '#6b7f99' },

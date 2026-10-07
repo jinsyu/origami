@@ -8,7 +8,7 @@ const flip = { spin: { a: [0, 0, 0], b: [0, 1, 0], angle: 180 } };
 export const cicada = {
   id: 'cicada',
   name: '매미',
-  level: 4,
+  level: 2,
   desc: '줄무늬 머리와 비스듬한 날개. 겹친 종이를 한 장씩 골라 접는 연습이에요.',
   paper: '정사각형 색종이',
   colors: { front: '#fbf8f1', back: '#4f9a5c' },

@@ -22,9 +22,9 @@ const LANG = (() => {
 const EN = LANG === 'en';
 const KO = {
   title: '종이접기 교실', full: '크게 보기', unfull: '작게 보기', stop: '멈추기', replay: '처음부터 다시 보기', auto: '끝까지 이어서 보기',
-  done: '완성', folded: '접어 봤어요', resume: (i, n) => `이어서 ${i}/${n}`, next: (n) => `다음 작품: ${n}`, stepsCount: (n) => `${n}단계`, level: (l) => `난이도 ${l}`,
+  done: '완성', folded: '접어 봤어요', resume: (i, n) => `이어서 ${i}/${n}`, next: (n) => `다음 작품: ${n}`, stepsCount: (n) => `${n}단계`, level: (l) => ['입문', '초급', '중급', '고급'][l - 1],
   printTitle: (n) => `${n} 접는 방법`,
-  bands: [['all', '전체'], ['easy', '처음 (1~3)'], ['mid', '중간 (4~6)'], ['hard', '도전 (7~10)']], bandLabel: '난이도로 보기',
+  bands: [['all', '전체'], ['1', '입문'], ['2', '초급'], ['3', '중급'], ['4', '고급']], bandLabel: '난이도로 보기',
 };
 const T = EN ? enUI : KO;
 if (EN) {
@@ -69,8 +69,8 @@ const plansOf = (m) => { if (!planCache.has(m.id)) planCache.set(m.id, buildMode
 function meter(level) {
   const el = document.createElement('span');
   el.className = 'meter';
-  el.setAttribute('aria-label', EN ? `Difficulty ${level} of 10` : `난이도 10단계 중 ${level}`);
-  el.innerHTML = Array.from({ length: 10 }, (_, i) => `<i class="${i < level ? 'on' : ''}"></i>`).join('');
+  el.setAttribute('aria-label', EN ? `Level: ${T.level(level)}` : `난이도: ${T.level(level)}`);
+  el.innerHTML = Array.from({ length: 4 }, (_, i) => `<i class="${i < level ? 'on' : ''}"></i>`).join('');
   return el;
 }
 
@@ -102,6 +102,7 @@ const hero = createHero($('heroCanvas'), MODELS, plansOf, (m) => {
 const bandKey = 'origami.band';
 let band = 'all';
 try { band = localStorage.getItem(bandKey) || 'all'; } catch { /* 저장소 사용 불가 */ }
+if (!['all', '1', '2', '3', '4'].includes(band)) band = 'all';
 function applyBand() {
   [...$('cards').children].forEach((li) => { li.hidden = band !== 'all' && li.dataset.band !== band; });
   $('bands').querySelectorAll('button').forEach((b) => b.setAttribute('aria-pressed', String(b.dataset.band === band)));
@@ -114,7 +115,7 @@ function renderBands() {
     const b = document.createElement('button');
     b.type = 'button';
     b.dataset.band = key;
-    const n = key === 'all' ? MODELS.length : MODELS.filter((m) => (m.level <= 3 ? 'easy' : m.level <= 6 ? 'mid' : 'hard') === key).length;
+    const n = key === 'all' ? MODELS.length : MODELS.filter((m) => String(m.level) === key).length;
     b.innerHTML = `<span></span><small>${n}</small>`;
     b.querySelector('span').textContent = label;
     b.onclick = () => { band = key; try { localStorage.setItem(bandKey, band); } catch { /* 무시 */ } applyBand(); };
@@ -131,8 +132,8 @@ function renderGallery() {
     const li = document.createElement('li');
     li.className = 'card';
     li.dataset.id = m.id;
-    li.dataset.band = m.level <= 3 ? 'easy' : m.level <= 6 ? 'mid' : 'hard';
-    li.innerHTML = `<a href="#/m/${m.id}"><div class="pic matgrid"><span class="lv" aria-hidden="true">${m.level}</span><img alt="" /></div>
+    li.dataset.band = String(m.level);
+    li.innerHTML = `<a href="#/m/${m.id}"><div class="pic matgrid"><span class="lv" aria-hidden="true">${T.level(m.level)}</span><img alt="" /></div>
       <div class="meta"><h3></h3><p></p><div class="facts"><span class="steps"></span></div></div></a>`;
     li.querySelector('h3').textContent = m.name;
     li.querySelector('p').textContent = m.desc;

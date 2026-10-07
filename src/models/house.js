@@ -6,7 +6,7 @@ const roof = (c) => c.tags.has('roofL') || c.tags.has('roofR');
 export const house = {
   id: 'house',
   name: '집',
-  level: 2,
+  level: 1,
   desc: '모서리 두 개를 가운데 선에 맞추면 뾰족한 지붕이 생겨요. 선에 맞춰 접는 연습이에요.',
   paper: '정사각형 색종이',
   colors: { front: '#fbf8f1', back: '#c8553d' },

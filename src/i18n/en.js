@@ -136,32 +136,8 @@ export const enModels = {
       'Fold the top corner down to close the flap. Your envelope is done!',
     ],
   },
-  swan: {
-    name: 'Swan', desc: 'Two kite folds make a long, thin neck. Finish with an outside reverse fold.', paper: 'Square origami paper',
-    done: 'Your swan is done! Tilt the neck forward a little for an elegant look.',
-    steps: [
-      'Place the paper white side up as a diamond. Fold it in half vertically and unfold to make a center line.',
-      'Fold the two lower edges to the center line to make a kite.',
-      'Turn the paper over.',
-      'Fold the two lower edges to the center line again to make it thinner.',
-      'Fold the bottom point up to the top point. This becomes the neck.',
-      'Fold the tip of the neck down a little to make the head.',
-      'Fold the paper in half backward along the center line.',
-      'Lay it down with the fold at the bottom. The neck points left.',
-      'Reverse fold the neck outward so it stands up, wrapping around the body.',
-    ],
-  },
-  owl: {
-    name: 'Owl', desc: 'Fold a head and beak out of the kite base. Learn to fold a tip back on itself.', paper: 'Square origami paper',
-    done: 'Your owl is done! Draw big round eyes.',
-    steps: [
-      'Place the paper colored side down as a diamond. Fold it in half vertically and unfold to make a center line.',
-      'Fold the two lower edges to the center line to make a kite. The sides are the wings.',
-      'Fold the top corner down. This is the head.',
-      'Fold that tip back up a little. This is the beak.',
-      'Fold the bottom corner behind so it can stand. Your owl is done!',
-    ],
-  },
+
+
   whale: {
     name: 'Whale', desc: 'Blunt the head of a kite, then outside reverse fold the thin end up into a tail.', paper: 'Square origami paper',
     done: 'Your whale is done! Draw an eye and a water spout above its head.',
@@ -231,19 +207,7 @@ export const enModels = {
       'Turn it back over. Your tulip bud is done!',
     ],
   },
-  dino: {
-    name: 'Dinosaur', desc: 'Three reverse folds make a long neck, a head and a tail. Line up the fold angles carefully.', paper: 'Square origami paper',
-    done: 'Your dinosaur is done! Draw spikes along its back.',
-    steps: [
-      'Place the paper colored side down as a diamond. Fold it in half vertically and unfold to make a center line.',
-      'Fold the two lower edges to the center line to make a kite.',
-      'Fold the paper in half backward along the center line.',
-      'Lay it down with the fold at the bottom. The thin end points right.',
-      'Outside reverse fold the thin end so it stands up high. This is the long neck.',
-      'Reverse fold the tip of the neck forward to make the head.',
-      'Outside reverse fold the left end into a slightly raised tail. Your dinosaur is done!',
-    ],
-  },
+
   heron: {
     name: 'Heron', desc: 'Make the kite twice to get very slim, then reverse fold the neck, head and tail. A sleek water bird.', paper: 'Square origami paper',
     done: 'Your heron is done! Draw a red dot on top of its head.',
@@ -368,14 +332,14 @@ export const enUI = {
   title: 'Origami Classroom',
   lede: 'Get a sheet of origami paper. Each step shows the fold line and direction first, then folds slowly in 3D.',
   ladder: 'From easiest to hardest',
-  bands: [['all', 'All'], ['easy', 'Beginner (1–3)'], ['mid', 'Intermediate (4–6)'], ['hard', 'Challenge (7–10)']], bandLabel: 'Filter by level',
+  bands: [['all', 'All'], ['1', 'Beginner'], ['2', 'Easy'], ['3', 'Intermediate'], ['4', 'Advanced']], bandLabel: 'Filter by level',
   symbols: 'Learn the fold symbols',
   foot: 'Drag to rotate the paper. Use ← → to change steps and Space to play.',
   back: 'All models', print: 'Printable diagram', full: 'Full screen', unfull: 'Exit full screen',
   prev: 'Previous step', fold: 'Fold this step', auto: 'Play to the end', stop: 'Stop', replay: 'Watch again from the start',
   speed: 'Speed', slow: 'Slow', normal: 'Normal', fast: 'Fast', steps: 'Steps', done: 'Done', peek: 'Result',
   valley: 'Valley fold', mountain: 'Mountain fold', next: (n) => `Next: ${n}`, stepsCount: (n) => `${n} steps`,
-  folded: 'Folded', resume: (i, n) => `Continue ${i}/${n}`, level: (l) => `Level ${l}`, printTitle: (n) => `How to fold a ${n}`, printBtn: 'Print', toViewer: 'Back to folding',
+  folded: 'Folded', resume: (i, n) => `Continue ${i}/${n}`, level: (l) => ['Beginner', 'Easy', 'Intermediate', 'Advanced'][l - 1], printTitle: (n) => `How to fold a ${n}`, printBtn: 'Print', toViewer: 'Back to folding',
   sym: [
     ['Valley fold', 'Fold forward along the short dashed line. The crease sinks like a valley.'],
     ['Mountain fold', 'Fold backward along the long dashed line. The crease rises like a mountain.'],

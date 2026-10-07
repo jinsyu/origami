@@ -7,7 +7,7 @@ const flap = (c) => c.tags.has('flapR') || c.tags.has('flapL');
 export const kabuto = {
   id: 'kabuto',
   name: '투구',
-  level: 3,
+  level: 2,
   desc: '양쪽 날개를 올렸다가 바깥으로 꺾어 뿔을 만드는 옛 장수의 투구예요. 앞뒤 장을 따로 접는 연습이에요.',
   paper: '정사각형 색종이',
   colors: { front: '#fbf8f1', back: '#3d6fb6' },

@@ -58,7 +58,7 @@ const preAndPetal = (front, face, petalTag, side) => [
 export const crane = {
   id: 'crane',
   name: '학',
-  level: 9,
+  level: 4,
   desc: '사각 기본형에서 꽃잎 접기를 앞뒤로 하고, 목과 꼬리를 뒤집어 접어 세워요. 종이접기의 대표 작품이에요.',
   paper: '정사각형 색종이',
   colors: { front: '#fbf8f1', back: '#2e86ab' },
@@ -97,7 +97,7 @@ export const crane = {
 export const bird = {
   id: 'bird',
   name: '날갯짓 새',
-  level: 9,
+  level: 4,
   desc: '학 기본형에서 목과 꼬리를 바로 세우고 날개를 비스듬히 펴요. 꼬리를 당기면 날개가 움직이는 새예요.',
   paper: '정사각형 색종이',
   colors: { front: '#fbf8f1', back: '#e07a2f' },
