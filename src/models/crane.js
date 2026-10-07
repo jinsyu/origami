@@ -1,6 +1,5 @@
 // 학 (정사각형 색종이, 마름모 방향)
 import { flip } from './parts/folds.js';
-import { GAP } from '../engine.js';
 import { birdBase } from './parts/bases.js';
 const R = Math.SQRT1_2;
 const K = R * (1 - Math.SQRT1_2); // 연 모양 선 윗끝 높이 |y|
@@ -40,18 +39,24 @@ const head = () => {
     { line, side: tip, spine, filter: (c) => c.tags.has('neck') && c.tags.has('f2'), toward: 1, shift: 0.5 },
   ];
 };
-// 날개를 벌리면 몸통 앞뒤 벽이 벌어져 빵빵해진다: 가운데(x=0)가 가장 많이, 목·꼬리 쪽과 위아래 끝은 그대로.
-// 겹마다 지금 높이(z)에 비례해 밀어내므로 겹 순서가 유지된다
-const puff = (p, e) => {
+// 날개를 펴면 등(날개 경첩 위 몸통)이 낮은 사각뿔처럼 솟는다: 꼭대기 점(0,0)·양옆 꼭짓점(±0.117,-0.117)·
+// 날개 경첩(y=-0.207)은 그대로, 가운데가 가장 많이. 면은 평평하게(구간마다 일차식) 두어 접힌 종이처럼 각지게.
+// 한쪽 벽의 겹은 통째로 같은 양만큼 밀린다 (겹마다 다르게 밀면 겹 가장자리에 틈이 벌어져 속이 보인다).
+// 앞 벽·뒤 벽은 높이가 아니라 종이 조각으로 가른다: 처음 반으로 접을 때 뒤로 간 쪽(f2)이 뒤 벽.
+// 몸통 윗부분은 여덟 조각이 고리로 이어져 있다. 바깥 겹(faceA·faceB)은 가운데 선을 평평하게 건너고,
+// 안쪽 겹은 가운데 선(x=0)에서 앞 벽↔뒤 벽으로 U자로 꺾여 이어진다. 그래서 안쪽 겹은 가운데 선에서 0,
+// 바깥 변(바깥 겹과 접힌 선으로 이어진 곳)에서 바깥 겹과 같은 양이 되게 민다 (책장이 벌어지듯).
+const BACK = 0.04; // 등이 솟는 높이 (몸통 폭 0.234 의 약 1/6)
+const inner = (q) => !['faceA', 'faceB', 'leg'].some((t) => q.tags.has(t));
+const puff = (p, e, q) => {
   const [x, y, z] = p;
-  const fx = Math.abs(x) < 0.11 ? Math.cos((Math.PI / 2) * (x / 0.11)) ** 2 : 0; // 꺾이는 곳 없이 매끄럽게
-  // 날개가 붙는 선(y≈-0.207) 위쪽 등만 부풀린다. 그 아래에는 목·꼬리 밑동이 있어 밀면 겹이 부채처럼 벌어진다
-  const fy = y < 0 && y > -0.2 ? Math.sin((Math.PI * -y) / 0.2) : 0;
-  const s = Math.max(-1, Math.min(1, z / (GAP * 13.5))); // 몸통 바깥 겹 높이 ≈ 겹 간격 13.5개
-  // 목·꼬리(몸통 바깥쪽, 날개가 붙는 선 아래)는 겹 사이를 눌러 한 장처럼 보이게 한다 (겹마다 따로 보이면 머리가 여러 개처럼 보인다)
-  const sm = (a, b, v) => { const k = Math.min(1, Math.max(0, (v - a) / (b - a))); return k * k * (3 - 2 * k); };
-  const w = Math.max(sm(0.11, 0.16, Math.abs(x)), sm(-0.2, -0.24, y)) * (1 - sm(0.03, 0.06, Math.abs(z))) * e; // 펼친 날개(|z| 큼)는 제외
-  return [x, y, z * (1 - 0.6 * w) + 0.09 * e * fx * fy * s];
+  if (y >= 0 || y <= -0.207 || Math.abs(x) >= 0.117) return p;
+  const tx = 1 - Math.abs(x) / 0.117;
+  const ty = y > -0.117 ? -y / 0.117 : (y + 0.207) / 0.09;
+  const h = Math.min(tx, ty);
+  const half = y >= -0.117 ? -y : 0.117 + 0.2 * (y + 0.117); // 그 높이에서 몸통 윗부분의 반폭
+  const r = inner(q) ? Math.min(1, Math.abs(x) / Math.max(half, 1e-6)) : 1;
+  return [x, y, z + BACK * e * h * r * (q.tags.has('f2') ? -1 : 1)];
 };
 export const crane = {
   id: 'crane',
@@ -66,7 +71,7 @@ export const crane = {
   finalView: [0.45, 0.75, 1],
   // 21단계: 몸통 속 가운데 겹(날개 밑동과 다리 겹이 만나는 점)이 부풀리며 벌어진다. 겉에서는 보이지 않는다
   knownTears: [21],
-  done: '학 완성! 몸통이 빵빵하게 부풀었어요.',
+  done: '학 완성! 날개를 펴니 등이 볼록 솟았어요.',
   steps: [
     ...birdBase(),
     { text: '아래쪽 두 다리의 바깥 변을 가운데 선에 맞춰 접어 가늘게 만들어요.', moves: narrow((c) => c.tags.has('f2')) },
@@ -76,7 +81,7 @@ export const crane = {
     { text: '왼쪽 다리도 안쪽 뒤집어 접어 세워요. 꼬리가 돼요.', sim: true, moves: lift(-1, 145, 'tail'), view: [0.3, 0.4, 1] },
     { text: '목 끝을 안쪽 뒤집어 접어 머리를 만들어요.', sim: true, moves: head(), view: [0.3, 0.4, 1] },
     {
-      text: '양쪽 날개를 옆으로 펼치면서 살살 당기면 몸통이 빵빵하게 부풀어요. 학 완성!',
+      text: '양쪽 날개를 옆으로 펼치면서 살살 당기면 등이 볼록 솟아요. 학 완성!',
       deform: puff,
       moves: [
         { line: [[-1, -K], [1, -K]], side: [0, 0.2], filter: (c) => c.tags.has('petalB'), angle: 90, toward: 1 },

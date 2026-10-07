@@ -8,6 +8,7 @@
 
 export const GAP = 0.0008; // 겹친 종이 층 사이 간격
 const E = 1e-7;
+import { flatLevels } from './settle.js';
 const CUT = 3; // 임시: 방금 자른 모서리
 // 모서리 종류: 1 = 종이 가장자리, 2 = 접힌 선, 0 = seam(계산용으로만 나눈 자리, 그리지 않음)
 
@@ -51,7 +52,7 @@ export function foldAngle(PA, PB, k) {
 }
 
 const cxyz = (q) => { const c = centroid(q.p); return { x: c[0], y: c[1], z: c[2] }; };
-const clonePoly = (q) => ({ p: q.p.map((v) => v.slice()), uv: q.uv, e: q.e, tags: new Set(q.tags), owner: -1, hist: q.hist });
+const clonePoly = (q) => ({ p: q.p.map((v) => v.slice()), uv: q.uv, e: q.e, tags: new Set(q.tags), owner: -1, hist: q.hist, par: q.par });
 
 // 볼록 다각형을 평면(o, n)으로 둘로 자른다. 걸치지 않으면 null
 // 위치 기록(hist)도 같은 비율로 함께 자른다.
@@ -78,6 +79,7 @@ function splitPoly(q, o, n) {
     tags: new Set(q.tags),
     owner: -1,
     hist: q.hist ? q.hist.map((h) => L.map((v) => at(h, v))) : undefined,
+    par: q.par,
   });
   return [build(A), build(B)];
 }
@@ -405,25 +407,130 @@ function planCrossUnfold(polys, step) {
   return { ...pB, moves: [pA2.moves[0], pB.moves[0]], parts: [pA2, pB] };
 }
 
-// 단순 단계에서 진행률 t(0~1)일 때 각 다각형의 꼭짓점 위치
-export function pose(plan, t, raw = false) {
-  if (plan.parts) return t < 0.5 ? pose(plan.parts[0], t * 2, raw) : pose(plan.parts[1], t * 2 - 1, raw);
-  if (plan.sim) return t < 0.5 ? plan.polys.map((q) => q.hist[0]) : plan.polys.map((q) => q.p);
-  const e = t * t * (3 - 2 * t);
-  const out = plan.polys.map((q) => {
+// 단순 단계에서 진행률 t(0~1)일 때 각 다각형의 꼭짓점 위치 (엔진 계산용: 평평한 겹, 표시 보정 없음)
+function rigidPose(plan, e) {
+  return plan.polys.map((q) => {
     if (q.owner < 0) return q.p;
     const mv = plan.moves[q.owner];
     const f = mv.unfold ? Math.sin(Math.PI * e) : e;
     const s = mv.unfold ? (mv.lift || 0) * f : mv.shift * f;
     return q.p.map((p) => add(rotate(p, mv.o, mv.d, mv.theta * f), mul(mv.u, s)));
   });
-  // deform(p, e): 위치에 따라 꼭짓점을 옮기는 연속 변형 (부풀리기). 같은 점은 같이 움직여 끊기지 않는다
-  return plan.deform && !raw ? out.map((L) => L.map((p) => plan.deform(p, e))) : out;
 }
 
-// 단계의 시작·끝 상태
-export const startPose = (plan) => (plan.sim ? plan.polys.map((q) => q.hist[0]) : plan.polys.map((q) => q.p));
-export const endPose = (plan) => (plan.sim ? plan.polys.map((q) => q.p) : pose(plan, 1));
+// 표시 보정: 겹 다지기(settle.js)로 겹을 내려앉힌 높이.
+// 엔진은 늘 평평한 원래 높이로 계산하고(접는 높이·겹 순서가 흔들리지 않게), 화면에 그릴 때만 종이 점을 옮긴다.
+// 종이 점(면 i, uv)마다 단계 시작의 보정(이전 단계 끝에서 이어 옴)과 끝의 보정(이번 단계 끝의 겹 다지기)을
+// 각 면의 좌표틀로 저장해 두면, 면이 돌아도 보정이 함께 돈다. 단계가 진행되며 시작 보정에서 끝 보정으로 바뀐다.
+export function frameOf(L) {
+  const n = polyNormal(L);
+  for (let k = 1; k < L.length; k++) {
+    const v = sub(L[k], L[0]), l = Math.hypot(v[0], v[1], v[2]);
+    if (l < 1e-6) continue;
+    const e1 = norm(sub(v, mul(n, dot(v, n))));
+    return [e1, cross(n, e1), n];
+  }
+  return [[1, 0, 0], [0, 1, 0], [0, 0, 1]];
+}
+const toLocal = (F, v) => [dot(v, F[0]), dot(v, F[1]), dot(v, F[2])];
+export const toWorld = (F, a) => [F[0][0] * a[0] + F[1][0] * a[1] + F[2][0] * a[2], F[0][1] * a[0] + F[1][1] * a[1] + F[2][1] * a[2], F[0][2] * a[0] + F[1][2] * a[1] + F[2][2] * a[2]];
+const ease = (x) => (x <= 0 ? 0 : x >= 1 ? 1 : x * x * (3 - 2 * x));
+// 시작 보정 → 끝 보정으로 바뀌는 비율
+export const settleW = (plan, t) => (plan.parts ? (t < 0.5 ? 0 : ease(t * 2 - 1)) : ease(t));
+// 보정값(면 좌표 A: 시작, B: 끝)을 지금 위치 L에 더한다
+export function dressLoop(L, A, B, w) {
+  const F = frameOf(L);
+  return L.map((p, k) => {
+    const a = A[k], b = B[k], o = toWorld(F, [a[0] + (b[0] - a[0]) * w, a[1] + (b[1] - a[1]) * w, a[2] + (b[2] - a[2]) * w]);
+    return [p[0] + o[0], p[1] + o[1], p[2] + o[2]];
+  });
+}
+// 면 i의 종이 점 uv에 대한 [시작 보정, 끝 보정] (각 면 좌표틀 기준)
+export const offAt = (plan, i, uv) => plan.offLocal(i, uv);
+// 면마다 꼭짓점 보정값 (화면용 pose 에서 씀)
+function cornerOff(plan) {
+  if (plan._corner !== undefined) return plan._corner;
+  if (!plan.offLocal) return (plan._corner = null);
+  const A = [], B = [];
+  let any = false;
+  plan.polys.forEach((q, i) => {
+    const r = q.uv.map((u) => plan.offLocal(i, u));
+    A.push(r.map((x) => x[0])); B.push(r.map((x) => x[1]));
+    if (r.some(([a, b]) => Math.abs(a[2]) + Math.abs(b[2]) + Math.abs(a[0]) + Math.abs(b[0]) + Math.abs(a[1]) + Math.abs(b[1]) > 1e-9)) any = true;
+  });
+  return (plan._corner = any ? { A, B } : null);
+}
+
+// 엔진 계산용 위치 (표시 보정 없음)
+export function rawPose(plan, t) {
+  if (plan.parts) return t < 0.5 ? rawPose(plan.parts[0], t * 2) : rawPose(plan.parts[1], t * 2 - 1);
+  if (plan.sim) return t < 0.5 ? plan.polys.map((q) => q.hist[0]) : plan.polys.map((q) => q.p);
+  return rigidPose(plan, t * t * (3 - 2 * t));
+}
+
+// 단순 단계에서 진행률 t(0~1)일 때 각 다각형의 꼭짓점 위치 (화면용: 부풀리기 변형 + 표시 보정)
+export function pose(plan, t) {
+  const co = cornerOff(plan), w = settleW(plan, t), e = t * t * (3 - 2 * t);
+  let out = rawPose(plan, t);
+  // deform(p, e, q): 위치에 따라 꼭짓점을 옮기는 연속 변형 (부풀리기). 같은 점은 같이 움직여 끊기지 않는다.
+  // q 는 그 점이 속한 종이 조각 ({ tags, uv }): 앞 벽·뒤 벽처럼 조각에 따라 다르게 옮길 때 쓴다.
+  // 변형은 엔진 높이(겹 다지기 전)를 보고 하고, 겹 다지기 보정은 그 뒤에 더한다
+  if (plan.deform) out = out.map((L, i) => L.map((p) => plan.deform(p, e, plan.polys[i])));
+  if (co) out = out.map((L, i) => dressLoop(L, co.A[i], co.B[i], w));
+  return out;
+}
+
+// 단계의 시작·끝 상태 (화면용)
+export const startPose = (plan) => pose(plan, 0);
+export const endPose = (plan) => pose(plan, 1);
+// 엔진 계산용 끝 상태 (평평한 원래 높이, 부풀리기 변형은 다음 단계로 이어진다)
+const rawEnd = (plan) => {
+  if (plan.parts) return rawEnd(plan.parts[1]);
+  if (plan.sim) return plan.polys.map((q) => q.p);
+  const out = rigidPose(plan, 1);
+  return plan.deform ? out.map((L, i) => L.map((p) => plan.deform(p, 1, plan.polys[i]))) : out;
+};
+const rawStart = (plan) => (plan.parts ? rawStart(plan.parts[0]) : plan.polys.map((q) => (plan.sim ? q.hist[0] : q.p)));
+
+// 면 i 위 종이 점 uv의 위치를 정하는 일차 변환 (면은 강체이므로 세 꼭짓점으로 정해진다)
+function affineOf(U, P) {
+  let best = 0, ib = [0, 1, 2];
+  const n = U.length;
+  for (let a = 1; a < n; a++) for (let b = a + 1; b < n; b++) {
+    const ar = Math.abs((U[a][0] - U[0][0]) * (U[b][1] - U[0][1]) - (U[a][1] - U[0][1]) * (U[b][0] - U[0][0]));
+    if (ar > best) { best = ar; ib = [0, a, b]; }
+  }
+  const [i0, i1, i2] = ib, u0 = U[i0], du1 = [U[i1][0] - u0[0], U[i1][1] - u0[1]], du2 = [U[i2][0] - u0[0], U[i2][1] - u0[1]];
+  const det = du1[0] * du2[1] - du1[1] * du2[0] || 1e-30;
+  const p0 = P[i0], dp1 = sub(P[i1], p0), dp2 = sub(P[i2], p0);
+  return (u) => {
+    const x = u[0] - u0[0], y = u[1] - u0[1], s = (x * du2[1] - y * du2[0]) / det, t = (du1[0] * y - du1[1] * x) / det;
+    return [p0[0] + dp1[0] * s + dp2[0] * t, p0[1] + dp1[1] * s + dp2[1] * t, p0[2] + dp1[2] * s + dp2[2] * t];
+  };
+}
+
+// 단계마다 표시 보정 함수를 붙인다 (prev: 이전 단계 계획)
+function attachSettle(plan, prev, raw) {
+  const start = rawStart(plan);
+  const F0 = start.map(frameOf), F1 = raw.map(frameOf);
+  const levels = flatLevels(raw, GAP);
+  const aff = raw.map((L, i) => affineOf(plan.polys[i].uv, L));
+  const memo = new Map();
+  // 끝 보정 (세계 좌표 벡터): 다음 단계가 이어 받는다
+  plan.endOff = (i, uv) => {
+    const key = `${i}|${uvKey(uv)}`;
+    let v = memo.get(key);
+    if (v) return v;
+    if (levels) { const p = aff[i](uv); v = [0, 0, levels.query(i, p[0], p[1])]; }
+    else v = toWorld(F1[i], toLocal(F0[i], startOff(i, uv)));
+    memo.set(key, v);
+    return v;
+  };
+  const startOff = (i, uv) => (prev && prev.endOff && plan.polys[i].par !== undefined ? prev.endOff(plan.polys[i].par, uv) : [0, 0, 0]);
+  plan.offLocal = (i, uv) => [toLocal(F0[i], startOff(i, uv)), toLocal(F1[i], plan.endOff(i, uv))];
+  plan.frames = { F0, F1 };
+  if (plan.parts) plan.parts.forEach((pt) => { pt.offLocal = plan.offLocal; });
+}
 
 // 그릴 모서리 목록: 가장자리(1)와 접힌 선(2, 맞닿은 이웃 다각형 포함)
 function edgeList(polys) {
@@ -473,9 +580,11 @@ export function buildModel(model) {
   for (const step of model.steps) {
     const plan = step.sim ? planSeqStep(polys, step) : crossUnfold(step) ? planCrossUnfold(polys, step) : planStep(polys, step);
     if (inked.length || step.draw) { plan.inked = inked; plan.draw = step.draw || []; inked = [...inked, ...plan.draw]; }
+    // 화면용 겹 다지기 (엔진 상태는 그대로)
+    const raw = rawEnd(plan);
+    attachSettle(plan, plans[plans.length - 1], raw);
     plans.push(plan);
-    const fin = endPose(plan);
-    polys = plan.polys.map((q, i) => ({ ...clonePoly(q), p: fin[i].map((v) => v.slice()), hist: undefined }));
+    polys = plan.polys.map((q, i) => ({ ...clonePoly(q), p: raw[i].map((v) => v.slice()), hist: undefined, par: i }));
   }
   return plans;
 }

@@ -4,7 +4,7 @@
 // 2) 이완: 하위 회전끼리 서로 다른 면이 따로 움직이면 이음매가 벌어지므로,
 //    같은 종이 위치(uv)의 꼭짓점을 합치고 변 길이(종이는 늘어나지 않음)를 반복 투영해 이어 붙인다.
 // 시작·끝에서는 이완 강도가 0이 되어 엔진이 계산한 정확한 평면 상태와 일치한다.
-import { foldAngle, rotate } from './engine.js';
+import { foldAngle, rotate, dressLoop } from './engine.js';
 
 const ease = (x) => (x <= 0 ? 0 : x >= 1 ? 1 : x * x * (3 - 2 * x));
 const wrap = (a) => a - 2 * Math.PI * Math.round(a / (2 * Math.PI));
@@ -106,7 +106,17 @@ export function prepareSim(plan) {
     const p2 = polys.map((q) => q.tags.has(tag('obis')) || q.tags.has(tag('ibis')));
     squash = { roleIdx, group, p2 };
   }
-  const sim = { loops, nCorner, NV: nCorner, member, subs: plan.subs, start, end, dist, guides, squash, tearOk: plan.tearOk };
+  // 표시 보정(겹 다지기): 고리 꼭짓점(T자 접점 포함)마다 종이 점의 [시작, 끝] 보정값
+  let off = null;
+  if (plan.offLocal) {
+    off = polys.map((q, pi) => loops[pi].map((it) => {
+      const U = q.uv, a = U[it.k], b = U[(it.k + 1) % U.length];
+      return plan.offLocal(pi, [a[0] + (b[0] - a[0]) * it.t, a[1] + (b[1] - a[1]) * it.t]);
+    }));
+    if (!off.some((L) => L.some(([a, b]) => Math.abs(a[0]) + Math.abs(a[1]) + Math.abs(a[2]) + Math.abs(b[0]) + Math.abs(b[1]) + Math.abs(b[2]) > 1e-9))) off = null;
+    else off = off.map((L) => ({ A: L.map((x) => x[0]), B: L.map((x) => x[1]) }));
+  }
+  const sim = { off, loops, nCorner, NV: nCorner, member, subs: plan.subs, start, end, dist, guides, squash, tearOk: plan.tearOk };
   // swing: 뒤집어 접기를 '겹을 책처럼 벌리기' 대신 '날개를 평면 안에서 돌리며 앞뒤 겹이 등선 쪽으로 좁아졌다 자리를 바꾸기'로 보여 준다.
   // 벌어진 틈으로 안쪽 면이 보이지 않아 겉면 색이 유지된다. 끝 상태는 같다.
   const rv = plan.swing && plan.subs.find((s) => s.mv.rev);
@@ -359,8 +369,17 @@ function bake(sim) {
   sim.frames = frames;
 }
 
-// 진행률 t에서 다각형별 고리 꼭짓점 위치 (미리 계산한 프레임 사이를 보간)
+// 진행률 t에서 다각형별 고리 꼭짓점 위치 (화면용: 표시 보정 포함)
 export function simPose(sim, t) {
+  const P = simPose0(sim, t);
+  if (!sim.off) return P;
+  const w = ease(t);
+  return P.map((L, pi) => dressLoop(L, sim.off[pi].A, sim.off[pi].B, w));
+}
+// 표시 보정 없는 위치 (엔진 계산용)
+export const simRaw = (sim, t) => simPose0(sim, t);
+// 미리 계산한 프레임 사이를 보간
+function simPose0(sim, t) {
   if (t <= 0) return sim.start;
   if (t >= 1) return sim.end;
   if (sim.swing) {

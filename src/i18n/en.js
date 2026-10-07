@@ -599,7 +599,7 @@ export const enModels = {
   },
   crane: {
     name: 'Crane', desc: 'Petal fold both sides of the square base, then reverse fold the neck and tail. The classic origami model.', paper: 'Square origami paper',
-    done: 'Your crane is done! Spread the wings and puff up the body.',
+    done: 'Your crane is done! Spreading the wings makes its back rise a little.',
     steps: [
       'Place the paper white side up as a diamond. Fold the top corner down to the bottom corner.',
       'Fold the right corner over to the left corner.',
@@ -621,7 +621,7 @@ export const enModels = {
       'Inside reverse fold the right leg up between the wings. This is the neck.',
       'Inside reverse fold the left leg up too. This is the tail.',
       'Inside reverse fold the tip of the neck to make the head.',
-      'Spread the wings while gently pulling them apart, and the body puffs up. Your crane is done!',
+      'Spread the wings while gently pulling them apart, and the back rises a little. Your crane is done!',
     ],
   },
   roofhouse: {
