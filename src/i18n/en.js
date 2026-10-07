@@ -1,5 +1,19 @@
 // 영어 문구. 작품별 이름·설명·단계 안내, 화면 문구
 export const enModels = {
+  car: {
+    name: 'Car', desc: 'Fold the ends of a band down for wheels and fold a corner at an angle for the windshield. Draw a window.', paper: 'Square origami paper',
+    done: 'Your car is done! Vroom vroom!',
+    steps: [
+      'Place the paper colored side down. Fold in half both ways and unfold to make creases.',
+      'Fold the bottom edge up to the center line.',
+      'Fold both ends of the band down at an angle along the dotted lines. These are the wheels.',
+      'Fold the top down along the center line.',
+      'Fold it back up along the dotted line.',
+      'Fold the top right corner along the slanted dotted line. This is the windshield.',
+      'Turn the paper over.',
+      'Draw a window next to the windshield with a pencil, and you are done!',
+    ],
+  },
   koala: {
     name: 'Koala Face', desc: 'Fold both sides down and then back up and out to make big round ears. Draw a big nose.', paper: 'Square origami paper (gray)',
     done: 'Your koala face is done!',

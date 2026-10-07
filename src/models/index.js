@@ -32,5 +32,6 @@ import { fuji } from './fuji.js';
 import { chick } from './chick.js';
 import { pig } from './pig.js';
 import { koala } from './koala.js';
+import { car } from './car.js';
 
-export const MODELS = [dog, cat, flower, cup, bookmark, house, cicada, kabuto, hat, airplane, glider, envelope, whale, heart, frame, duck, tulip, heron, masu, roofhouse, crane, fox, panda, boat, top2, ddakji, rabbit, watermelon, motorboat, fuji, chick, pig, koala].sort((a, b) => a.level - b.level);
+export const MODELS = [dog, cat, flower, cup, bookmark, house, cicada, kabuto, hat, airplane, glider, envelope, whale, heart, frame, duck, tulip, heron, masu, roofhouse, crane, fox, panda, boat, top2, ddakji, rabbit, watermelon, motorboat, fuji, chick, pig, koala, car].sort((a, b) => a.level - b.level);
