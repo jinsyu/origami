@@ -438,6 +438,20 @@ export function simArrows(sim, n = 2) {
     if (picked.some((p) => Math.hypot(p.a[0] - c.a[0], p.a[1] - c.a[1]) < 0.15 || Math.hypot(p.b[0] - c.b[0], p.b[1] - c.b[1]) < 0.12)) continue;
     picked.push(c);
   }
+  // swing(뒤집어 접기를 평면 안에서 돌리기): 실제 움직임대로 회전 중심 P 를 도는 호. 직선으로 그리면 도는 방향을 알 수 없다
+  if (sim.swing) {
+    const { P, delta } = sim.swing;
+    return picked.map((c) => {
+      const a = c.a, b = c.b, m = rotate(a, P, Z, delta / 2);
+      const ctl = [0, 1].map((i) => 2 * m[i] - (a[i] + b[i]) / 2);
+      const path = [];
+      for (let k = 0; k <= 24; k++) {
+        const t = k / 24, u = 1 - t;
+        path.push([u * u * a[0] + 2 * u * t * ctl[0] + t * t * b[0], u * u * a[1] + 2 * u * t * ctl[1] + t * t * b[1], Math.max(a[2], b[2]) + 0.006]);
+      }
+      return path;
+    });
+  }
   // 출발점 - 가장 높이 뜬 지점 - 도착점을 잇는 단순한 호 (실제 경로가 휘돌아도 읽기 쉽게)
   return picked.map((c) => {
     let top = null, tz = -Infinity;
