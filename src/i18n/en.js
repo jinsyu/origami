@@ -1,5 +1,18 @@
 // 영어 문구. 작품별 이름·설명·단계 안내, 화면 문구
 export const enModels = {
+  rabbit: {
+    name: 'Rabbit Face', desc: 'Fold the bottom edge up into a band, then bring both sides to the center. The band ends pop up into long ears.', paper: 'Square origami paper',
+    done: 'Your rabbit face is done!',
+    steps: [
+      'Place the paper colored side down as a diamond. Fold the bottom corner up to the top corner.',
+      'Fold in half and unfold to make a center crease.',
+      'Fold the bottom edge up a little to make a band.',
+      'Fold both corners up at an angle so the bottom edges meet the center line. The band ends pop up as ears.',
+      'Turn the paper over.',
+      'Fold the bottom point behind too to make the chin.',
+      'Draw the eyes and mouth with a pencil, then color the nose and cheeks pink, and you are done!',
+    ],
+  },
   boat: {
     name: 'Sailboat', desc: 'One fold makes a triangle sail and a boat body. Color it, add a flag and waves, and set sail.', paper: 'Square origami paper',
     done: 'Your sailboat is done! Glue it on blue paper and it will sail across the sea.',
