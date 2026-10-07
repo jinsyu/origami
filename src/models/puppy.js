@@ -19,11 +19,11 @@ const earMoves = (sx, ear) => {
   const line = [[sx * ear, H], B];
   return [
     // 안쪽에 접혀 있던 모서리를 꺼내 편다 (앞 겹은 앞으로, 뒤 겹은 뒤로 돌아 나온다)
-    { line: hinge, side: up, filter: (c) => corner(c) && face(c), toward: 1 },
-    { line: hinge, side: up, filter: (c) => corner(c) && !face(c), toward: -1 },
+    { line: hinge, side: up, filter: (c) => corner(c) && face(c), toward: 1, at: [0, 0.8] },
+    { line: hinge, side: up, filter: (c) => corner(c) && !face(c), toward: -1, at: [0, 0.8] },
     // 귀를 바깥으로 뒤집어 접는다: 앞 겹은 앞으로, 뒤 겹은 뒤로
-    { line, side: out, filter: face, toward: 1, tag: 'ear' },
-    { line, side: out, filter: back, toward: -1, tag: 'ear' },
+    { line, side: out, filter: face, toward: 1, tag: 'ear', at: [0.3, 1] },
+    { line, side: out, filter: back, toward: -1, tag: 'ear', at: [0.3, 1] },
   ];
 };
 
