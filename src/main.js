@@ -295,8 +295,18 @@ function setGuideOpacity(a) {
 // ---------- 카메라 자동 맞춤 ----------
 let camTween = null;
 controls.addEventListener('start', () => { camTween = null; });
+// 범례 상자가 캔버스 아래를 가리므로, 범례가 보일 때는 그 위쪽 영역에 작품을 맞춘다
+function applyPad() {
+  const w = stage.clientWidth, h = stage.clientHeight;
+  if (!w || !h) return 1;
+  const lg = $('legend'), pad = lg.hidden ? 0 : Math.min(h * 0.25, lg.offsetHeight + 16);
+  camera.aspect = w / (h - pad);
+  if (pad) camera.setViewOffset(w, h - pad, 0, 0, w, h); else camera.clearViewOffset();
+  camera.updateProjectionMatrix();
+  return camera.aspect;
+}
 function frameTo(points, dir, instant, extra = []) {
-  const fit = fitCamera(camera, points, dir, canvas.clientWidth / Math.max(1, canvas.clientHeight), 1.12, extra);
+  const fit = fitCamera(camera, points, dir, applyPad(), 1.12, extra);
   camTween = { k: instant ? 1 : 0, fromPos: camera.position.clone(), fromTarget: controls.target.clone(), toPos: fit.pos, toTarget: fit.target };
 }
 
@@ -510,8 +520,7 @@ function resize() {
   const w = stage.clientWidth, h = stage.clientHeight;
   if (!w || !h) return;
   renderer.setSize(w, h, false);
-  camera.aspect = w / h;
-  camera.updateProjectionMatrix();
+  applyPad();
   guideMats.forEach((m) => m.resolution && m.resolution.set(w, h));
 }
 new ResizeObserver(resize).observe(stage);

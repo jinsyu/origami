@@ -277,7 +277,20 @@ export function fitCamera(camera, points, dir, aspect, margin = 1.1, extra = [])
   }
   const vf = THREE.MathUtils.degToRad(camera.fov) / 2;
   const hf = Math.atan(Math.tan(vf) * aspect);
-  const dist = Math.max(hw / Math.tan(hf), hh / Math.tan(vf)) * margin + front;
+  let dist = Math.max(hw / Math.tan(hf), hh / Math.tan(vf)) * margin + front;
+  // 원근 때문에 카메라 쪽으로 나온 점(펼친 날개 끝 등)은 더 크게 보인다: 실제 투영으로 확인해 넘치면 물러선다
+  const tx = Math.tan(hf) / margin, ty = Math.tan(vf) / margin;
+  for (let k = 0; k < 20; k++) {
+    const cam = center.clone().addScaledVector(v, dist);
+    let over = 1;
+    for (const p of all) {
+      const d = p.clone().sub(cam), z = -d.dot(v);
+      if (z <= 1e-3) { over = 1.2; break; }
+      over = Math.max(over, Math.abs(d.dot(right)) / z / tx, Math.abs(d.dot(up)) / z / ty);
+    }
+    if (over <= 1.001) break;
+    dist *= Math.min(1.25, over);
+  }
   return { pos: center.clone().addScaledVector(v, dist), target: center };
 }
 
