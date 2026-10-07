@@ -1,0 +1,11 @@
+{
+  "src": "https://en.origami-club.com/easy/food/watermelon2/zu.gif",
+  "note": "완성 그림은 수박 두 조각이 겹쳐 있어 뺐다. 3번은 뒤집기 화살표가 종이 오른쪽을 가린다",
+  "panels": [
+    { "label": 1, "after": 0, "box": [51, 40, 448, 436] },
+    { "label": 2, "after": 1, "box": [539, 40, 936, 436] },
+    { "label": 3, "after": 2, "box": [51, 517, 448, 866] },
+    { "label": 4, "after": 3, "box": [540, 517, 937, 866] },
+    { "label": 5, "after": 5, "box": [56, 920, 454, 1269] }
+  ]
+}
