@@ -386,7 +386,9 @@ function planSeqStep(polys, step) {
     subs.push({ mv, at: m.at || [0, 1], curve: m.curve || (mv.transient ? 'updown' : 'ease'), peak: m.peak ?? 0.5, role: m.role });
   });
   cur.forEach((q) => { q.owner = -1; });
-  return { polys: cur, moves: [], subs, sim: true, tearOk: !!step.tearOk, swing: step.swing !== false, edges: edgeList(cur) };
+  // 펼쳐 누르기·꽃잎 접기처럼 포개진 겹을 들어 올려 다시 배치하는 단계 (role 이 붙은 하위 동작)
+  const unstack = step.moves.some((m) => m.role);
+  return { polys: cur, moves: [], subs, sim: true, unstack, tearOk: !!step.tearOk, swing: step.swing !== false, edges: edgeList(cur) };
 }
 
 // 서로 엇갈리는 두 '접었다 펴기'를 한 단계에서 하면, 동시에 움직일 때 한 조각이 한 동작에만 속해
@@ -436,12 +438,17 @@ const toLocal = (F, v) => [dot(v, F[0]), dot(v, F[1]), dot(v, F[2])];
 export const toWorld = (F, a) => [F[0][0] * a[0] + F[1][0] * a[1] + F[2][0] * a[2], F[0][1] * a[0] + F[1][1] * a[1] + F[2][1] * a[2], F[0][2] * a[0] + F[1][2] * a[1] + F[2][2] * a[2]];
 const ease = (x) => (x <= 0 ? 0 : x >= 1 ? 1 : x * x * (3 - 2 * x));
 // 시작 보정 → 끝 보정으로 바뀌는 비율
-export const settleW = (plan, t) => (plan.parts ? (t < 0.5 ? 0 : ease(t * 2 - 1)) : ease(t));
+// 복합 단계는 겹이 포개진 채 움직이다 끝에서 다시 배치되는 일이 많아(펼쳐 누르기: 포개진 두 겹이 나란히 펼쳐짐)
+// 앞 절반은 시작 보정을 유지하고 뒤 절반에 끝 보정으로 바꾼다 (포개진 동안 끝 보정이 섞여 겹이 뒤집히지 않게)
+// 포개진 겹을 다시 배치하는 단계는 움직이는 동안 접히는 선 근처의 겹 사이가 엔진 간격만큼 가까워, mm 단위 보정이
+// 겹 순서를 뒤집을 수 있다. 움직이는 동안은 보정을 빼고(엔진 위치) 시작·끝에서만 다진 모습을 쓴다
+export const settleFade = (plan, t) => (plan.unstack ? 1 - Math.sin(Math.PI * Math.min(1, Math.max(0, t))) : 1);
+export const settleW = (plan, t) => (plan.parts ? (t < 0.5 ? 0 : ease(t * 2 - 1)) : plan.sim ? ease(t * 2 - 1) : ease(t));
 // 보정값(면 좌표 A: 시작, B: 끝)을 지금 위치 L에 더한다
-export function dressLoop(L, A, B, w) {
+export function dressLoop(L, A, B, w, f = 1) {
   const F = frameOf(L);
   return L.map((p, k) => {
-    const a = A[k], b = B[k], o = toWorld(F, [a[0] + (b[0] - a[0]) * w, a[1] + (b[1] - a[1]) * w, a[2] + (b[2] - a[2]) * w]);
+    const a = A[k], b = B[k], o = toWorld(F, [(a[0] + (b[0] - a[0]) * w) * f, (a[1] + (b[1] - a[1]) * w) * f, (a[2] + (b[2] - a[2]) * w) * f]);
     return [p[0] + o[0], p[1] + o[1], p[2] + o[2]];
   });
 }
@@ -476,7 +483,7 @@ export function pose(plan, t) {
   // q 는 그 점이 속한 종이 조각 ({ tags, uv }): 앞 벽·뒤 벽처럼 조각에 따라 다르게 옮길 때 쓴다.
   // 변형은 엔진 높이(겹 다지기 전)를 보고 하고, 겹 다지기 보정은 그 뒤에 더한다
   if (plan.deform) out = out.map((L, i) => L.map((p) => plan.deform(p, e, plan.polys[i])));
-  if (co) out = out.map((L, i) => dressLoop(L, co.A[i], co.B[i], w));
+  if (co) out = out.map((L, i) => dressLoop(L, co.A[i], co.B[i], w, settleFade(plan, t)));
   return out;
 }
 

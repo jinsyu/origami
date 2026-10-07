@@ -4,7 +4,7 @@
 // 2) 이완: 하위 회전끼리 서로 다른 면이 따로 움직이면 이음매가 벌어지므로,
 //    같은 종이 위치(uv)의 꼭짓점을 합치고 변 길이(종이는 늘어나지 않음)를 반복 투영해 이어 붙인다.
 // 시작·끝에서는 이완 강도가 0이 되어 엔진이 계산한 정확한 평면 상태와 일치한다.
-import { foldAngle, rotate, dressLoop } from './engine.js';
+import { foldAngle, rotate, dressLoop, settleW, settleFade } from './engine.js';
 
 const ease = (x) => (x <= 0 ? 0 : x >= 1 ? 1 : x * x * (3 - 2 * x));
 const wrap = (a) => a - 2 * Math.PI * Math.round(a / (2 * Math.PI));
@@ -116,7 +116,7 @@ export function prepareSim(plan) {
     if (!off.some((L) => L.some(([a, b]) => Math.abs(a[0]) + Math.abs(a[1]) + Math.abs(a[2]) + Math.abs(b[0]) + Math.abs(b[1]) + Math.abs(b[2]) > 1e-9))) off = null;
     else off = off.map((L) => ({ A: L.map((x) => x[0]), B: L.map((x) => x[1]) }));
   }
-  const sim = { off, loops, nCorner, NV: nCorner, member, subs: plan.subs, start, end, dist, guides, squash, tearOk: plan.tearOk };
+  const sim = { off, unstack: plan.unstack, loops, nCorner, NV: nCorner, member, subs: plan.subs, start, end, dist, guides, squash, tearOk: plan.tearOk };
   // swing: 뒤집어 접기를 '겹을 책처럼 벌리기' 대신 '날개를 평면 안에서 돌리며 앞뒤 겹이 등선 쪽으로 좁아졌다 자리를 바꾸기'로 보여 준다.
   // 벌어진 틈으로 안쪽 면이 보이지 않아 겉면 색이 유지된다. 끝 상태는 같다.
   const rv = plan.swing && plan.subs.find((s) => s.mv.rev);
@@ -373,8 +373,8 @@ function bake(sim) {
 export function simPose(sim, t) {
   const P = simPose0(sim, t);
   if (!sim.off) return P;
-  const w = ease(t);
-  return P.map((L, pi) => dressLoop(L, sim.off[pi].A, sim.off[pi].B, w));
+  const w = settleW({ sim: true }, t), f = settleFade({ unstack: sim.unstack }, t);
+  return P.map((L, pi) => dressLoop(L, sim.off[pi].A, sim.off[pi].B, w, f));
 }
 // 표시 보정 없는 위치 (엔진 계산용)
 export const simRaw = (sim, t) => simPose0(sim, t);

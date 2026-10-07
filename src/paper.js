@@ -1,6 +1,6 @@
 // 종이 메시: 단계 계획(plan)과 진행률 t를 받아 앞·뒷면, 가장자리·접힌 선을 그린다.
 import * as THREE from 'three';
-import { pose, rawPose, settleW, frameOf, polyNormal, cross, sub, sheetsOf, sheetOfU } from './engine.js';
+import { pose, rawPose, settleW, settleFade, frameOf, polyNormal, cross, sub, sheetsOf, sheetOfU } from './engine.js';
 import { prepareSim, simPose, simRaw } from './sim.js';
 import { SETTLE_CELL } from './settle.js';
 
@@ -26,7 +26,6 @@ function metaOf(p) {
 
 // 부채꼴 삼각형 하나를 나누는 최대 수 (부풀리기 단계, 겹 다지기로 겹이 휘는 면) · 둥근 접힘 띠를 나누는 수 · 띠로 잇는 최대 틈
 const MAX_SUB = 24, FOLD_ARC = 4, FOLD_MAX = 0.012;
-const ease = (x) => (x <= 0 ? 0 : x >= 1 ? 1 : x * x * (3 - 2 * x));
 // 종이 질감 (미세한 섬유 무늬)
 let sharedTex = null;
 function paperTexture() {
@@ -348,14 +347,14 @@ export class PaperMesh {
 
   // 이웃 면과 맞댄 변 사이의 틈(겹 간격·계단·경첩)을 띠로 잇는다: 겹쳐 접힌(거의 180°) 선은 반원, 그 밖은 곧은 띠.
   // 틈이 큰 곳(일부러 벌어지는 이음)은 잇지 않는다
-  updateFolds(base, normals, F, w, fx) {
+  updateFolds(base, normals, F, w, fx, fade = 1) {
     const geo = this.foldF.geometry, P = geo.attributes.position.array, N = geo.attributes.normal.array;
     const ridge = []; // 반원 띠의 꼭대기 선 (접힌 모서리로 보이는 곳)
     let k = 0;
     const at = (W, o, qi) => {
       const L = base[qi], v = fx([0, 1, 2].map((c) => L[W[0]][c] * W[1] + L[W[2]][c] * W[3] + L[W[4]][c] * W[5]), qi);
       if (o && F) {
-        const f = F[qi], [A, B] = o, q = [0, 1, 2].map((c) => A[c] + (B[c] - A[c]) * w);
+        const f = F[qi], [A, B] = o, q = [0, 1, 2].map((c) => (A[c] + (B[c] - A[c]) * w) * fade);
         for (let c = 0; c < 3; c++) v[c] += f[0][c] * q[0] + f[1][c] * q[1] + f[2][c] * q[2];
       }
       return v;
@@ -423,7 +422,7 @@ export class PaperMesh {
     const P = geo.attributes.position.array;
     // 잘게 나눌 때는 엔진 위치(보정·변형 전)에서 나눈 뒤 점마다 변형·보정한다
     const base = this.fine ? (p.sim ? simRaw(simOf(p), t) : rawPose(p, t)) : loops, e = t * t * (3 - 2 * t);
-    const w = p.sim ? ease(t) : settleW(p, t);
+    const w = settleW(p, t), fade = settleFade(p, t);
     const F = this.hasOff ? base.map(frameOf) : null;
     const fx = this.fine && p.deform ? (v, qi) => p.deform(v, e, p.polys[qi]) : (v) => v;
     // 면마다 가운데점 (부채꼴 중심)
@@ -435,7 +434,7 @@ export class PaperMesh {
       if (deform) { const d = p.deform([x, y, z], e, p.polys[qi]); x = d[0]; y = d[1]; z = d[2]; }
       if (F) {
         const f = F[qi], o = v * 3;
-        const a0 = OA[o] + (OB[o] - OA[o]) * w, a1 = OA[o + 1] + (OB[o + 1] - OA[o + 1]) * w, a2 = OA[o + 2] + (OB[o + 2] - OA[o + 2]) * w;
+        const a0 = (OA[o] + (OB[o] - OA[o]) * w) * fade, a1 = (OA[o + 1] + (OB[o + 1] - OA[o + 1]) * w) * fade, a2 = (OA[o + 2] + (OB[o + 2] - OA[o + 2]) * w) * fade;
         x += f[0][0] * a0 + f[1][0] * a1 + f[2][0] * a2; y += f[0][1] * a0 + f[1][1] * a1 + f[2][1] * a2; z += f[0][2] * a0 + f[1][2] * a1 + f[2][2] * a2;
       }
       P[v * 3] = x; P[v * 3 + 1] = y; P[v * 3 + 2] = z;
@@ -445,7 +444,7 @@ export class PaperMesh {
     geo.attributes.position.needsUpdate = true;
     geo.computeBoundingSphere();
     this.back.geometry.boundingSphere = geo.boundingSphere;
-    const ridge = this.updateFolds(base, normals, F, w, fx);
+    const ridge = this.updateFolds(base, normals, F, w, fx, fade);
 
     const D = this.dark.geometry.attributes.position.array, L = this.light.geometry.attributes.position.array;
     let di = 0, li = 0;
@@ -467,7 +466,7 @@ export class PaperMesh {
         const at = (s2) => {
           let v = fx(a0.map((x, j) => x + (b0[j] - x) * (s2 / S)), ed.i);
           if (eo && F) {
-            const f = F[ed.i], [A, B] = eo[s2], q = [0, 1, 2].map((j) => A[j] + (B[j] - A[j]) * w);
+            const f = F[ed.i], [A, B] = eo[s2], q = [0, 1, 2].map((j) => (A[j] + (B[j] - A[j]) * w) * fade);
             v = [0, 1, 2].map((j) => v[j] + f[0][j] * q[0] + f[1][j] * q[1] + f[2][j] * q[2]);
           }
           return v;
