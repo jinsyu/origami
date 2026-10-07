@@ -1,5 +1,15 @@
 // 영어 문구. 작품별 이름·설명·단계 안내, 화면 문구
 export const enModels = {
+  motorboat: {
+    name: 'Boat', desc: 'Just three folds make a boat with a cabin. Draw windows to decorate it.', paper: 'Square origami paper',
+    done: 'Your boat is done! Glue it on blue paper and it will race across the sea.',
+    steps: [
+      'Place the paper colored side down. Fold the bottom edge up by one third. This is the hull.',
+      'Fold the top left behind along the slanted dotted line. This makes the cabin.',
+      'Fold the bottom left corner of the hull behind at an angle to make the bow.',
+      'Draw two square windows on the cabin with a pencil, and you are done!',
+    ],
+  },
   watermelon: {
     name: 'Watermelon', desc: 'Fold the bottom into a band for the white rind, then fold the sides down at an angle for a slice of watermelon. Draw black seeds.', paper: 'Square origami paper (red)',
     done: 'Your watermelon is done! A cool summer fruit.',
