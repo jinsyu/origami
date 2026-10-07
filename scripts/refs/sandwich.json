@@ -1,0 +1,9 @@
+{
+  "src": "https://en.origami-club.com/easy/food/sandwich2/zu.gif",
+  "panels": [
+    { "label": 1, "after": 0, "box": [28, 36, 592, 597] },
+    { "label": 2, "after": 1, "box": [410, 353, 974, 657] },
+    { "label": 3, "after": 2, "box": [30, 663, 594, 967] },
+    { "label": "완성", "after": 3, "box": [623, 716, 927, 1014] }
+  ]
+}

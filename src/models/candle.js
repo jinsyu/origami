@@ -3,7 +3,12 @@
 // 세 모서리를 가운데로 접고 아래를 접어 올려 불꽃 끝만 남긴 뒤, 양옆을 뒤로 접어 가는 초를 만든다.
 const R = Math.SQRT1_2, A = R / 2;
 
-export const candle = {
+export const candleParams = { fy: 0.14, sx: 1 / 6 };
+
+export function makeCandle({ fy, sx } = candleParams) {
+  return {
+  params: { fy, sx },
+  make: makeCandle,
   id: 'candle',
   name: '촛불',
   level: 1,
@@ -25,13 +30,16 @@ export const candle = {
         { line: [[-1, -A], [1, -A]], side: [0, -R] },
       ],
     },
-    { text: '아래 변을 점선에서 접어 올려요. 위쪽 끝에 작은 불꽃만 보이게 해요.', moves: [{ line: [[-1, 0.14], [1, 0.14]], side: [0, -A] }] },
+    { text: '아래 변을 점선에서 접어 올려요. 위쪽 끝에 작은 불꽃만 보이게 해요.', moves: [{ line: [[-1, fy], [1, fy]], side: [0, -A] }] },
     {
       text: '양쪽을 세로 점선에서 뒤로 접으면 완성!',
       moves: [
-        { line: [[0.15, -1], [0.15, 1]], side: [A, 0], toward: -1 },
-        { line: [[-0.15, -1], [-0.15, 1]], side: [-A, 0], toward: -1 },
+        { line: [[sx, -1], [sx, 1]], side: [A, 0], toward: -1 },
+        { line: [[-sx, -1], [-sx, 1]], side: [-A, 0], toward: -1 },
       ],
     },
   ],
 };
+}
+
+export const candle = makeCandle();
