@@ -32,7 +32,7 @@ GitHub `jinsyu/origami` → Vercel 자동 배포 (main 푸시 = 배포). 빌드 
 | `src/models/parts/bases.js` | 기본형 단계 묶음: `squareBase()`(사각, 5단계), `birdBase()`(학, 14단계), `waterbombBase()`(물풍선, 5단계), `fishBase()`(물고기, 4단계: 연 선 두 번 + 토끼 귀 접기 위아래). 작품 steps 앞에 펼쳐 넣는다 |
 | `src/models/parts/axioms.js` | 접는 선 작도(종이접기 공리): `through`, `pointToPoint`, `lineToLine`, `perpThrough`, `parallelThrough`, `pointToLineThrough`, `pointToLinePerp`, `intersect`, `reflect`, `mid`, `along` |
 | `src/models/parts/draw.js` | 꾸미기 도우미: arc, eye, cheek, box, fill |
-| `scripts/check.mjs` | `npm run check` — 끊김·NaN·튐 검사 |
+| `scripts/check.mjs` | `npm run check` — 끊김·NaN·튐 검사, 겹 다지기가 겹 순서를 뒤집지 않는지(격자), 단계가 넘어갈 때 화면이 튀지 않는지 |
 | `scripts/layers.mjs` | 층 관통 진단 |
 | `scripts/thumb-server.mjs` | 썸네일 저장 서버 (5199) |
 
