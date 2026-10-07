@@ -21,5 +21,6 @@ import { crane } from './crane.js';
 import { masu } from './masu.js';
 import { roofhouse } from './roofhouse.js';
 import { top } from './top.js';
+import { fox } from './fox.js';
 
-export const MODELS = [dog, cat, flower, cup, bookmark, house, cicada, kabuto, hat, airplane, glider, envelope, whale, heart, frame, duck, tulip, heron, masu, roofhouse, crane, top].sort((a, b) => a.level - b.level);
+export const MODELS = [dog, cat, flower, cup, bookmark, house, cicada, kabuto, hat, airplane, glider, envelope, whale, heart, frame, duck, tulip, heron, masu, roofhouse, crane, top, fox].sort((a, b) => a.level - b.level);

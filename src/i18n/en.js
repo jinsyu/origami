@@ -1,5 +1,17 @@
 // 영어 문구. 작품별 이름·설명·단계 안내, 화면 문구
 export const enModels = {
+  fox: {
+    name: 'Fox Face', desc: 'The pointy tip of a triangle becomes the snout, and lifting both corners makes ears with white insides.', paper: 'Square origami paper',
+    done: 'Your fox face is done! Give it a name and show your friends.',
+    steps: [
+      'Place the paper colored side down as a diamond. Fold the top corner down to the bottom corner.',
+      'Fold both side corners down to the bottom corner. It becomes a diamond.',
+      'Fold the tips of both flaps up and outward at an angle. The tips poking out at the top become ears.',
+      'Turn the paper over. Now you can see a fox face with pointy ears.',
+      'With a pencil, draw the eyes and fill in a black nose at the tip of the snout.',
+      'Color the cheeks pink with a colored pencil, and you are done!',
+    ],
+  },
   top: {
     name: 'Cushion Spinning Top', desc: 'Fold the four corners to the center three times for a sturdy top. Color it, add a toothpick and give it a spin.', paper: 'Square origami paper, a toothpick',
     done: 'Your spinning top is done! Twist the toothpick between your fingers and watch the colors blend.',
