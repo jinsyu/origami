@@ -1,5 +1,18 @@
 // 영어 문구. 작품별 이름·설명·단계 안내, 화면 문구
 export const enModels = {
+  chick: {
+    name: 'Chick', desc: 'Fold a corner in and back out to make a tiny beak, then fold in half for a cute chick.', paper: 'Square origami paper (yellow)',
+    done: 'Your chick is done! Say peep peep!',
+    steps: [
+      'Place the paper colored side down as a diamond. Fold in half both ways and unfold to make creases.',
+      'Fold the left corner in by one third.',
+      'Fold the tip back out so it pokes out a little on the left. This is the beak.',
+      'Fold the top corner down to the bottom corner.',
+      'Fold the bottom tip behind along the dotted line.',
+      'Tilt the chick so the beak points up.',
+      'Draw an eye next to the beak with a pencil, and you are done!',
+    ],
+  },
   fuji: {
     name: 'Snowy Mountain', desc: 'Fold the tip of a triangle down and back up to make white snow, then fold it behind for a flat summit.', paper: 'Square origami paper',
     done: 'Your mountain is done! A tall mountain capped with white snow.',
