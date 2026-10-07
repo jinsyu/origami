@@ -34,6 +34,7 @@ GitHub `jinsyu/origami` → Vercel 자동 배포 (main 푸시 = 배포). 빌드 
 | `src/models/parts/draw.js` | 꾸미기 도우미: arc, eye, cheek, box, fill |
 | `scripts/check.mjs` | `npm run check` — 끊김·NaN·튐 검사, 겹 다지기가 겹 순서를 뒤집지 않는지(격자), 단계가 넘어갈 때 화면이 튀지 않는지 |
 | `scripts/layers.mjs` | 층 관통 진단 |
+| `scripts/diagram.mjs`, `scripts/refs/*.json` | 도안 맞춤 검사 (`npm run diagrams`): 도안 그림의 단계 그림마다 종이 모양·색 면을 엔진 결과와 겹쳐 점수를 낸다. `--fit` 으로 도면에서 읽기 어려운 길이를 그림에 맞춰 찾는다 |
 | `scripts/thumb-server.mjs` | 썸네일 저장 서버 (5199) |
 
 ### 작품 데이터 요약
@@ -47,7 +48,13 @@ GitHub `jinsyu/origami` → Vercel 자동 배포 (main 푸시 = 배포). 빌드 
 ## 작업 방법
 
 - 로컬: `python3 -m http.server 5173` (이미 띄워져 있으면 재사용). 브라우저 캐시 때문에 수정 파일은 `fetch(url,{cache:'reload'})` 후 새로고침.
-- 검증: `npm run check` + `node --check src/i18n/en.js` (check는 en.js를 읽지 않음) + 브라우저 화면 확인.
+- 검증: `npm run check` + `npm run diagrams` + `node --check src/i18n/en.js` (check는 en.js를 읽지 않음) + 브라우저 화면 확인.
+- **도안 맞춤 검사 (새 작품은 반드시)**: `scripts/refs/<id>.json` 에 zu.gif 주소와 단계 그림마다 `{ after: 접은 단계 수, box: [x0,y0,x1,y1] }` (gif 화소 좌표, 그림 한 장만 들어가게)를 적고 `node scripts/diagram.mjs <id> --img 비교.png`.
+  - 도안 n번 그림 = n-1 단계를 접은 뒤 모습, 완성 그림 = 접기 단계 전부. 엔진 단계 수가 도안과 다르면 after 를 맞춘다.
+  - 그림마다 위치·크기는 자동으로 맞춘다. 종이 IoU 0.9·색 일치 0.85 아래면 실패. 비교 그림의 빨강 = 도안에만 종이, 파랑 = 엔진에만, 노랑 = 색 면(앞뒤)이 다름.
+  - 색 면 비교로 산 접기/골짜기 접기, 겹 순서(앞뒤)가 맞는지까지 드러난다 (말 얼굴 3단계는 도안 화살표로는 헷갈렸지만 색 일치로 '뒤로 접기'임을 확인).
+  - 도면에서 읽기 어려운 길이·높이는 작품을 `make(params)` 와 `params` 로 만들고 refs 에 `fit: { 이름: [최소, 최대] }` 를 적어 `--fit` 으로 찾는다. 찾은 값이 1/6·1/2 처럼 깔끔하면 그 값을 쓴다 (트럭 0.083 → H/6).
+  - 그림 상자는 gif 의 불투명 덩어리 경계를 뽑아 잡으면 빠르다. 회색 종이(코알라 등)는 색 면을 구별 못 한다(채도로 가름).
 - 공유 미리보기: `scripts/og.html` 을 1200x630 으로 캡처해 og.jpg 로 저장 (작품 수 문구 갱신).
 - 썸네일: `node scripts/thumb-server.mjs` 띄우고 헤드리스 크롬(`--headless=new --use-angle=swiftshader --enable-unsafe-swiftshader`)으로 `?live&save#/` 를 40초 열기. 작품·색을 바꾸면 반드시 다시 만든다.
 - 단계 중간 모습 확인: 브라우저에서 `thumbs.js` 의 `snapshot(model, plan, t, dir, size)` 로 PNG를 만들어 작은 저장 서버로 보내고, PIL로 여러 장을 한 장에 모아 본다. 화면 캡처보다 빠르고 시점을 마음대로 고를 수 있다.
@@ -59,10 +66,10 @@ GitHub `jinsyu/origami` → Vercel 자동 배포 (main 푸시 = 배포). 빌드 
 - 여러 장: `sheets: [{ outline, colors, place: {x, y, z, rot} }]`. 장마다 태그 `sheet0`, `sheet1`… 로 골라 접는다. 옮기기·돌리기는 `axis3` (`offset` 으로 평행 이동). (현재 쓰는 작품 없음)
 - 아직 불가: 연꽃(입체), 몸 전체 강아지(다리 기본형 필요).
 
-## 현재 작품 (47개)
+## 현재 작품 (50개)
 
 - 입문: 사자 얼굴, 샌드위치, 부엉이, 요트, 촛불, 강아지 얼굴, 고양이 얼굴, 여우 얼굴, 판다 얼굴, 토끼 얼굴, 수박, 보트, 눈 덮인 산, 병아리, 돼지 얼굴, 쥐 얼굴, 아이스크림, UFO, 문어, 피아노, 튤립 꽃, 집, 편지 봉투
-- 초급: 펭귄, 코알라 얼굴, 자동차, 금붕어, 연필, 컵, 모서리 책갈피, 매미, 투구, 종이 모자, 하트, 액자, 지붕 집
+- 초급: 펭귄, 코알라 얼굴, 자동차, 트럭, 말 얼굴, 케이크, 금붕어, 연필, 컵, 모서리 책갈피, 매미, 투구, 종이 모자, 하트, 액자, 지붕 집
 - 중급: 원숭이, 코끼리, 게, 종이비행기, 글라이더, 고래, 오리, 두루미
 - 고급: 튤립 꽃봉오리, 네모 상자, 학 (아기 여우는 DEV로 뺌)
 
@@ -77,17 +84,14 @@ GitHub `jinsyu/origami` → Vercel 자동 배포 (main 푸시 = 배포). 빌드 
 
 도면은 그림이라 `https://en.origami-club.com/<분류>/<작품>/zu.html` 에서 `zu.gif` 를 받아 `sips -s format png` 로 바꿔 직접 보고 좌표를 잡는다. 작품 파일 첫 줄에 출처 주소를 적는다.
 
-- 구현: 사자 얼굴(lion), 샌드위치(sandwich2), 부엉이(owl, Origami Club 도면대로 다시 구현), 요트(yacht), 촛불(candle2), 원숭이(monkey2), 코끼리(elephant2), 펭귄(penguin), 게(crab2), 아기 여우(fox-cub), 피아노(piano2), 문어, UFO, 아이스크림(soft-cream2), 토끼 얼굴, 수박, 보트(motorboat), 눈 덮인 산(fuji), 병아리, 돼지 얼굴, 코알라 얼굴, 자동차, 금붕어, 연필, 쥐 얼굴
+- 구현: 사자 얼굴(lion), 샌드위치(sandwich2), 부엉이(owl, Origami Club 도면대로 다시 구현), 요트(yacht), 촛불(candle2), 원숭이(monkey2), 코끼리(elephant2), 펭귄(penguin), 게(crab2), 아기 여우(fox-cub), 피아노(piano2), 문어, UFO, 아이스크림(soft-cream2), 토끼 얼굴, 수박, 보트(motorboat), 눈 덮인 산(fuji), 병아리, 돼지 얼굴, 코알라 얼굴, 자동차, 금붕어, 연필, 쥐 얼굴, 트럭(track), 말 얼굴(horse), 케이크(cake) — 셋 다 도안 맞춤 검사 통과
 - 실패·보류:
-  - 트럭(vehicle/track): 운전석 칸(6·7단계)을 만들지 못해 자동차와 구별 안 됨 — 보류
   - 강아지(animal/dog)·북극곰: 펼쳐 누르기+당겨 빼기/주머니 접기 — 보류
   - 고릴라(animal/gorilla): 5단계 펼쳐 누르기에서 세모가 윗변 위로 솟아야 하는데 축 해석 실패(경첩 x=-0.25·x=0 둘 다 시도) — 보류
   - 카네이션(flowers/carnation2): 가위·풀 사용 — 제외
   - 신칸센(vehicle/shinkansen): 주머니 접기·안으로 접기 — 보류
-  - 말 얼굴(animal-face/horse): 5~7단계 주름 접기 높이가 불분명 — 보류
   - 호랑이·곰·소 얼굴: 코알라·지붕 집과 접는 법이 거의 같아 제외
   - 나무(flowers/tree): 세 조각을 풀로 붙이는 작품이라 제외
-  - 케이크: 작은 주름·계단 접기 높이를 도면에서 읽기 어려움
   - 로켓(easy/vehicle/rocket): 날개 단계에서 아래 띠의 겹 구성(뒤집기 방향)을 해석 못 해 끊김
   - 달팽이(easy/other/snail): 4~7단계 접는 선 끝점이 불분명
   - 토끼 얼굴 6단계(위 꼭짓점 뒤로 접기): 귀(띠 끝)가 가운데 선을 따라 꼭대기까지 붙어 있어 접으면 끊긴다 — 생략. 대신 띠 폭 B=0.16 으로 귀를 길게 (귀가 꼭대기 위로 나오는 길이 = B)

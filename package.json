@@ -1,1 +1,1 @@
-{"type":"module","private":true,"scripts":{"check":"node scripts/check.mjs"}}
+{"type":"module","private":true,"scripts":{"check":"node scripts/check.mjs","diagrams":"node scripts/diagram.mjs --all"}}
