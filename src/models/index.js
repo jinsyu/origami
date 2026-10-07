@@ -24,5 +24,6 @@ import { fox } from './fox.js';
 import { panda } from './panda.js';
 import { boat } from './boat.js';
 import { top2 } from './top2.js';
+import { ddakji } from './ddakji.js';
 
-export const MODELS = [dog, cat, flower, cup, bookmark, house, cicada, kabuto, hat, airplane, glider, envelope, whale, heart, frame, duck, tulip, heron, masu, roofhouse, crane, fox, panda, boat, top2].sort((a, b) => a.level - b.level);
+export const MODELS = [dog, cat, flower, cup, bookmark, house, cicada, kabuto, hat, airplane, glider, envelope, whale, heart, frame, duck, tulip, heron, masu, roofhouse, crane, fox, panda, boat, top2, ddakji].sort((a, b) => a.level - b.level);

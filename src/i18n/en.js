@@ -33,6 +33,21 @@ export const enModels = {
       'Color the cheeks pink with a colored pencil, and you are done!',
     ],
   },
+  ddakji: {
+    name: 'Ddakji', desc: 'Fold two sheets into strips and weave them together into a sturdy ddakji. Play ddakji-chigi with a friend.', paper: '2 sheets of square origami paper',
+    done: 'Your ddakji is done! Slam it down next to your friend’s ddakji and flip it over to win.',
+    steps: [
+      'Place both sheets colored side down. Fold the top edge down to the bottom edge.',
+      'Fold the bottom edge up to the top edge once more to make a long thin strip.',
+      'On the yellow strip, fold the right end up at an angle and the left end down.',
+      'Fold the green strip the same way: right end up, left end down.',
+      'Turn the green strip sideways and lay it across the yellow strip in a cross.',
+      'Fold the top end of the yellow strip underneath down over the green strip.',
+      'Fold the right end of the green strip over to the left.',
+      'Fold the bottom end of the yellow strip up over it.',
+      'Fold the left end of the green strip to the right, tucking its tip under the first yellow flap, and you are done!',
+    ],
+  },
   top2: {
     name: 'Ddakji Spinning Top', desc: 'Fold two sheets into strips, weave them together like ddakji, and push a toothpick through the center to spin it.', paper: '2 sheets of square origami paper, a toothpick',
     done: 'Your spinning top is done! Pinch the top of the toothpick and twist to spin it. The two colors blend together.',
