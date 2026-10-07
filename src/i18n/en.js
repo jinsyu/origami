@@ -1,22 +1,39 @@
 // 영어 문구. 작품별 이름·설명·단계 안내, 화면 문구
 export const enModels = {
+  top: {
+    name: 'Cushion Spinning Top', desc: 'Fold the four corners to the center three times for a sturdy top. Color it, add a toothpick and give it a spin.', paper: 'Square origami paper, a toothpick',
+    done: 'Your spinning top is done! Twist the toothpick between your fingers and watch the colors blend.',
+    steps: [
+      'Place the paper colored side down. Fold and unfold both diagonals to find the center.',
+      'Fold all four corners to the center point. This is the cushion fold.',
+      'Fold the four new corners to the center once more.',
+      'Turn the paper over.',
+      'Fold the four corners to the center on this side too, pressing firmly. This makes a thick top body.',
+      'With colored pencils, color rings of different colors around the center.',
+      'Push a toothpick through the center so it pokes out a little on both sides, and you are done!',
+    ],
+  },
   dog: {
     name: 'Dog Face', desc: 'Four folds make a puppy with floppy ears. Perfect for a first fold.', paper: 'Square origami paper',
-    done: 'Your dog face is done! Draw the eyes and nose.',
+    done: 'Your dog face is done! Give it a name and show your friends.',
     steps: [
       'Place the paper colored side down as a diamond. Fold the top corner down to the bottom corner.',
       'Fold both side corners down at an angle so the tips hang outside the face. These are the ears.',
       'Fold only the front layer of the bottom corner up a little. This is the nose.',
       'Fold the remaining layer behind to make the chin.',
+      'With a pencil, draw the eyes, nose and mouth. Fill in the nose at the tip of the folded-up triangle.',
+      'Color the cheeks and tongue pink with a colored pencil, and you are done!',
     ],
   },
   cat: {
     name: 'Cat Face', desc: 'Fold a triangle and lift both ends up into pointy ears. Done in three folds.', paper: 'Square origami paper',
-    done: 'Your cat face is done! Draw the eyes and whiskers.',
+    done: 'Your cat face is done! Give it a name and show your friends.',
     steps: [
       'Place the paper colored side down as a diamond. Fold the top corner down to the bottom corner.',
       'Fold both side corners up at an angle. The tips poke up as ears.',
       'Fold the bottom tip behind a little to round off the chin.',
+      'With a pencil, draw the eyes, the mouth and whiskers on both sides.',
+      'Color the nose and cheeks pink with a colored pencil, and you are done!',
     ],
   },
   flower: {
@@ -42,22 +59,26 @@ export const enModels = {
   },
   house: {
     name: 'House', desc: 'Fold two corners to the center line for a pointed roof. Practice folding to a line.', paper: 'Square origami paper',
-    done: 'Your house is done! Draw windows and a door.',
+    done: 'Your house is done! A cozy home with the lights on.',
     steps: [
       'Place the paper colored side down. Fold it in half vertically and unfold to make a center line.',
       'Fold the two top corners down to the center line. This is the pointed roof.',
-      'Fold the bottom edge up a little to make a base strip. Your house is done!',
+      'Fold the bottom edge up a little to make a base strip.',
+      'With a pencil, draw a door in the middle and a window on each side.',
+      'Color the windows yellow and the door brown with colored pencils, and you are done!',
     ],
   },
 
   bookmark: {
     name: 'Corner Bookmark', desc: 'A bookmark that slips over the corner of a page. Make a pocket with the front layer and tuck both ends inside. Draw a face on it!', paper: 'Square origami paper',
-    done: 'Your corner bookmark is done! Draw eyes and teeth to make a monster bookmark.',
+    done: 'Your monster bookmark is done! Slip it over the corner of the page you are reading.',
     steps: [
       'Place the paper colored side down as a diamond. Fold the bottom corner up to the top corner.',
       'Fold only the front layer of the top corner down to the middle of the bottom edge. This layer becomes the pocket.',
       'Fold the right corner up to the top corner, tucking it inside the pocket.',
-      'Fold the left corner up the same way and tuck it into the pocket. Your corner bookmark is done!',
+      'Fold the left corner up the same way and tuck it into the pocket.',
+      'With a pencil, draw two big eyes on the top triangle and sharp teeth along the top edge of the pocket.',
+      'Color a red tongue inside the pocket with a colored pencil, and you are done!',
     ],
   },
   cicada: {
@@ -141,14 +162,15 @@ export const enModels = {
 
   whale: {
     name: 'Whale', desc: 'Blunt the head of a kite, then outside reverse fold the thin end up into a tail.', paper: 'Square origami paper',
-    done: 'Your whale is done! Draw an eye and a water spout above its head.',
+    done: 'Your whale is done! Give its tail a little wiggle.',
     steps: [
       'Place the paper colored side down as a diamond. Fold it in half vertically and unfold to make a center line.',
       'Fold the two lower edges to the center line to make a kite.',
       'Fold the top corner down to make a blunt head.',
       'Fold the paper in half backward along the center line.',
       'Lay it down with the fold at the bottom. The thin end points right.',
-      'Outside reverse fold the thin end so it stands up. This is the tail. Your whale is done!',
+      'Outside reverse fold the thin end so it stands up. This is the tail.',
+      'With a pencil, draw a round eye on the head, then color the cheek pink with a colored pencil, and you are done!',
     ],
   },
   heart: {
@@ -211,7 +233,7 @@ export const enModels = {
 
   heron: {
     name: 'Heron', desc: 'Make the kite twice to get very slim, then reverse fold the neck, head and tail. A sleek water bird.', paper: 'Square origami paper',
-    done: 'Your heron is done! Draw a red dot on top of its head.',
+    done: 'Your heron is done! What a fine red-crowned heron.',
     steps: [
       'Place the paper colored side down as a diamond. Fold it in half vertically and unfold to make a center line.',
       'Fold the two lower edges to the center line to make a kite.',
@@ -221,7 +243,8 @@ export const enModels = {
       'Lay it down with the fold at the bottom. The thin end points right.',
       'Outside reverse fold the thin end up at an angle. This is the neck.',
       'Reverse fold the tip of the neck forward for the head and long beak.',
-      'Outside reverse fold the left end up into a tail. Your heron is done!',
+      'Outside reverse fold the left end up into a tail.',
+      'Dot an eye with a pencil, then color the top of the head red with a colored pencil, and you are done!',
     ],
   },
   masu: {
@@ -267,13 +290,15 @@ export const enModels = {
   },
   roofhouse: {
     name: 'House with a Roof', desc: 'Squash the tops of both side flaps into a triangular roof. The easiest way to practice the squash fold.', paper: 'Square origami paper',
-    done: 'Your house is done! Draw windows and a door.',
+    done: 'Your roof house is done! A cozy home with the lights on.',
     steps: [
       'Place the paper colored side down. Fold the top half down.',
       'Fold it in half vertically and unfold to make a center line.',
       'Fold both ends to the center line.',
       'Lift the right flap, open the top and press it flat into a triangular roof.',
-      'Squash the left flap the same way to finish the roof. Your house is done!',
+      'Squash the left flap the same way to finish the roof.',
+      'With a pencil, draw a door in the middle of the wall and a window on each side.',
+      'Color the windows yellow and the door red with colored pencils, and you are done!',
     ],
   },
 
@@ -288,7 +313,7 @@ export const enUI = {
   symbols: 'Learn the fold symbols',
   foot: 'Drag to rotate the paper. Use ← → to change steps and Space to play.',
   back: 'All models', print: 'Printable diagram', full: 'Full screen', unfull: 'Exit full screen',
-  prev: 'Previous step', fold: 'Fold this step', auto: 'Play to the end', stop: 'Stop', replay: 'Watch again from the start',
+  prev: 'Previous step', fold: 'Fold this step', draw: 'Draw this step', auto: 'Play to the end', stop: 'Stop', replay: 'Watch again from the start',
   speed: 'Speed', slow: 'Slow', normal: 'Normal', fast: 'Fast', steps: 'Steps', done: 'Done', peek: 'Result',
   valley: 'Valley fold', mountain: 'Mountain fold', next: (n) => `Next: ${n}`, stepsCount: (n) => `${n} steps`,
   startBtn: (n) => `Start with the ${n}`, continueBtn: (n, i, k) => `Continue the ${n} (${i}/${k})`,

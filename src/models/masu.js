@@ -50,7 +50,6 @@ export const masu = {
   desc: '평면에서 선을 미리 내 두고, 벽을 세우고 모서리를 접어 넣어 입체 상자를 조립해요.',
   paper: '정사각형 색종이',
   colors: { front: '#fbf8f1', back: '#7a5bb5' },
-  pattern: 'check',
   accent: '#5e43a0',
   outline: [[0, -R], [R, 0], [0, R], [-R, 0]],
   view: [0.3, -0.45, 1],

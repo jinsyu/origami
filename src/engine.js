@@ -253,7 +253,7 @@ const moveTo = (p, mv, f) => add(rotate(p, mv.o, mv.d, mv.theta * f), mul(mv.u, 
 function planStep(polys, step) {
   let cur = polys.map(clonePoly);
   const moves = [];
-  step.moves.forEach((m, mi) => {
+  (step.moves || []).forEach((m, mi) => {
     const r = selectMove(cur, m, mi);
     cur = r.cur;
     moves.push(r.mv);
@@ -335,8 +335,10 @@ function edgeList(polys) {
 export function buildModel(model) {
   let polys = [{ p: model.outline.map(([x, y]) => [x, y, 0]), uv: model.outline.map((v) => v.slice()), e: model.outline.map(() => 1), tags: new Set(), owner: -1 }];
   const plans = [];
+  let inked = []; // 꾸미기 단계에서 이미 그린 획 (다음 꾸미기 단계에도 그대로 보인다)
   for (const step of model.steps) {
     const plan = step.sim ? planSeqStep(polys, step) : planStep(polys, step);
+    if (inked.length || step.draw) { plan.inked = inked; plan.draw = step.draw || []; inked = [...inked, ...plan.draw]; }
     plans.push(plan);
     const fin = endPose(plan);
     polys = plan.polys.map((q, i) => ({ ...clonePoly(q), p: fin[i].map((v) => v.slice()), hist: undefined }));

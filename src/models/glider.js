@@ -11,7 +11,6 @@ export const glider = {
   desc: '앞을 뭉툭하게 접어 무게를 앞에 모은 넓은 날개 비행기예요. 천천히 오래 날아요.',
   paper: '정사각형 색종이',
   colors: { front: '#fbf8f1', back: '#e76f51' },
-  pattern: 'stripes',
   accent: '#c4502f',
   outline: [[-H, -H], [H, -H], [H, H], [-H, H]],
   view: [0.32, -0.5, 1],

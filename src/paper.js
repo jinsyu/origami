@@ -48,39 +48,6 @@ function paperTexture() {
   return sharedTex;
 }
 
-// 무늬 색종이: 색깔 면에만 입힌다. 재질 색과 곱해지므로 바탕은 밝은 회색, 무늬는 흰색으로 그려 색 안에서 밝게 보이게 한다
-const patternCache = new Map();
-function patternTexture(kind) {
-  if (patternCache.has(kind)) return patternCache.get(kind);
-  const c = document.createElement('canvas');
-  c.width = c.height = 256;
-  const g = c.getContext('2d');
-  g.drawImage(paperTexture().image, 0, 0);
-  g.globalCompositeOperation = 'multiply';
-  g.fillStyle = 'rgb(214,214,214)';
-  g.fillRect(0, 0, 256, 256);
-  g.globalCompositeOperation = 'source-over';
-  g.fillStyle = 'rgba(255,255,255,0.95)';
-  g.strokeStyle = 'rgba(255,255,255,0.95)';
-  if (kind === 'dots') {
-    for (let y = 0; y < 256; y += 32) for (let x = (y / 32) % 2 ? 16 : 0; x < 256 + 16; x += 32) { g.beginPath(); g.arc(x, y + 16, 5, 0, Math.PI * 2); g.fill(); }
-  } else if (kind === 'stripes') {
-    g.lineWidth = 9;
-    for (let i = -256; i < 512; i += 32) { g.beginPath(); g.moveTo(i, 0); g.lineTo(i + 256, 256); g.stroke(); }
-  } else if (kind === 'check') {
-    g.globalAlpha = 0.45;
-    for (let i = 0; i < 256; i += 64) { g.fillRect(i, 0, 32, 256); g.fillRect(0, i, 256, 32); }
-  } else if (kind === 'waves') {
-    g.lineWidth = 4;
-    for (let y = 8; y < 256; y += 24) { g.beginPath(); for (let x = 0; x <= 256; x += 4) g.lineTo(x, y + Math.sin((x / 256) * Math.PI * 4) * 6); g.stroke(); }
-  }
-  const tex = new THREE.CanvasTexture(c);
-  tex.wrapS = tex.wrapT = THREE.RepeatWrapping;
-  tex.colorSpace = THREE.SRGBColorSpace;
-  patternCache.set(kind, tex);
-  return tex;
-}
-
 export function addLights(scene) {
   // 그늘진 면도 종이 색이 그대로 읽히도록 바닥광을 밝게, 주광 대비는 낮게 둔다
   scene.add(new THREE.HemisphereLight('#ffffff', '#ece9e2', 1.9));
@@ -105,8 +72,70 @@ export class PaperMesh {
     this.dark = new THREE.LineSegments(new THREE.BufferGeometry(), new THREE.LineBasicMaterial({ color: '#1e2b3a', transparent: true, opacity: 0.45 }));
     this.light = new THREE.LineSegments(new THREE.BufferGeometry(), new THREE.LineBasicMaterial({ color: '#1e2b3a', transparent: true, opacity: 0.16 }));
     this.group = new THREE.Group();
-    this.group.add(this.front, this.back, this.dark, this.light);
+    this.ink = new THREE.Group(); // 꾸미기 단계에서 연필·색연필로 그린 획
+    this.group.add(this.front, this.back, this.dark, this.light, this.ink);
     this.plan = null;
+    this.inkItems = [];
+  }
+
+  // 꾸미기 획을 만든다: 이미 그린 획(inked)은 그대로, 이번 단계 획(draw)은 진행률에 따라 차례로 나타난다
+  setupInk(p) {
+    this.ink.traverse((o) => { if (o.geometry) o.geometry.dispose(); if (o.material) o.material.dispose(); });
+    this.ink.clear();
+    this.inkItems = [];
+    if (!p.draw) return;
+    const weight = (s) => (s.line ? s.line.reduce((a, q, i) => (i ? a + Math.hypot(q[0] - s.line[i - 1][0], q[1] - s.line[i - 1][1]) : 0), 0) : 0.06);
+    const total = p.draw.reduce((a, s) => a + weight(s), 0) || 1;
+    let acc = 0;
+    const add = (s, animated) => {
+      const mat = new THREE.MeshBasicMaterial({ color: s.color || '#34363a', transparent: true, opacity: s.line ? 0.92 : 0.85, side: THREE.DoubleSide, depthWrite: false });
+      let mesh;
+      if (s.line) {
+        // 획을 촘촘히 나눠 얇은 띠로 만든다 (앞에서부터 그려지게)
+        const pts = [];
+        s.line.forEach((q, i) => {
+          if (!i) { pts.push(q); return; }
+          const a = s.line[i - 1], n = Math.max(1, Math.ceil(Math.hypot(q[0] - a[0], q[1] - a[1]) / 0.004));
+          for (let k = 1; k <= n; k++) pts.push([a[0] + ((q[0] - a[0]) * k) / n, a[1] + ((q[1] - a[1]) * k) / n]);
+        });
+        const h = (s.w || 0.011) / 2, v = [];
+        for (let i = 1; i < pts.length; i++) {
+          const a = pts[i - 1], b = pts[i], L = Math.hypot(b[0] - a[0], b[1] - a[1]) || 1;
+          const nx = (-(b[1] - a[1]) / L) * h, ny = ((b[0] - a[0]) / L) * h;
+          const A = [a[0] - nx, a[1] - ny], B = [a[0] + nx, a[1] + ny], C = [b[0] + nx, b[1] + ny], D = [b[0] - nx, b[1] - ny];
+          for (const q of [A, B, C, A, C, D]) v.push(q[0], q[1], 0);
+        }
+        const geo = new THREE.BufferGeometry();
+        geo.setAttribute('position', new THREE.Float32BufferAttribute(v, 3));
+        mesh = new THREE.Mesh(geo, mat);
+      } else {
+        const r = s.r || 0.02;
+        mesh = new THREE.Mesh(new THREE.CircleGeometry(1, 28), mat);
+        mesh.position.set(s.dot[0], s.dot[1], 0);
+        mesh.scale.set(r, s.ry || r, 1);
+        mesh.userData.r = [r, s.ry || r];
+      }
+      mesh.renderOrder = s.under ? 2 : 3; // 색칠(under)은 연필 윤곽 아래에
+      this.ink.add(mesh);
+      if (!animated) return;
+      const w = weight(s) / total;
+      this.inkItems.push({ mesh, from: acc, to: acc + w, segs: s.line ? mesh.geometry.attributes.position.count / 6 : 0 });
+      acc += w;
+    };
+    p.inked.forEach((s) => add(s, false));
+    p.draw.forEach((s) => add(s, true));
+  }
+
+  updateInk(loops, t) {
+    if (!this.ink.children.length) return;
+    // 맨 위 종이 바로 위에 얹는다
+    this.ink.position.z = Math.max(...loops.flat().map((v) => v[2])) + 0.003;
+    const e = Math.min(1, t / 0.9);
+    for (const it of this.inkItems) {
+      const f = Math.max(0, Math.min(1, (e - it.from) / (it.to - it.from || 1)));
+      if (it.segs) it.mesh.geometry.setDrawRange(0, Math.round(it.segs * f) * 6);
+      else { const [rx, ry] = it.mesh.userData.r, k = f > 0 ? 1 - Math.pow(1 - f, 3) : 0.0001; it.mesh.scale.set(rx * k, ry * k, 1); }
+    }
   }
 
   setModel(model) {
@@ -115,19 +144,13 @@ export class PaperMesh {
     this.uvScale = 1.6 / Math.max(Math.max(...us) - this.uvMin[0], Math.max(...vs) - this.uvMin[1]);
     this.frontMat.color.set(model.colors.front);
     this.backMat.color.set(model.colors.back);
-    // 무늬는 색깔 면(흰색이 아닌 쪽)에 입힌다
-    const plain = paperTexture();
-    const pat = model.pattern ? patternTexture(model.pattern) : plain;
-    const frontIsWhite = new THREE.Color(model.colors.front).getHSL({}).l > 0.9;
-    this.frontMat.map = frontIsWhite ? plain : pat;
-    this.backMat.map = frontIsWhite ? pat : plain;
-    this.frontMat.needsUpdate = this.backMat.needsUpdate = true;
     this.plan = null;
   }
 
   // 다각형마다 중심점 부채꼴로 삼각형을 만든다 (T자 접점이 있어도 갈라지지 않게)
   setup(p) {
     this.plan = p;
+    this.setupInk(p);
     const meta = metaOf(p);
     const tris = meta.uv.reduce((s, L) => s + L.length, 0);
     const geo = new THREE.BufferGeometry();
@@ -193,6 +216,7 @@ export class PaperMesh {
     this.light.geometry.setDrawRange(0, li / 3);
     this.dark.geometry.attributes.position.needsUpdate = true;
     this.light.geometry.attributes.position.needsUpdate = true;
+    this.updateInk(loops, t);
     return loops;
   }
 }

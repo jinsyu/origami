@@ -1,5 +1,6 @@
 // 두루미 (정사각형 색종이, 마름모 방향)
 // 연 모양을 앞뒤로 두 번 접어 가늘게 → 뒤로 반 접기 → 목·머리·꼬리를 뒤집어 접는다.
+import { PENCIL } from './parts/draw.js';
 const R = Math.SQRT1_2;
 const s1 = Math.sin(Math.PI / 8), c1 = Math.cos(Math.PI / 8);
 const s2 = Math.sin(Math.PI / 16), c2 = Math.cos(Math.PI / 16);
@@ -29,7 +30,7 @@ export const heron = {
   outline: [[0, -R], [R, 0], [0, R], [-R, 0]],
   view: [0.3, -0.45, 1],
   finalView: [0.35, 0.3, 1],
-  done: '두루미 완성! 머리 위에 빨간 점을 그려 보세요.',
+  done: '두루미 완성! 빨간 머리가 멋진 두루미예요.',
   steps: [
     { text: '색깔 면이 아래로 가게 마름모로 놓고, 세로로 반 접었다 펴서 가운데 선을 만들어요.', moves: [{ line: [[0, -1], [0, 1]], side: [1, 0], unfold: true }] },
     {
@@ -66,12 +67,17 @@ export const heron = {
       ],
     },
     {
-      text: '왼쪽 끝을 바깥으로 뒤집어 접어 꼬리를 올려요. 두루미 완성!',
+      text: '왼쪽 끝을 바깥으로 뒤집어 접어 꼬리를 올려요.',
       sim: true,
       moves: [
         { line: TAIL_LINE, side: [-0.6, 0.02], filter: (c) => !back(c) && c.x < 0, toward: 1, spine: [[0, 0], [-1, 0]] },
         { line: TAIL_LINE, side: [-0.6, 0.02], filter: (c) => back(c) && c.x < 0, toward: -1, spine: [[0, 0], [-1, 0]] },
       ],
+    },
+    {
+      text: '연필로 눈을 콕 찍고, 색연필로 머리 꼭대기를 빨간색으로 칠하면 완성!',
+      view: [0.15, 0.1, 1],
+      draw: [{ dot: [0.352, 0.343], r: 0.008, color: PENCIL }, { dot: [0.322, 0.362], r: 0.017, ry: 0.012, color: '#d8312f' }],
     },
   ],
 };
