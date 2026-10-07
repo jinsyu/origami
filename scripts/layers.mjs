@@ -1,6 +1,7 @@
-// 진단: 겹친 층이 서로 뚫고 지나가거나(앞뒤 색 섞임) 너무 붙어 깜빡이는 곳 찾기
-import { buildModel, pose, polyNormal, GAP } from '../src/engine.js';
-import { prepareSim, simPose } from '../src/sim.js';
+// 진단: 접는 동작에서 겹친 층이 서로 뚫고 지나가거나(앞뒤 색 섞임) 너무 붙어 깜빡이는 곳 찾기
+// 엔진 위치(겹 다지기 전)로 잰다: 겹 다지기로 휜 면은 평면 근사가 맞지 않고, 화면 높이 순서는 npm run check 의 격자 검사가 맡는다
+import { buildModel, rawPose, polyNormal, GAP } from '../src/engine.js';
+import { prepareSim, simRaw } from '../src/sim.js';
 import { MODELS } from '../src/models/index.js';
 const only = process.argv[2];
 const sub = (a, b) => [a[0] - b[0], a[1] - b[1], a[2] - b[2]], dot = (a, b) => a[0] * b[0] + a[1] * b[1] + a[2] * b[2];
@@ -23,7 +24,7 @@ for (const m of MODELS) {
   plans.forEach((p, si) => {
     const s = p.sim ? prepareSim(p) : null;
     const F = 48, frames = [];
-    for (let f = 0; f <= F; f++) frames.push(s ? simPose(s, f / F) : pose(p, f / F));
+    for (let f = 0; f <= F; f++) frames.push(s ? simRaw(s, f / F) : rawPose(p, f / F));
     const prevSign = new Map(); const hits = new Map();
     frames.forEach((P, f) => {
       const N = P.map(polyNormal), C = P.map(cen);
