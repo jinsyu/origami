@@ -93,42 +93,40 @@ export function flatLevels(P, gap, polys) {
   let base = Infinity;
   for (let i = 0; i < n; i++) base = Math.min(base, Zf[i]);
   const order2 = [...Array(n).keys()].sort((a2, b2) => Zf[a2] - Zf[b2]);
-  const H = new Float64Array(n), C = new Float64Array(n), near = new Uint8Array(n);
-  let lastKey = '';
-  const solve = (x, y) => {
-    const key = x + ',' + y;
-    if (key === lastKey) return;
-    lastKey = key;
-    for (let j = 0; j < n; j++) {
-      const b = box[j];
-      near[j] = x >= b[0] && x <= b[1] && y >= b[2] && y <= b[3] ? 1 : 0;
-      C[j] = near[j] ? 1 - smooth((distTo(j, x, y) - HOLD) / FADE) : 0;
-    }
-  };
-  const height = (i, x, y) => {
-    solve(x, y);
-    // i 아래 겹들의 높이를 낮은 것부터 차례로 (i 와 관계있는 겹만)
-    let h = base;
+  // 한 점에서 그 자리의 모든 겹 높이를 아래에서부터 한 번에 구해 기억한다 (같은 자리를 여러 면·꼭짓점이 묻는다)
+  const cache = new Map();
+  const C = new Float64Array(n), D = new Float64Array(n), H = new Float64Array(n);
+  const heightsAt = (x, y) => {
+    const key = Math.round(x * 1e8) + ',' + Math.round(y * 1e8);
+    let r = cache.get(key);
+    if (r) return r;
+    const ids = [];
     for (const j of order2) {
-      if (j === i) continue;
-      if (!(Zf[j] < Zf[i] - 1e-6)) break;
-      if (!near[j] || C[j] <= 0 || !ov[i][j]) continue;
-      if (unit[j] === unit[i] && distTo(j, x, y) > 0) continue; // 같은 면의 이웃 조각
-      h = Math.max(h, below(j, x, y) + STEP * C[j]);
+      const b = box[j];
+      if (x < b[0] || x > b[1] || y < b[2] || y > b[3]) continue;
+      D[j] = distTo(j, x, y);
+      C[j] = 1 - smooth((D[j] - HOLD) / FADE);
+      ids.push(j);
     }
-    return h;
+    // 낮은 겹부터: 자기 아래에 깔린(관계있는) 겹들의 (높이 + STEP × 덮임) 가운데 최댓값
+    for (let a2 = 0; a2 < ids.length; a2++) {
+      const i = ids[a2];
+      let h = base;
+      for (let b2 = 0; b2 < a2; b2++) {
+        const j = ids[b2];
+        if (!(Zf[j] < Zf[i] - 1e-6) || C[j] <= 0 || !ov[i][j]) continue;
+        if (unit[j] === unit[i] && D[j] > 0) continue; // 같은 면의 이웃 조각
+        const v = H[j] + STEP * C[j];
+        if (v > h) h = v;
+      }
+      H[i] = h;
+    }
+    r = new Map(ids.map((i) => [i, H[i]]));
+    if (cache.size > 50000) cache.clear();
+    cache.set(key, r);
+    return r;
   };
-  // 아래 겹의 높이 (같은 점에서 여러 번 쓰이므로 점마다 기억)
-  const memo = new Map();
-  let memoKey = '';
-  const below = (j, x, y) => {
-    const key = x + ',' + y;
-    if (key !== memoKey) { memo.clear(); memoKey = key; }
-    if (memo.has(j)) return memo.get(j);
-    const v = height(j, x, y);
-    memo.set(j, v);
-    return v;
-  };
+  const below = (i, x, y) => { const v = heightsAt(x, y).get(i); return v === undefined ? base : v; };
   const query0 = (i, x, y) => below(i, x, y) - Z[i];
   // 묶음 전체의 평균 이동이 0이 되게 상수만큼 옮긴다 (다른 평면 묶음과 이어진 경첩이 벌어지지 않게. 상수라 순서·이음새는 그대로)
   let shift = 0, cntS = 0;
