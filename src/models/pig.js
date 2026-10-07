@@ -5,7 +5,12 @@ import { eye, PENCIL } from './parts/draw.js';
 const R = Math.SQRT1_2, A = R / 2;
 const has = (t) => (c) => c.tags.has(t);
 
-export const pig = {
+export const pigParams = { y1: -0.507, y2: -0.386, ex: 0.211, ey: -0.25 };
+
+export function makePig({ y1, y2, ex, ey } = pigParams) {
+  return {
+  params: { y1, y2, ex, ey },
+  make: makePig,
   id: 'pig',
   name: '돼지 얼굴',
   level: 1,
@@ -27,15 +32,18 @@ export const pig = {
       ],
     },
     { text: '위 꼭짓점을 아래 꼭짓점에 맞춰 반으로 접어요.', moves: [{ line: [[-1, 0], [1, 0]], side: [0, R], tag: 'top' }] },
-    { text: '아래 끝을 점선에서 접어 올려요.', moves: [{ line: [[-1, -0.55], [1, -0.55]], side: [0, -R], tag: 'snout' }] },
-    { text: '올린 끝을 조금만 다시 내려 접어요. 하얀 코가 생겨요.', moves: [{ line: [[-1, -0.44], [1, -0.44]], side: [0, -0.4], filter: (c) => c.tags.has('snout') && !c.tags.has('top') }] },
+    { text: '아래 끝을 점선에서 접어 올려요.', moves: [{ line: [[-1, y1], [1, y1]], side: [0, -R], tag: 'snout' }] },
+    { text: '올린 끝을 조금만 다시 내려 접어요. 하얀 코가 생겨요.', moves: [{ line: [[-1, y2], [1, y2]], side: [0, y2 + 0.05], filter: (c) => c.tags.has('snout') && !c.tags.has('top') }] },
     {
       text: '위 양쪽 모서리를 조금씩 접어 내려 귀를 만들어요.',
       moves: [
-        { line: [[0.212, 0], [A, -0.141]], side: [A, 0] },
-        { line: [[-0.212, 0], [-A, -0.141]], side: [-A, 0] },
+        { line: [[ex, 0], [A, ey]], side: [A, 0] },
+        { line: [[-ex, 0], [-A, ey]], side: [-A, 0] },
       ],
     },
-    { text: '연필로 눈과 콧구멍을 그리면 완성!', view: [0, -0.15, 1], draw: [...eye(-0.13, -0.19, 0.022), ...eye(0.13, -0.19, 0.022), { dot: [-0.02, -0.44], r: 0.01, ry: 0.016, color: PENCIL }, { dot: [0.02, -0.44], r: 0.01, ry: 0.016, color: PENCIL }] },
+    { text: '연필로 눈과 콧구멍을 그리면 완성!', view: [0, -0.15, 1], draw: [...eye(-0.13, -0.19, 0.022), ...eye(0.13, -0.19, 0.022), { dot: [-0.025, -0.39], r: 0.01, ry: 0.016, color: PENCIL }, { dot: [0.025, -0.39], r: 0.01, ry: 0.016, color: PENCIL }] },
   ],
 };
+}
+
+export const pig = makePig();
