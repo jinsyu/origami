@@ -1,5 +1,14 @@
 // 영어 문구. 작품별 이름·설명·단계 안내, 화면 문구
 export const enModels = {
+  yacht: {
+    name: 'Yacht', desc: 'Just three folds make a yacht with a white sail.', paper: 'Square origami paper',
+    done: 'Your yacht is done! Float it on a blue sea.',
+    steps: [
+      'Place the paper white side up. Fold the top left corner to the bottom right corner along the diagonal.',
+      'Fold the front layer to the left along the dotted line. A white sail appears.',
+      'Fold the bottom up along the dotted line. This is the hull.',
+    ],
+  },
   candle: {
     name: 'Candle', desc: 'Fold three corners to the center and fold the bottom up so only a small flame shows at the top. Stick it on a birthday card.', paper: 'Square origami paper (orange)',
     done: 'Your candle is done! Fold several to decorate a birthday cake.',
