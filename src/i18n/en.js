@@ -1,5 +1,17 @@
 // 영어 문구. 작품별 이름·설명·단계 안내, 화면 문구
 export const enModels = {
+  octopus: {
+    name: 'Octopus', desc: 'Fold the sides to the center and the bottom corners outward for wide legs, then fold the top down for a round head.', paper: 'Square origami paper (red)',
+    done: 'Your octopus is done!',
+    steps: [
+      'Place the paper colored side down. Fold in half both ways and unfold to make creases.',
+      'Fold both side edges to the center line.',
+      'Fold the bottom inner corners outward along the dotted lines.',
+      'Turn the paper over.',
+      'Fold the top down along the dotted line. This is the head.',
+      'Draw the eyes, a round mouth and stripes on the legs with a pencil, and you are done!',
+    ],
+  },
   ufo: {
     name: 'UFO', desc: 'Fold a band down in a V for legs, then fold the top corners for a round UFO. Draw round windows.', paper: 'Square origami paper',
     done: 'Your UFO is done! Off to outer space!',
