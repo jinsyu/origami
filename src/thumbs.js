@@ -117,8 +117,20 @@ export function diagram(model, plans, i) {
   const sym = mirror(-1, 1);
   // 위아래 대칭이면 옆에서 조금 비껴 본다 (정면에서는 두 화살표가 세로선 하나로 겹친다)
   const symY = mirror(1, -1);
+  // 일부만 접는(90° 등, 날개 펴기) 단계: 호가 축에 수직인 평면에 그려지므로 회전축 방향에서, 화살표가 시작되는
+  // (축에서 가장 먼 꼭짓점이 있는) 쪽 끝에서 비스듬히 본다. 옆에서 보면 호가 납작해져 화살표가 작게 보인다
+  const p = plans[i];
+  const partial = !st.diagramView && !st.sim && !p.parts && p.moves.length && p.moves.every((mv) => !mv.spin && !mv.flat && !mv.unfold && Math.abs(mv.d[0] * p.moves[0].d[0] + mv.d[1] * p.moves[0].d[1] + mv.d[2] * p.moves[0].d[2]) > 0.999);
+  let axisView = null;
+  if (partial) {
+    const mv = p.moves[0], g = moveGuides(p, 0), tip = g.path[0];
+    if (tip) {
+      const sgn = Math.sign((tip[0] - mv.o[0]) * mv.d[0] + (tip[1] - mv.o[1]) * mv.d[1] + (tip[2] - mv.o[2]) * mv.d[2]) || 1;
+      axisView = [sgn * mv.d[0] * 0.8, sgn * mv.d[1] * 0.8 + 0.24, sgn * mv.d[2] * 0.8 + 0.4];
+    }
+  }
   // diagramView: 도면에서만 쓰는 시점 (화면 시점으로는 화살표가 납작해지는 단계)
-  const dir = st.diagramView ? st.diagramView : st.view && st.view[2] > 0.5 ? [st.view[0] * 0.5, st.view[1] * 0.5, 1] : sym ? [0, -0.45, 1] : symY ? [0.45, -0.1, 1] : [0.12, -0.25, 1];
+  const dir = st.diagramView ? st.diagramView : axisView ? axisView : st.view && st.view[2] > 0.5 ? [st.view[0] * 0.5, st.view[1] * 0.5, 1] : sym ? [0, -0.45, 1] : symY ? [0.45, -0.1, 1] : [0.12, -0.25, 1];
   // 꾸미기 단계는 접는 선이 없으므로 다 그린 모습을 보여 준다
   if (model.steps[i].draw) return snapshot(model, plans[i], 1, [0, 0, 1], 420, `${model.id}:d${i}`);
   return snapshot(model, plans[i], 0, dir, 420, `${model.id}:d${i}`, true);
