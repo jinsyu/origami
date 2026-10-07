@@ -9,7 +9,7 @@
 export const GAP = 0.0014; // 겹친 종이 층 사이 간격
 const E = 1e-7;
 const CUT = 3; // 임시: 방금 자른 모서리
-// 모서리 종류: 1 = 종이 가장자리, 2 = 접힌 선
+// 모서리 종류: 1 = 종이 가장자리, 2 = 접힌 선, 0 = seam(계산용으로만 나눈 자리, 그리지 않음)
 
 export const add = (a, b) => [a[0] + b[0], a[1] + b[1], a[2] + b[2]];
 export const sub = (a, b) => [a[0] - b[0], a[1] - b[1], a[2] - b[2]];
@@ -136,7 +136,7 @@ function selectMove(cur, m, mi) {
     if (parts) {
       const s = parts.map(sel);
       if (s[0] !== s[1]) {
-        parts.forEach((pt, k) => { pt.e = pt.e.map((f) => (f === CUT ? 2 : f)); pt.owner = s[k] ? mi : -1; next.push(pt); });
+        parts.forEach((pt, k) => { pt.e = pt.e.map((f) => (f === CUT ? (m.seam ? 0 : 2) : f)); pt.owner = s[k] ? mi : -1; next.push(pt); });
         continue;
       }
     }
@@ -225,7 +225,7 @@ function grabMove(cur, m, mi, o, d, n, u, sideOf, ref) {
     if (src.owner !== -1) { next.push(src); continue; }
     const moved = ps.map((p) => seen.has(p));
     if (ps.length > 1 && moved.some((x) => x) && !moved.every((x) => x)) {
-      ps.forEach((p, i) => { p.q.e = p.q.e.map((f) => (f === CUT ? 2 : f)); p.q.owner = moved[i] ? mi : -1; next.push(p.q); });
+      ps.forEach((p, i) => { p.q.e = p.q.e.map((f) => (f === CUT ? (m.seam ? 0 : 2) : f)); p.q.owner = moved[i] ? mi : -1; next.push(p.q); });
     } else { src.owner = moved.some((x) => x) ? mi : -1; next.push(src); }
   }
   return finishMove(next, m, mi, o, d, n, u);
@@ -443,7 +443,8 @@ function edgeList(polys) {
       const t2 = (dx * (o.b[0] - ed.a[0]) + dy * (o.b[1] - ed.a[1])) / L;
       if (Math.min(Math.max(t1, t2), L) - Math.max(Math.min(t1, t2), 0) > 1e-6) { j = o.i; break; }
     }
-    res.push({ i: ed.i, k: ed.k, j, border: false });
+    // seam(0): 계산용으로 나눈 자리라 평평할 때는 그리지 않고, 실제로 꺾였을 때만 접힌 선으로 그린다
+    res.push({ i: ed.i, k: ed.k, j, border: false, seam: ed.f === 0 });
   }
   return res;
 }

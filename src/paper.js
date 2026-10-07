@@ -270,6 +270,7 @@ export class PaperMesh {
         const n1 = normals[ed.i], n2 = normals[ed.j];
         dark = n1[0] * n2[0] + n1[1] * n2[1] + n1[2] * n2[2] < 0.995;
       }
+      if (ed.seam && !dark) continue;
       const arr = dark ? D : L;
       let o = dark ? di : li;
       if (S > 1) {

@@ -28,7 +28,7 @@ GitHub `jinsyu/origami` → Vercel 자동 배포 (main 푸시 = 배포). 빌드 
 | `src/i18n/en.js` | 영어 문구 (작품별 steps 배열 길이를 한국어와 맞출 것) |
 | `src/models/*.js`, `index.js` | 작품 데이터와 목록 (level 순 정렬) |
 | `src/models/parts/folds.js` | squash, petal, flip 등 공용 접기 |
-| `src/models/parts/bases.js` | 기본형 단계 묶음: `squareBase()`(사각, 5단계), `birdBase()`(학, 14단계), `waterbombBase()`(물풍선, 5단계). 작품 steps 앞에 펼쳐 넣는다 |
+| `src/models/parts/bases.js` | 기본형 단계 묶음: `squareBase()`(사각, 5단계), `birdBase()`(학, 14단계), `waterbombBase()`(물풍선, 5단계), `fishBase()`(물고기, 4단계: 연 선 두 번 + 토끼 귀 접기 위아래). 작품 steps 앞에 펼쳐 넣는다 |
 | `src/models/parts/draw.js` | 꾸미기 도우미: arc, eye, cheek, box, fill |
 | `scripts/check.mjs` | `npm run check` — 끊김·NaN·튐 검사 |
 | `scripts/layers.mjs` | 층 관통 진단 |
@@ -107,6 +107,8 @@ GitHub `jinsyu/origami` → Vercel 자동 배포 (main 푸시 = 배포). 빌드 
 - **grab (종이처럼 고르기)**: 동작에 `grab: [x, y]` 를 주면 그 점을 덮는 겹에서 출발해, 접는 선을 넘지 않고 종이로 이어진 조각만 함께 접는다. `layers: 'top'`(기본, 맨 위 한 장) | `'all'`(그 점의 모든 겹) | 숫자 n. `side` 를 생략하면 잡은 점 쪽이 접히는 쪽. `filter` 와 함께 쓰면 후보를 더 좁힌다.
   - 같은 쪽에서 접힌 선으로 붙어 있는 겹은 자동으로 같이 움직인다(실제 종이와 같음). 태그를 미리 붙여 둘 필요가 줄어든다.
   - `half: 'front'|'back'`: 잡은 겹을 높이 순으로 위·아래 절반으로 나눈다. 뒤집어 접기(앞 겹 toward -1, 뒤 겹 toward 1)에 쓴다. 학 18·19단계를 이것으로 바꿔도 결과가 같음을 확인.
+- `seam: true`: 접지 않고(angle: 0) 조각만 나눌 때 쓴다. 평평한 동안에는 선을 그리지 않고, 나중에 실제로 꺾이면 접힌 선으로 그린다 (토끼 귀 접기에서 가운데 세로선).
+- 시험용 작품(DEV): 참새(sparrow) — 엔진 기능 시험용. 지금은 물고기 기본형까지.
 - `deform(p, e)`: 단순 단계에서 위치에 따라 꼭짓점을 옮기는 연속 변형 (학 몸통 부풀리기). 같은 점은 같이 움직여 끊기지 않는다.
 
 - 여러 겹을 함께 접으면 맨 아래 겹이 뒤집혀 맨 위로 온다. 흰 안쪽을 보이게 하려면 맨 앞 한 장만 골라 접는다 (tag 로 반 접기한 쪽을 표시해 filter).

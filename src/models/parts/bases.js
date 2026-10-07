@@ -57,3 +57,36 @@ export const waterbombBase = () => [
       moves: squash(1, and(not('f2'), has('f1')), and(not('f2'), not('f1'))),
     },
 ];
+
+// 물고기 기본형 (3단계): 마름모(흰 면 위) 기준. 양쪽 꼭짓점에서 22.5° 선으로 연 모양 선을 낸 뒤,
+// 위아래 각각 토끼 귀 접기로 접어 오른쪽을 향한 세모 날개 두 개를 만든다.
+// 토끼 귀 접기의 끝 상태: 두 연 선이 만나는 점 I=(0, ±t) (t = R·tan22.5°)에서
+//  - 왼쪽 선 위쪽(x<0) 조각은 왼쪽 선을 따라 내려 접고(꼭대기 끝이 (t,0)으로 와서 오른쪽을 향한 세모가 된다)
+//  - 오른쪽 선 위쪽(x>0) 조각은 오른쪽 선을 따라 내려 접은 뒤, 꼭대기 쪽 세모만 세로선 x=0을 따라 오른쪽으로 넘긴다.
+const T = R * Math.tan(Math.PI / 8);
+const kiteLine = (sx, sy) => [[sx * R, 0], [sx * R - sx * Math.cos(Math.PI / 8), sy * Math.sin(Math.PI / 8)]];
+const rabbitEar = (sy) => [
+  // 세로선 x=0 으로 조각을 먼저 나눠 둔다 (움직이지 않음). 꼭대기 쪽 세모가 왼쪽·오른쪽으로 갈라져야 한다
+  { line: [[0, -1], [0, 1]], side: [0.1, 0], angle: 0, seam: true },
+  { line: kiteLine(-1, sy), side: [-0.1, sy * 0.5], filter: (c) => c.x < 0 && sy * c.y > 0, toward: 1, tag: `fishL${sy}` },
+  { line: kiteLine(1, sy), side: [0.1, sy * 0.5], filter: (c) => c.x > 0 && sy * c.y > 0, toward: 1, tag: `fishR${sy}` },
+  { line: [[0, 0], [0, sy]], side: [-0.1, sy * T * 0.3], filter: (c) => c.tags.has(`fishR${sy}`) && c.x < 0, toward: 1, tag: `fishF${sy}` },
+];
+export const fishBase = () => [
+  {
+    text: '색깔 면이 아래로 가게 마름모로 놓고, 왼쪽 꼭짓점에서 위아래 변을 가운데 가로선에 맞춰 접었다 펴요.',
+    moves: [
+      { line: kiteLine(-1, 1), side: [-0.2, 0.5], unfold: true },
+      { line: kiteLine(-1, -1), side: [-0.2, -0.5], unfold: true },
+    ],
+  },
+  {
+    text: '오른쪽 꼭짓점에서도 위아래 변을 가운데 가로선에 맞춰 접었다 펴요.',
+    moves: [
+      { line: kiteLine(1, 1), side: [0.2, 0.5], unfold: true },
+      { line: kiteLine(1, -1), side: [0.2, -0.5], unfold: true },
+    ],
+  },
+  { text: '위쪽은 접은 선대로 양옆을 함께 접어 내리면서, 가운데에 솟는 부분을 오른쪽으로 눕혀 세모로 눌러요.', sim: true, moves: rabbitEar(1) },
+  { text: '아래쪽도 똑같이 접어 올리면서 가운데 부분을 오른쪽으로 눕혀요. 물고기 기본형이 완성돼요.', sim: true, moves: rabbitEar(-1) },
+];
