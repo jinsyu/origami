@@ -1,5 +1,6 @@
 // 학 (정사각형 색종이, 마름모 방향)
 import { flip } from './parts/folds.js';
+import { GAP } from '../engine.js';
 import { birdBase } from './parts/bases.js';
 const R = Math.SQRT1_2;
 const K = R * (1 - Math.SQRT1_2); // 연 모양 선 윗끝 높이 |y|
@@ -46,7 +47,7 @@ const puff = (p, e) => {
   const fx = Math.abs(x) < 0.11 ? Math.cos((Math.PI / 2) * (x / 0.11)) ** 2 : 0; // 꺾이는 곳 없이 매끄럽게
   // 날개가 붙는 선(y≈-0.207) 위쪽 등만 부풀린다. 그 아래에는 목·꼬리 밑동이 있어 밀면 겹이 부채처럼 벌어진다
   const fy = y < 0 && y > -0.2 ? Math.sin((Math.PI * -y) / 0.2) : 0;
-  const s = Math.max(-1, Math.min(1, z / 0.019)); // 0.019 = 몸통 바깥 겹 높이
+  const s = Math.max(-1, Math.min(1, z / (GAP * 13.5))); // 몸통 바깥 겹 높이 ≈ 겹 간격 13.5개
   // 목·꼬리(몸통 바깥쪽, 날개가 붙는 선 아래)는 겹 사이를 눌러 한 장처럼 보이게 한다 (겹마다 따로 보이면 머리가 여러 개처럼 보인다)
   const sm = (a, b, v) => { const k = Math.min(1, Math.max(0, (v - a) / (b - a))); return k * k * (3 - 2 * k); };
   const w = Math.max(sm(0.11, 0.16, Math.abs(x)), sm(-0.2, -0.24, y)) * (1 - sm(0.03, 0.06, Math.abs(z))) * e; // 펼친 날개(|z| 큼)는 제외

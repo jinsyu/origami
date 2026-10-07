@@ -1,3 +1,4 @@
+import { GAP } from '../engine.js';
 // 컵 (정사각형 색종이, 마름모 방향)
 // 옆 모서리를 맞은편 변에 닿게 접되, 접힌 윗변이 수평이 되도록 67.5° 선으로 접는다.
 const R = Math.SQRT1_2;
@@ -10,7 +11,7 @@ const open = (p, e) => {
   const [x, y, z] = p;
   const half = C + ((0.293 - C) * Math.max(0, y)) / TOP; // 그 높이에서 컵 반폭
   const gx = Math.max(0, 1 - (x / half) ** 2), gy = Math.max(0, Math.min(1, y / TOP)) ** 1.5;
-  const sd = Math.tanh((z - 0.0007) / 0.0003);
+  const sd = Math.tanh((z - GAP / 2) / (GAP * 0.2)); // 첫 두 겹(z=0, GAP) 사이가 주머니
   // 벌어지는 만큼 겹 사이도 넓혀, 휜 면끼리 서로 뚫고 나오지 않게 한다
   return [x, y, z * (1 + 3 * e * gx * gy) + 0.07 * e * gx * gy * sd];
 };

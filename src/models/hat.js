@@ -1,3 +1,4 @@
+import { GAP } from '../engine.js';
 // 종이 모자 (정사각형 색종이)
 // 반으로 접어 직사각형 → 위 모서리 두 개를 비스듬히 내려 지붕 → 앞 띠는 앞으로, 뒤 띠는 뒤로 접어 올린다.
 const H = 0.5;
@@ -9,7 +10,7 @@ const open = (p, e) => {
   const [x, y, z] = p;
   const half = 0.1 - Math.min(0, y); // 그 높이에서 모자 반폭
   const gx = Math.max(0, 1 - (x / half) ** 2), gy = Math.max(0, Math.min(1, -y / 0.4)) ** 1.5;
-  const sd = Math.tanh((z - 0.0007) / 0.0003);
+  const sd = Math.tanh((z - GAP / 2) / (GAP * 0.2)); // 첫 두 겹(z=0, GAP) 사이가 주머니
   // 벌어지는 만큼 겹 사이도 넓혀, 휜 면끼리 서로 뚫고 나오지 않게 한다
   return [x, y, z * (1 + 3 * e * gx * gy) + 0.08 * e * gx * gy * sd];
 };

@@ -1,3 +1,4 @@
+import { GAP } from '../engine.js';
 // 투구 (정사각형 색종이, 마름모 방향)
 // 세모 → 양 끝을 아래 꼭짓점으로 → 날개 끝을 꼭대기로 올렸다가 바깥으로 꺾어 뿔 → 앞 장은 위로, 뒷장은 뒤로 접어 챙.
 const R = Math.SQRT1_2;
@@ -9,7 +10,7 @@ const open = (p, e) => {
   const [x, y, z] = p;
   const half = R + Math.min(0, y); // 그 높이에서 몸통 반폭
   const gx = half > 0 ? Math.max(0, 1 - (x / half) ** 2) : 0, gy = Math.max(0, Math.min(1, -y / 0.5)) ** 1.5;
-  const sd = Math.tanh((z - 0.0007) / 0.0003);
+  const sd = Math.tanh((z - GAP / 2) / (GAP * 0.2)); // 첫 두 겹(z=0, GAP) 사이가 주머니
   // 벌어지는 만큼 겹 사이도 넓혀, 휜 면끼리 서로 뚫고 나오지 않게 한다
   return [x, y, z * (1 + 3 * e * gx * gy) + 0.08 * e * gx * gy * sd];
 };
