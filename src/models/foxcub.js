@@ -2,6 +2,7 @@
 // 출처: Origami Club "Fox cub" (Fumiaki Shingu) https://en.origami-club.com/animal/animal(small)/fox-cub/
 // 띠 접기 양 끝을 펼쳐 누르고 접어 몸통을 만든 뒤, 반으로 접어 머리와 꼬리를 뒤집어 접어 세운다.
 import { squashFlap } from './parts/folds.js';
+import { arc, fillPoly, PENCIL } from './parts/draw.js';
 const H = 0.5, Q = 0.25;
 const has = (t) => (c) => c.tags.has(t);
 const NECK = [[0, -Q], [0.27, 0]]; // 목을 세우는 바깥 뒤집어 접기 선
@@ -85,6 +86,16 @@ export const foxcub = {
         { line: HEAD, side: [-0.3, -0.2], filter: (c) => c.tags.has('back'), toward: 1, spine: [[0, 0], [-1, 0]], tag: 'head' },
       ],
     },
-    { text: '여우가 앉은 모습이 되도록 돌려요.', moves: [{ spin: { a: [0, 0, 0], b: [0, 0, 1], angle: 40 } }], view: [0, 0, 1] },
+    { text: '종이를 뒤집어요. 앉아 있는 여우가 보여요.', moves: [{ spin: { a: [0, 0, 0], b: [0, 1, 0], angle: 180 } }], view: [0, 0.4, 1] },
+    {
+      text: '연필로 웃는 눈과 까만 코끝, 수염을 그리면 완성!',
+      view: [0, 0, 1],
+      draw: [
+        { line: arc([0.1, 0.025], 0.028, 0.022, 160, 20, 12), w: 0.009, color: PENCIL },
+        fillPoly([[0.238, 0], [0.205, 0.016], [0.205, -0.016]], PENCIL),
+        { line: [[0.15, -0.01], [0.19, -0.022]], w: 0.005, color: PENCIL },
+        { line: [[0.15, 0.012], [0.19, 0.02]], w: 0.005, color: PENCIL },
+      ],
+    },
   ],
 };

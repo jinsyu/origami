@@ -1,5 +1,23 @@
 // 영어 문구. 작품별 이름·설명·단계 안내, 화면 문구
 export const enModels = {
+  foxcub: {
+    name: 'Fox Cub', desc: 'A full-body fox with its head and tail raised by squash folds and reverse folds.', paper: 'Square origami paper',
+    done: 'Your fox cub is done!',
+    steps: [
+      'Place the paper colored side down. Fold in half both ways and unfold to make creases.',
+      'Fold the top and bottom edges to the center line.',
+      'Fold both ends to the center line and unfold to make vertical creases.',
+      'Open the top and bottom pockets at the right end and squash both corners into triangles.',
+      'Fold the top and bottom left corners in along the dotted lines.',
+      'Fold the top and bottom flaps of the right diamond to the right along the dotted lines.',
+      'Fold the top half behind along the center line.',
+      'Outside reverse fold the right part up along the dotted line. This becomes the ears.',
+      'Outside reverse fold the left end up along the dotted line.',
+      'Inside reverse fold the left end along the dotted line. Do the same on the back.',
+      'Turn the paper over. A sitting fox appears.',
+      'Draw a smiling eye, a black nose tip and whiskers with a pencil, and you are done!',
+    ],
+  },
 
   piano: {
     name: 'Piano', desc: 'Fold narrow strips on both sides and a corner at an angle for a grand piano lid, then fold the bottom up for white keys.', paper: 'Square origami paper (black or gray)',
