@@ -341,7 +341,7 @@ function openModel(m, startStep = 0) {
         // 한 줄 배치(모바일)에서는 목록이 화면 아래에 있으므로 안내문과 접기 화면으로 올려 준다
         if (matchMedia('(max-width: 900px)').matches) $('viewer').querySelector('.instruction').scrollIntoView({ block: 'start', behavior: matchMedia('(prefers-reduced-motion: reduce)').matches ? 'auto' : 'smooth' });
       };
-      li.onkeydown = (e) => { if (e.key === 'Enter') li.onclick(); };
+      li.onkeydown = (e) => { if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); li.onclick(); } };
       list.appendChild(li);
     });
     // 단계 그림은 화면이 뜬 뒤 차례로
@@ -435,6 +435,8 @@ slider.oninput = () => {
 };
 window.addEventListener('keydown', (e) => {
   if ($('viewer').hidden || e.target.closest('input, select, textarea')) return;
+  // 버튼·링크·단계 항목에 초점이 있으면 스페이스는 그 항목을 누르는 키로 둔다
+  if (e.key === ' ' && e.target.closest('button, a, [tabindex]')) return;
   if (e.key === 'ArrowRight') { e.preventDefault(); foldStep(); }
   else if (e.key === 'ArrowLeft') { e.preventDefault(); prevStep(); }
   else if (e.key === ' ') { e.preventDefault(); toggleAuto(); }
