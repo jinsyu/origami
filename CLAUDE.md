@@ -49,7 +49,7 @@ GitHub `jinsyu/origami` → Vercel 자동 배포 (main 푸시 = 배포). 빌드 
 ## 작업 방법
 
 - 로컬: `python3 -m http.server 5173` (이미 띄워져 있으면 재사용). 브라우저 캐시 때문에 수정 파일은 `fetch(url,{cache:'reload'})` 후 새로고침.
-- 검증: `npm run check` + `npm run diagrams` + `node --check src/i18n/en.js` (check는 en.js를 읽지 않음) + 브라우저 화면 확인.
+- 검증: `npm run check` + `npm run diagrams` + `npm run inkcheck`(꾸미기 획·점이 마지막 모습의 종이 위인지) + `node --check src/i18n/en.js` (check는 en.js를 읽지 않음) + 브라우저 화면 확인.
 - **도안 맞춤 검사 (새 작품은 반드시)**: `scripts/refs/<id>.json` 에 zu.gif 주소와 단계 그림마다 `{ after: 접은 단계 수, box: [x0,y0,x1,y1] }` (gif 화소 좌표, 그림 한 장만 들어가게)를 적고 `node scripts/diagram.mjs <id> --img 비교.png`.
   - 도안 n번 그림 = n-1 단계를 접은 뒤 모습, 완성 그림 = 접기 단계 전부. 엔진 단계 수가 도안과 다르면 after 를 맞춘다.
   - 그림마다 위치·크기는 자동으로 맞춘다. 종이 IoU 0.9·색 일치 0.85 아래면 실패. 비교 그림의 빨강 = 도안에만 종이, 파랑 = 엔진에만, 노랑 = 색 면(앞뒤)이 다름.
