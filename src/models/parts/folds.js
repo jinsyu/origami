@@ -66,3 +66,40 @@ export const squashFlap = ({ V, hd, sd, outer, inner, faceTag, size = 1 }) => {
     { line: [V, at(b2, 1)], side: spineSide2, filter: (c) => c.tags.has(`${faceTag}_in`), toward: 1, at: [0.33, 0.95], role: 'ibis', tag: faceTag },
   ];
 };
+
+// 계단 접기(pleat): 선 a 에서 골짜기, a 와 나란히 far 쪽으로 width 떨어진 선에서 산으로 접어 계단을 만든다.
+// 끝 상태: a 와 두 번째 선 사이 띠는 뒤집혀 a 앞쪽에 겹치고, 그 너머는 원래 방향 그대로 width 의 두 배만큼 a 쪽으로 옮겨진다.
+// 구현: (1) a 너머를 모두 a 를 따라 접어 넘긴다 (2) 넘어온 것 가운데 두 번째 선의 거울상 너머를 다시 접어 넘긴다.
+// a: [[x,y],[x,y]], far: 접혀 넘어갈 쪽의 점, sel: 함께 접을 겹을 고르는 조건 (생략하면 그쪽 전부), toward: 앞(1)·뒤(-1)
+export const pleat = ({ a, far, width, sel, toward = 1, tag = 'pleat' }) => {
+  const [p, q] = a, dx = q[0] - p[0], dy = q[1] - p[1], L = Math.hypot(dx, dy);
+  let nx = -dy / L, ny = dx / L; // a 의 법선, far 쪽으로
+  if ((far[0] - p[0]) * nx + (far[1] - p[1]) * ny < 0) { nx = -nx; ny = -ny; }
+  const b2 = [[p[0] - nx * width, p[1] - ny * width], [q[0] - nx * width, q[1] - ny * width]]; // 두 번째 선의 거울상 (가까운 쪽)
+  const near2 = [p[0] - nx * width * 2, p[1] - ny * width * 2];
+  return [
+    { line: a, side: far, filter: sel, toward, tag },
+    { line: b2, side: near2, filter: (c) => c.tags.has(tag) && (c.x - p[0]) * nx + (c.y - p[1]) * ny < -width + 1e-6, toward, tag: `${tag}2` },
+  ];
+};
+
+// 크림프 접기(crimp): 반으로 접힌 날개(등선으로 앞·뒤 겹이 이어짐)를 계단 접기로 꺾는다.
+// 앞 겹은 앞으로(toward 1), 뒤 겹은 뒤로(toward -1) 같은 계단을 접어 두 겹이 대칭으로 꺾인다.
+// front·back: 앞·뒤 겹 조건
+export const crimp = ({ a, far, width, front, back, tag = 'crimp' }) => [
+  ...pleat({ a, far, width, sel: front, toward: 1, tag: `${tag}F` }),
+  ...pleat({ a, far, width, sel: back, toward: -1, tag: `${tag}B` }),
+];
+
+// 뒤집어 접기(reverse fold): 등선(spine)으로 앞·뒤 겹이 이어진 날개를 접는 선 line 에서 뒤집어 접는다.
+// grab: 날개 위의 한 점 (그 점의 모든 겹을 잡는다), kind: 'inside'(안으로) | 'outside'(바깥으로)
+// 앞 절반 겹과 뒤 절반 겹이 서로 반대로 접힌다. 복합 단계(sim: true)의 moves 로 쓴다.
+// filter 로 후보를 좁힐 수 있다 (예: 이웃 날개가 같은 쪽에 이어져 있을 때)
+export const reverseFold = ({ line, grab, side = grab, spine, kind = 'inside', filter, tag, shift = 0.5 }) => {
+  const t = kind === 'inside' ? -1 : 1;
+  const base = { line, side, spine, grab, layers: 'all', filter, tag, shift };
+  return [
+    { ...base, half: 'front', toward: t },
+    { ...base, toward: -t }, // 앞 겹이 넘어간 뒤 남은 겹 = 뒤 절반
+  ];
+};
