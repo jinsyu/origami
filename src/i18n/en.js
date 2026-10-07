@@ -554,7 +554,7 @@ export const enModels = {
       'Fold the left side up the same way.',
       'Fold the left tip down a little along the dotted line.',
       'Fold the left end behind a little along the dotted line. It becomes the head.',
-      'Draw the eye and nose with a pencil, and color the inside of the ear.',
+      'Draw the eye with a pencil, and color the outer half of the white triangle on top of the head (the mouth) to make the nose.',
       'Color the cheek with a colored pencil and draw a shell on its tummy, and you are done!',
     ],
   },

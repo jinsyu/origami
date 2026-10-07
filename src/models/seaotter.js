@@ -43,14 +43,12 @@ export function makeSeaotter(P = seaotterParams) {
       { text: '왼쪽 끝을 점선에서 조금 접어 내려요.', moves: [{ line: [[-1, headTop - ear], [0, headTop - ear]], side: [cL, headTop], filter: left, tag: 'ear' }] },
       { text: '왼쪽 끝을 점선에서 조금 뒤로 접어요. 머리가 돼요.', moves: [{ line: [[headLeft + nose, -1], [headLeft + nose, 1]], side: [-R, 0.18], toward: -1 }] },
       {
-        text: '연필로 눈과 코를 그리고, 귀 안쪽을 칠해요.',
+        text: '연필로 눈을 그리고, 머리 위 흰 세모(입)의 바깥쪽을 칠해 코를 만들어요.',
         view: V,
         draw: [
           ...eye(-0.315, 0.245, 0.03),
-          // 귀: 접어 내린 흰 세모의 바깥쪽 절반
+          // 코: 접어 내린 흰 세모(입)의 바깥쪽 절반 (해달은 누워 있어 얼굴이 위를 본다)
           fillPoly([[cL - ear + 0.004, headTop - ear - 0.002], [cL - 0.012, headTop - ear - 0.002], [cL - 0.004, headTop - 2 * ear + 0.01]], PENCIL),
-          { dot: [-0.385, 0.195], r: 0.014, ry: 0.011, color: PENCIL },
-          { line: arc([-0.36, 0.17], 0.022, 0.016, 200, 330), w: 0.007, color: PENCIL },
         ],
       },
       {
