@@ -8,7 +8,12 @@ const MOUTH = rot([-H, 0]); // 입 끝 (돌린 뒤)
 const has = (t) => (c) => c.tags.has(t);
 const DIAG = [[-H, 0], [H, H]];
 
-export const goldfish = {
+export const goldfishParams = { f1: 0.2, f2: 0.03, m: 0.09 };
+
+export function makeGoldfish({ f1, f2, m } = goldfishParams) {
+  return {
+  params: { f1, f2, m },
+  make: makeGoldfish,
   id: 'goldfish',
   name: '금붕어',
   level: 2,
@@ -24,9 +29,12 @@ export const goldfish = {
     { text: '색깔 면이 위로 오게 놓고, 아래 변을 위 변에 맞춰 반으로 접어요.', moves: [{ line: [[-1, 0], [1, 0]], side: [0, -1], tag: 'front' }] },
     { text: '앞의 한 장을 점선을 따라 비스듬히 접어 내려요.', moves: [{ line: DIAG, side: [-0.4, 0.45], filter: has('front'), tag: 'fA' }] },
     { text: '뒤의 한 장도 같은 선을 따라 뒤로 접어요.', moves: [{ line: DIAG, side: [-0.4, 0.45], filter: (c) => !c.tags.has('front'), toward: -1, tag: 'fB' }] },
-    { text: '앞쪽 오른쪽 위를 점선에서 아래로 접어 내려요. 지느러미가 돼요.', moves: [{ line: [[0, 0.25], [H, 0.05]], side: [0.45, 0.45], filter: has('front'), tag: 'fin' }] },
+    { text: '앞쪽 오른쪽 위를 점선에서 아래로 접어 내려요. 지느러미가 돼요.', moves: [{ line: [[0, f1], [H, f2]], side: [0.45, 0.45], filter: has('front'), tag: 'fin' }] },
     { text: '금붕어가 옆으로 눕도록 돌려요.', moves: [{ spin: { a: [0, 0, 0], b: [0, 0, 1], angle: TILT } }], view: [0, 0, 1] },
-    { text: '입 끝을 점선에서 조금 뒤로 접어요.', moves: [{ line: [[MOUTH[0] + 0.07, -1], [MOUTH[0] + 0.07, 1]], side: [MOUTH[0], MOUTH[1]], toward: -1 }], view: [0, 0, 1] },
+    { text: '입 끝을 점선에서 조금 뒤로 접어요.', moves: [{ line: [[MOUTH[0] + m, -1], [MOUTH[0] + m, 1]], side: [MOUTH[0], MOUTH[1]], toward: -1 }], view: [0, 0, 1] },
     { text: '연필로 눈을 그리면 완성!', view: [0, 0, 1], draw: [...eye(MOUTH[0] + 0.17, MOUTH[1] - 0.08, 0.024)] },
   ],
 };
+}
+
+export const goldfish = makeGoldfish();
