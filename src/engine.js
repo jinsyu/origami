@@ -258,7 +258,11 @@ function planStep(polys, step) {
     cur = r.cur;
     moves.push(r.mv);
   });
-  moves.forEach((mv, mi) => { mv.shift = computeShift(cur, mv, mi); });
+  moves.forEach((mv, mi) => {
+    mv.shift = computeShift(cur, mv, mi);
+    // 접었다 펴기: 완전히 접힌 순간에도 아래 겹과 같은 높이에 겹치지 않게 접을 때의 높이만큼 띄운다
+    if (mv.unfold && mv.flat) { mv.unfold = false; mv.lift = computeShift(cur, mv, mi); mv.unfold = true; }
+  });
   return { polys: cur, moves, edges: edgeList(cur), deform: step.deform };
 }
 
@@ -299,7 +303,7 @@ export function pose(plan, t) {
     if (q.owner < 0) return q.p;
     const mv = plan.moves[q.owner];
     const f = mv.unfold ? Math.sin(Math.PI * e) : e;
-    const s = mv.unfold ? 0 : mv.shift * f;
+    const s = mv.unfold ? (mv.lift || 0) * f : mv.shift * f;
     return q.p.map((p) => add(rotate(p, mv.o, mv.d, mv.theta * f), mul(mv.u, s)));
   });
   // deform(p, e): 위치에 따라 꼭짓점을 옮기는 연속 변형 (부풀리기). 같은 점은 같이 움직여 끊기지 않는다
