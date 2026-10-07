@@ -342,6 +342,8 @@ function bake(sim) {
     const w = sim.tearOk ? 0 : Math.min(1, Math.min(t, 1 - t) * 25);
     frames.push(sim.loops.map((L, pi) => L.map((it, li) => {
       const p = kin[pi][li], o = [0, 0, 0];
+      // 이번 단계에 움직이지 않는 면은 제자리에 둔다 (이완이 이미 접힌 겹을 끌어당겨 서로 파고들지 않게)
+      if (!sim.member[pi].length && !sim.petal && !sim.squash) return p;
       for (let c = 0; c < 3; c++) {
         const off = Math.max(-LIM, Math.min(LIM, p[c] - avg[it.w * 3 + c]));
         o[c] = p[c] + (x[it.w * 3 + c] + off - p[c]) * w;

@@ -54,7 +54,10 @@ const puff = (p, e) => {
   const fx = Math.max(0, 1 - Math.abs(x) / 0.135);
   const fy = y < 0 && y > -0.32 ? Math.sin((Math.PI * -y) / 0.32) : 0;
   const s = Math.max(-1, Math.min(1, z / 0.03));
-  return [x, y, z + 0.07 * e * fx * fy * s];
+  // 목·꼬리는 겹 사이를 눌러 얇게 한다 (두꺼우면 아래에서 볼 때 속의 흰 면이 들여다보인다)
+  const k = Math.min(1, Math.max(0, (Math.abs(x) - 0.12) / 0.08));
+  const w = k * k * (3 - 2 * k) * e;
+  return [x, y, z * (1 - 0.65 * w) + 0.07 * e * fx * fy * s];
 };
 const tagged = (moves, tag) => moves.map((m) => ({ ...m, tag }));
 const preAndPetal = (front, face, petalTag, side) => [
@@ -90,9 +93,9 @@ export const crane = {
     { text: '아래쪽 두 다리의 바깥 변을 가운데 선에 맞춰 접어 가늘게 만들어요.', moves: narrow((c) => c.tags.has('f2')) },
     { text: '종이를 뒤집어요.', moves: [flip], view: [0, 0.4, 1] },
     { text: '이쪽 다리도 바깥 변을 가운데 선에 맞춰 접어요.', moves: narrow((c) => !c.tags.has('f2')) },
-    { text: '오른쪽 다리를 날개 사이로 안쪽 뒤집어 접어 세워요. 목이 돼요.', sim: true, moves: lift(1, 35, 'neck') },
-    { text: '왼쪽 다리도 안쪽 뒤집어 접어 세워요. 꼬리가 돼요.', sim: true, moves: lift(-1, 145, 'tail') },
-    { text: '목 끝을 안쪽 뒤집어 접어 머리를 만들어요.', sim: true, moves: head() },
+    { text: '오른쪽 다리를 날개 사이로 안쪽 뒤집어 접어 세워요. 목이 돼요.', sim: true, moves: lift(1, 35, 'neck'), view: [0.3, 0.4, 1] },
+    { text: '왼쪽 다리도 안쪽 뒤집어 접어 세워요. 꼬리가 돼요.', sim: true, moves: lift(-1, 145, 'tail'), view: [0.3, 0.4, 1] },
+    { text: '목 끝을 안쪽 뒤집어 접어 머리를 만들어요.', sim: true, moves: head(), view: [0.3, 0.4, 1] },
     {
       text: '양쪽 날개를 옆으로 펼치면서 살살 당기면 몸통이 빵빵하게 부풀어요. 학 완성!',
       deform: puff,
