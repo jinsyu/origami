@@ -41,7 +41,7 @@ import { foxcub } from './foxcub.js';
 import { crab } from './crab.js';
 import { penguin } from './penguin.js';
 
-export const MODELS = [dog, cat, flower, cup, bookmark, house, cicada, kabuto, hat, airplane, glider, envelope, whale, heart, frame, duck, tulip, heron, masu, roofhouse, crane, fox, panda, rabbit, watermelon, motorboat, fuji, chick, pig, koala, car, goldfish, mouse, pencil, icecream, ufo, octopus, piano, foxcub, crab].sort((a, b) => a.level - b.level);
+export const MODELS = [dog, cat, flower, cup, bookmark, house, cicada, kabuto, hat, airplane, glider, envelope, whale, heart, frame, duck, tulip, heron, masu, roofhouse, crane, fox, panda, rabbit, watermelon, motorboat, fuji, chick, pig, koala, car, goldfish, mouse, pencil, icecream, ufo, octopus, piano, foxcub, crab, penguin].sort((a, b) => a.level - b.level);
 
 // 개발 중인 작품: 주소에 ?dev 를 붙였을 때만 목록에 나온다 (검사는 함께 한다)
-export const DEV = [penguin];
+export const DEV = [];

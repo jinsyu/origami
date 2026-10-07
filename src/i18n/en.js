@@ -1,5 +1,22 @@
 // 영어 문구. 작품별 이름·설명·단계 안내, 화면 문구
 export const enModels = {
+  penguin: {
+    name: 'Penguin', desc: 'Fold the bottom up for a white belly, then fold the sides in and back out for flippers.', paper: 'Square origami paper (blue)',
+    done: 'Your penguin is done!',
+    steps: [
+      'Place the paper colored side up as a diamond. Fold in half both ways and unfold to make creases.',
+      'Fold the bottom corner up along the dotted line. This is the white belly.',
+      'Fold that tip down a little along the dotted line. This is the beak.',
+      'Turn the paper over.',
+      'Fold the left side to the center along the vertical dotted line.',
+      'Fold the right side in too, overlapping the left.',
+      'Fold the left flap back out along the dotted line.',
+      'Fold the right flap back out too.',
+      'Fold the top corner down a little.',
+      'Turn the paper over.',
+      'Draw the eyes with a pencil, and you are done!',
+    ],
+  },
   crab: {
     name: 'Crab', desc: 'From the waterbomb base, inside reverse fold both ends for claws and fold the bottom for legs.', paper: 'Square origami paper',
     done: 'Your crab is done!',
@@ -492,8 +509,8 @@ export const enModels = {
     ],
   },
   masu: {
-    name: 'Masu Box', desc: 'Pre-crease the paper flat, then raise the walls and tuck in the corners to build a 3D box.', paper: 'Square origami paper',
-    done: 'Your masu box is done! Fold a slightly bigger sheet the same way to make a lid.',
+    name: 'Square Box', desc: 'Pre-crease the paper flat, then raise the walls and tuck in the corners to build a 3D box.', paper: 'Square origami paper',
+    done: 'Your square box is done! Fold a slightly bigger sheet the same way to make a lid.',
     steps: [
       'Place the paper colored side down as a diamond. Fold it in half vertically and unfold.',
       'Fold it in half horizontally and unfold too.',

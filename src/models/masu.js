@@ -44,7 +44,7 @@ const flaps = () => {
 
 export const masu = {
   id: 'masu',
-  name: '마스 상자',
+  name: '네모 상자',
   level: 4,
   maxJump: 0.07, // 벽 네 개를 한꺼번에 세우는 큰 입체 조립
   desc: '평면에서 선을 미리 내 두고, 벽을 세우고 모서리를 접어 넣어 입체 상자를 조립해요.',
@@ -54,7 +54,7 @@ export const masu = {
   outline: [[0, -R], [R, 0], [0, R], [-R, 0]],
   view: [0.3, -0.45, 1],
   finalView: [0.35, -0.9, 0.9],
-  done: '마스 상자 완성! 같은 방법으로 조금 큰 종이로 접으면 뚜껑이 돼요.',
+  done: '네모 상자 완성! 같은 방법으로 조금 큰 종이로 접으면 뚜껑이 돼요.',
   steps: [
     { text: '색깔 면이 아래로 가게 마름모로 놓고, 세로로 반 접었다 펴요.', moves: [{ line: [[0, -1], [0, 1]], side: [1, 0], unfold: true }] },
     { text: '가로로도 반 접었다 펴요.', moves: [{ line: [[-1, 0], [1, 0]], side: [0, 1], unfold: true }] },
