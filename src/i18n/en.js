@@ -1,5 +1,16 @@
 // 영어 문구. 작품별 이름·설명·단계 안내, 화면 문구
 export const enModels = {
+  fuji: {
+    name: 'Snowy Mountain', desc: 'Fold the tip of a triangle down and back up to make white snow, then fold it behind for a flat summit.', paper: 'Square origami paper',
+    done: 'Your mountain is done! A tall mountain capped with white snow.',
+    steps: [
+      'Place the paper colored side down as a diamond. Fold in half both ways and unfold to make creases.',
+      'Fold the bottom corner up to the top corner.',
+      'Fold only the front layer of the top down along the dotted line. The white inside shows.',
+      'Fold that tip back up just a little.',
+      'Fold the top behind along the dotted line to make it flat, and you are done!',
+    ],
+  },
   motorboat: {
     name: 'Boat', desc: 'Just three folds make a boat with a cabin. Draw windows to decorate it.', paper: 'Square origami paper',
     done: 'Your boat is done! Glue it on blue paper and it will race across the sea.',
