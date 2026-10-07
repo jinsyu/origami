@@ -573,6 +573,22 @@ export const enModels = {
       'Draw a round eye with a pencil, and you are done!',
     ],
   },
+  bee: {
+    name: 'Bee', desc: 'Open and squash the pockets at both corners to make wings. Draw the eyes and stripes!', paper: 'Square origami paper (yellow)',
+    done: 'Your bee is done! Buzz buzz~',
+    steps: [
+      'Place the paper colored side down like a diamond. Fold it in half both ways and unfold to make creases.',
+      'Fold the top corner down along the dotted line.',
+      'Fold both upper sides behind along the dotted lines.',
+      'Fold both corners along the dotted lines and unfold to make creases.',
+      'Open the pocket at the left corner and press it flat. It becomes a wing.',
+      'Open and squash the right side the same way.',
+      'Fold the top tip down a little along the dotted line.',
+      'Turn the paper over.',
+      'Draw big eyes and wing lines with a pencil.',
+      'Color thick stripes on the body and color the tail tip black, and you are done!',
+    ],
+  },
   neuli: {
     name: 'Neuli Face', desc: 'Our school friend Neuli! Fold a triangle, stand the ears up and fold the chin to make a wide, cute face.', paper: 'Square origami paper (light yellow or apricot)',
     done: 'Neuli face is done! You can draw a flower on top of the head too.',

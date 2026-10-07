@@ -1,0 +1,14 @@
+{
+  "src": "https://en.origami-club.com/easy/other/bee2/zu.gif",
+  "panels": [
+    { "label": 1, "after": 0, "box": [27, 19, 229, 221] },
+    { "label": 2, "after": 1, "box": [246, 19, 447, 222] },
+    { "label": 3, "after": 2, "box": [7, 278, 237, 439] },
+    { "label": 4, "after": 3, "box": [226, 270, 384, 428] },
+    { "label": 5, "after": 4, "box": [382, 248, 541, 407] },
+    { "label": 6, "after": 6, "box": [24, 478, 160, 636] },
+    { "label": 7, "after": 7, "box": [177, 493, 313, 636] },
+    { "label": "완성", "after": 8, "box": [343, 447, 553, 668] }
+  ],
+  "fit": { "top": [0.2, 0.32], "wingA": [-0.42, -0.28], "wingC": [-0.32, -0.15], "head": [0.02, 0.12] }
+}
