@@ -1,0 +1,14 @@
+{
+  "src": "https://en.origami-club.com/easy/clothes/shirt/zu.gif",
+  "panels": [
+    { "label": 1, "after": 0, "box": [50, 12, 249, 211] },
+    { "label": 2, "after": 1, "box": [327, 30, 526, 217] },
+    { "label": 3, "after": 2, "box": [22, 261, 221, 443] },
+    { "label": 4, "after": 3, "box": [239, 262, 342, 444] },
+    { "label": 5, "after": 4, "box": [362, 262, 462, 444] },
+    { "label": 6, "after": 5, "box": [45, 477, 155, 659] },
+    { "label": 7, "after": 6, "box": [170, 490, 330, 672] },
+    { "label": "완성", "after": 7, "box": [333, 529, 557, 668] }
+  ],
+  "fit": { "band": [0.06, 0.11], "collar": [0.02, 0.08], "hem": [-0.15, 0.05] }
+}

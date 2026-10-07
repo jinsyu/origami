@@ -481,6 +481,20 @@ export const enModels = {
       'Draw stripes on the forehead and both cheeks with a black colored pencil, and you are done!',
     ],
   },
+  shirt: {
+    name: 'Shirt', desc: 'Pull out the white band to make a collar, then fold the bottom up to make the sleeves. Draw the buttons!', paper: 'Square origami paper',
+    done: 'Your shirt is done! You can draw more buttons.',
+    steps: [
+      'Place the paper colored side down. Fold it in half both ways and unfold to make creases.',
+      'Fold the top edge behind a little along the dotted line.',
+      'Fold both sides to the center line. A white band shows at the top.',
+      'Fold the inner end of the white band along the slanted dotted line and unfold.',
+      'Pull the white band up and out, then fold it down in front along the crease. A collar appears.',
+      'Fold the triangles at the bottom center outward along the slanted dotted lines. They become sleeves.',
+      'Fold the bottom up in front along the dotted line and tuck its edge under the collar.',
+      'Draw buttons with a pencil, and you are done!',
+    ],
+  },
   neuli: {
     name: 'Neuli Face', desc: 'Our school friend Neuli! Fold a triangle, stand the ears up and fold the chin to make a wide, cute face.', paper: 'Square origami paper (light yellow or apricot)',
     done: 'Neuli face is done! You can draw a flower on top of the head too.',
