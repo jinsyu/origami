@@ -103,3 +103,11 @@ export const reverseFold = ({ line, grab, side = grab, spine, kind = 'inside', f
     { ...base, toward: -t }, // 앞 겹이 넘어간 뒤 남은 겹 = 뒤 절반
   ];
 };
+
+// 가라앉히기(sink): 여러 날개가 모인 꼭짓점을 선 line 에서 안으로 밀어 넣는다.
+// 끝 상태는 그 점의 모든 겹을 line 에서 접되, 앞 절반 겹은 뒤로·뒤 절반 겹은 앞으로 접은 것과 같다.
+// grab: 가라앉힐 꼭짓점 쪽의 점. 복합 단계(sim: true)의 moves 로 쓴다. 사각 기본형 꼭대기에서 끊김 없음 확인
+export const sink = ({ line, grab, filter, tag = 'sink' }) => [
+  { line, side: grab, grab, layers: 'all', half: 'front', toward: -1, filter, tag },
+  { line, side: grab, grab, layers: 'all', toward: 1, filter, tag },
+];
