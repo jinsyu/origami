@@ -560,7 +560,7 @@ export const enModels = {
       'Lift the top flap, open the pocket and press it flat into a triangle. This is a squash fold.',
       'Turn the paper over.',
       'Squash the other flap the same way. The triangle (waterbomb) base is done.',
-      'Fold both bottom tips of the front flap up at an angle, a little above and outside the top. These are petals.',
+      'Fold both bottom tips of the front flap up at an angle from the bottom center point, so they meet beside the top. These are petals.',
       'Turn the paper over.',
       'Fold this side up at an angle the same way.',
       'Turn it back over. Your tulip bud is done!',

@@ -8,17 +8,18 @@
 // 이렇게 하면 경첩과 등선이 모두 이어진 채로 날개가 삼각형으로 눌린다.
 const H = 0.5;
 import { has, not, and, flip, squash } from './parts/folds.js';
+// 접는 선은 아래 가운데 점(앞 날개 두 장이 이어진 곳)을 지나야 종이가 갈라지지 않는다.
+// 40° 선으로 접으면 날개 끝이 꼭대기 높이에서 살짝 바깥쪽에 닿는다
+const PC = Math.cos((40 * Math.PI) / 180), PS = Math.sin((40 * Math.PI) / 180);
 const petals = (front) => [
-  { line: [[0.31, -0.21], [0.89, 0.17]], side: [0.45, -0.48], filter: (c) => front(c) && c.x > 0, tag: 'petal' },
-  { line: [[-0.31, -0.21], [-0.89, 0.17]], side: [-0.45, -0.48], filter: (c) => front(c) && c.x < 0, tag: 'petal' },
+  { line: [[0, -H], [PC, -H + PS]], side: [0.45, -0.48], filter: (c) => front(c) && c.x > 0, tag: 'petal' },
+  { line: [[0, -H], [-PC, -H + PS]], side: [-0.45, -0.48], filter: (c) => front(c) && c.x < 0, tag: 'petal' },
 ];
 
 export const tulip = {
   id: 'tulip',
   name: '튤립 꽃봉오리',
   level: 4,
-  // 앞 날개 끝을 접어 올리면 물풍선 기본형 아래 모서리(종이 변의 가운데 점)에서 앞뒤 날개가 한 점에서 벌어진다 (실제 종이는 살짝 휘어 해결)
-  knownTears: [6, 8],
   desc: '날개를 벌려 눌러 삼각형 기본형을 만들고, 날개 끝을 모아 꽃봉오리를 만들어요. 펼쳐 누르기를 배워요.',
   paper: '정사각형 색종이',
   colors: { front: '#fbf8f1', back: '#e2557b' },
@@ -42,7 +43,7 @@ export const tulip = {
       moves: squash(1, and(not('f2'), has('f1')), and(not('f2'), not('f1'))),
     },
     {
-      text: '앞쪽 날개의 양쪽 아래 끝을 꼭대기보다 조금 위, 바깥쪽으로 비스듬히 접어 올려요. 꽃잎이 돼요.',
+      text: '앞쪽 날개의 양쪽 아래 끝을 아래 가운데 점에서 비스듬히 접어 올려 꼭대기 옆에 맞춰요. 꽃잎이 돼요.',
       moves: petals((c) => !c.tags.has('f2')),
     },
     { text: '종이를 뒤집어요.', moves: [flip], view: [0, 0.4, 1] },
