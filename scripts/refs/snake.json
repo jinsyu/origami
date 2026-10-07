@@ -1,0 +1,15 @@
+{
+  "src": "https://en.origami-club.com/easy/animal/snake/zu.gif",
+  "panels": [
+    { "label": 1, "after": 0, "box": [20, 20, 206, 206] },
+    { "label": 2, "after": 1, "box": [257, 21, 443, 207] },
+    { "label": 3, "after": 2, "box": [147, 230, 332, 329] },
+    { "label": 4, "after": 3, "box": [362, 254, 547, 307] },
+    { "label": 5, "after": 4, "box": [12, 327, 198, 512] },
+    { "label": 6, "after": 5, "box": [180, 392, 366, 511] },
+    { "label": 7, "after": 6, "box": [372, 381, 558, 521] },
+    { "label": 8, "after": 7, "box": [21, 545, 207, 670] },
+    { "label": 9, "after": 10, "box": [277, 552, 459, 607] },
+    { "label": "완성", "after": 11, "box": [287, 637, 552, 677] }
+  ]
+}
