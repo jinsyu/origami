@@ -47,6 +47,7 @@ GitHub `jinsyu/origami` → Vercel 자동 배포 (main 푸시 = 배포). 빌드 
 - 검증: `npm run check` + `node --check src/i18n/en.js` (check는 en.js를 읽지 않음) + 브라우저 화면 확인.
 - 공유 미리보기: `scripts/og.html` 을 1200x630 으로 캡처해 og.jpg 로 저장 (작품 수 문구 갱신).
 - 썸네일: `node scripts/thumb-server.mjs` 띄우고 헤드리스 크롬(`--headless=new --use-angle=swiftshader --enable-unsafe-swiftshader`)으로 `?live&save#/` 를 40초 열기. 작품·색을 바꾸면 반드시 다시 만든다.
+- 단계 중간 모습 확인: 브라우저에서 `thumbs.js` 의 `snapshot(model, plan, t, dir, size)` 로 PNG를 만들어 작은 저장 서버로 보내고, PIL로 여러 장을 한 장에 모아 본다. 화면 캡처보다 빠르고 시점을 마음대로 고를 수 있다.
 - 브라우저 패널이 가려지면 rAF가 멈춘다 → 슬라이더(`#progress`)를 직접 바꿔 상태를 본다.
 
 ## 엔진 한계 (새 작품 고를 때 기준)
@@ -95,6 +96,9 @@ GitHub `jinsyu/origami` → Vercel 자동 배포 (main 푸시 = 배포). 빌드 
 - 그 밖의 후보: 호랑이(easy/animal-face/tiger-face), 유령(easy/other/ghost2), 셔츠(easy/clothes/shirt, 끼우기 단계 불확실)
 
 ## 겹 색 다루기 요령
+
+- 겹이 많이 쌓인 가는 부분(학의 목·꼬리)은 층 간격 때문에 두꺼워져, 아래에서 보면 속 흰 면이 들여다보인다. 마지막 단계 `deform` 으로 눌러 얇게 하거나 단계 `view` 를 위에서 보게 둔다.
+- `deform(p, e)`: 단순 단계에서 위치에 따라 꼭짓점을 옮기는 연속 변형 (학 몸통 부풀리기). 같은 점은 같이 움직여 끊기지 않는다.
 
 - 여러 겹을 함께 접으면 맨 아래 겹이 뒤집혀 맨 위로 온다. 흰 안쪽을 보이게 하려면 맨 앞 한 장만 골라 접는다 (tag 로 반 접기한 쪽을 표시해 filter).
 - 날개를 되접는 선이 날개와 몸통이 이어진 변(경첩)을 지나면 종이가 끊긴다. 선이 경첩의 끝점을 지나게 잡는다 (코알라·쥐·여우 참고).
