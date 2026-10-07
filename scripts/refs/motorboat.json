@@ -1,0 +1,9 @@
+{
+  "src": "https://en.origami-club.com/easy/vehicle/boat/zu.gif",
+  "panels": [
+    { "label": 1, "after": 0, "box": [29, 45, 286, 279] },
+    { "label": 2, "after": 1, "box": [315, 45, 549, 200] },
+    { "label": 3, "after": 2, "box": [85, 344, 319, 500] },
+    { "label": "완성", "after": 4, "box": [297, 496, 531, 654] }
+  ]
+}
