@@ -82,6 +82,6 @@ export const masu = {
       moves: [...sideWalls().map((m) => (m.angle ? { ...m, at: [0, 0.5] } : m)), ...endWalls().map((m) => ({ ...m, at: m.axis3 ? [0.35, 1] : [0.25, 0.85] }))],
       view: [0.3, -0.35, 1],
     },
-    { text: '끝을 벽 너머 안쪽으로 넘겨 바닥에 눕혀요.', sim: true, moves: flaps(), view: [0.3, -0.35, 1] },
+    { text: '끝을 벽 너머 안쪽으로 넘겨 바닥에 눕혀요.', sim: true, moves: flaps(), view: [0.3, -0.35, 1], diagramView: [1, 0.6, 0.4] },
   ],
 };
