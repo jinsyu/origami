@@ -78,10 +78,10 @@
       <details class="rubric">
         <summary data-en="How levels are set">난이도는 이렇게 정했어요</summary>
         <ol>
-          <li data-en="Beginner: only simple valley and mountain folds">입문: 골짜기·산 접기만으로 몇 번 접으면 완성돼요</li>
-          <li data-en="Easy: fold front and back layers separately, more layers, a single squash fold">초급: 앞장·뒷장을 따로 접고, 겹과 단계가 늘어나요. 펼쳐 누르기도 한 번 해 봐요</li>
-          <li data-en="Intermediate: kite and waterbomb bases, squash folds, reverse folds">중급: 연 모양·세모 기본형, 펼쳐 누르기, 뒤집어 접기</li>
-          <li data-en="Advanced: several squash folds, petal folds and 3D assembly">고급: 펼쳐 누르기 여러 번, 꽃잎 접기, 입체 조립</li>
+          <li data-en="Beginner: only simple valley and mountain folds">입문: 골접기·산접기만으로 몇 번 접으면 완성돼요</li>
+          <li data-en="Easy: fold front and back layers separately, more layers, a single squash fold">초급: 앞장·뒷장을 따로 접고, 겹과 단계가 늘어나요. 펼쳐 눌러 접기도 한 번 해 봐요</li>
+          <li data-en="Intermediate: kite and waterbomb bases, squash folds, reverse folds">중급: 연 모양·세모 기본형, 펼쳐 눌러 접기, 뒤집어 접기</li>
+          <li data-en="Advanced: several squash folds, petal folds and 3D assembly">고급: 펼쳐 눌러 접기 여러 번, 꽃잎 접기, 입체 조립</li>
         </ol>
       </details>
       <ol id="cards" class="cards"></ol>
@@ -92,27 +92,27 @@
         <li>
           <a href="#/m/dog/1">
             <svg viewBox="0 0 120 80" aria-hidden="true"><rect x="10" y="10" width="100" height="60" class="sym-paper"/><line x1="60" y1="10" x2="60" y2="70" class="sym-valley"/><path d="M88 52 Q60 8 32 52" class="sym-arrow"/><path d="M32 52 l-2 -9 m2 9 l8 -4" class="sym-arrow"/></svg>
-            <h3 data-en="Valley fold">골짜기 접기</h3>
+            <h3 data-en="Valley fold">골접기</h3>
             <p data-en="Fold forward along the short dashed line. The crease sinks like a valley.">짧은 점선을 따라 앞쪽으로 접어요. 접은 선이 골짜기처럼 움푹 들어가요.</p>
           </a>
         </li>
         <li>
           <a href="#/m/airplane/4">
             <svg viewBox="0 0 120 80" aria-hidden="true"><rect x="10" y="10" width="100" height="60" class="sym-paper"/><line x1="60" y1="10" x2="60" y2="70" class="sym-mountain"/><path d="M88 52 Q60 8 32 52" class="sym-arrow back"/><path d="M32 52 l-2 -9 m2 9 l8 -4" class="sym-arrow back"/></svg>
-            <h3 data-en="Mountain fold">산 접기</h3>
+            <h3 data-en="Mountain fold">산접기</h3>
             <p data-en="Fold backward along the long dashed line. The crease rises like a mountain.">긴 점선을 따라 뒤쪽으로 접어요. 접은 선이 산처럼 솟아올라요.</p>
           </a>
         </li>
         <li>
           <a href="#/m/tulip/3">
             <svg viewBox="0 0 120 80" aria-hidden="true"><path d="M20 70 L60 10 L100 70 Z" class="sym-paper"/><line x1="60" y1="10" x2="60" y2="70" class="sym-valley"/><path d="M60 10 L40 70 M60 10 L80 70" class="sym-valley thin"/><path d="M78 30 Q96 18 104 40" class="sym-arrow"/></svg>
-            <h3 data-en="Squash fold">펼쳐 누르기</h3>
+            <h3 data-en="Squash fold">펼쳐 눌러 접기</h3>
             <p data-en="Lift a flap, open the pocket, then press it flat from above.">날개를 세워 틈을 벌린 뒤, 위에서 꾹 눌러 납작하게 펼쳐요.</p>
           </a>
         </li>
         <li>
           <a href="#/m/crane/9">
-            <svg viewBox="0 0 120 80" aria-hidden="true"><path d="M60 6 L90 40 L60 76 L30 40 Z" class="sym-paper"/><line x1="40" y1="40" x2="80" y2="40" class="sym-valley"/><path d="M60 76 L46 40 M60 76 L74 40" class="sym-valley thin"/><path d="M64 70 Q78 40 64 12" class="sym-arrow"/></svg>
+            <svg viewBox="0 0 120 80" aria-hidden="true"><path d="M45 6 L80 41 L45 76 L10 41 Z" class="sym-paper"/><path d="M45 76 L24.5 26.5 M45 76 L65.5 26.5" class="sym-valley thin"/><line x1="24.5" y1="26.5" x2="65.5" y2="26.5" class="sym-valley"/><path d="M50 72 Q120 44 50 10" class="sym-arrow"/><path d="M50 10 l4.4 7.9 m-4.4 -7.9 l8.9 -1.4" class="sym-arrow"/></svg>
             <h3 data-en="Petal fold">꽃잎 접기</h3>
             <p data-en="Lift the bottom point while folding the sides in. This is how crane wings are made.">아래 끝을 위로 들어 올리면서 양옆을 안으로 접어 넣어요. 학의 날개가 이렇게 생겨요.</p>
           </a>
@@ -164,8 +164,8 @@
         <div id="stage" class="stage matgrid">
           <canvas id="view" aria-label="종이접기 3D 화면"></canvas>
           <div class="legend" id="legend" hidden>
-            <span><i class="lg valley"></i><b data-en="Valley fold">골짜기 접기</b></span>
-            <span><i class="lg mountain"></i><b data-en="Mountain fold">산 접기</b></span>
+            <span><i class="lg valley"></i><b data-en="Valley fold">골접기</b></span>
+            <span><i class="lg mountain"></i><b data-en="Mountain fold">산접기</b></span>
           </div>
         </div>
         <div class="controls">
@@ -205,7 +205,7 @@
         <p id="pInfo"></p>
       </div>
       <ol id="pSteps" class="p-steps"></ol>
-      <p class="p-legend"><span><i class="lg valley"></i><b data-en="Valley fold">골짜기 접기</b></span><span><i class="lg mountain"></i><b data-en="Mountain fold">산 접기</b></span><span>origami.gyosil.app</span></p>
+      <p class="p-legend"><span><i class="lg valley"></i><b data-en="Valley fold">골접기</b></span><span><i class="lg mountain"></i><b data-en="Mountain fold">산접기</b></span><span>origami.gyosil.app</span></p>
     </main>
   </section>
 
