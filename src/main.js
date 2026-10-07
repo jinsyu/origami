@@ -300,6 +300,14 @@ function frameTo(points, dir, instant, extra = []) {
   camTween = { k: instant ? 1 : 0, fromPos: camera.position.clone(), fromTarget: controls.target.clone(), toPos: fit.pos, toTarget: fit.target };
 }
 
+// 좌우 대칭으로 함께 접는 단계는 정면 쪽에서 본다 (비스듬히 보면 한쪽 화살표가 납작해진다)
+const mirrored = (a, b) => a.line && b.line && a.line.every((p, i) => Math.abs(p[0] + b.line[i][0]) < 1e-6 && Math.abs(p[1] - b.line[i][1]) < 1e-6);
+function viewFor(st) {
+  const ms = st.moves || [];
+  if (!st.sim && ms.length === 2 && mirrored(ms[0], ms[1])) return [0, model.view[1], model.view[2]];
+  return model.view;
+}
+
 // ---------- 단계 이동 ----------
 function enterStep(i, play, instant) {
   step = i;
@@ -314,7 +322,7 @@ function enterStep(i, play, instant) {
     t = 0; phase = play ? 'wait' : 'idle'; waitT = WAIT_SEC / speed;
     const arrowPts = buildGuides(plan);
     const pts = [...toVecs(loopsOf(plan, 0)), ...toVecs(loopsOf(plan, 1)), ...(plan.sim ? toVecs(loopsOf(plan, 0.5)) : [])];
-    frameTo(pts, model.steps[step].view || model.view, instant, arrowPts);
+    frameTo(pts, model.steps[step].view || viewFor(model.steps[step]), instant, arrowPts);
   }
   const want = `#/m/${model.id}${step ? `/${step + 1}` : ''}`;
   if (location.hash !== want) history.replaceState(null, '', want);
