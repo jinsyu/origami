@@ -1,5 +1,16 @@
 // 영어 문구. 작품별 이름·설명·단계 안내, 화면 문구
 export const enModels = {
+  elephant: {
+    name: 'Elephant', desc: 'Fold the left side at an angle, fold in half and squash it open for an elephant face with a long trunk and big ears.', paper: 'Square origami paper',
+    done: 'Your elephant is done!',
+    steps: [
+      'Place the paper colored side down. Fold in half both ways and unfold to make creases.',
+      'Fold the left side at an angle along the dotted line starting at the bottom left corner. This is the trunk.',
+      'Fold the top half down.',
+      'Open the pocket at the top left and squash it flat along the diagonal dotted line. The face and ear appear.',
+      'Draw an eye with a pencil, and you are done!',
+    ],
+  },
   penguin: {
     name: 'Penguin', desc: 'Fold the bottom up for a white belly, then fold the sides in and back out for flippers.', paper: 'Square origami paper (blue)',
     done: 'Your penguin is done!',
