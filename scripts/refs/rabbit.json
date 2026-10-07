@@ -1,0 +1,65 @@
+{
+  "src": "https://en.origami-club.com/easy/animal-face/rabbit/zu.gif",
+  "note": "도안 6단계(위 꼭짓점 뒤로 접기)는 귀가 끊겨 엔진에서 생략(CLAUDE.md). 그래서 6번 이후 그림은 비교하지 않는다. 도안은 무늬 없이 흰 종이로만 그려져 색 면 비교를 끈다(minColor 0)",
+  "panels": [
+    {
+      "label": 1,
+      "after": 0,
+      "box": [
+        12,
+        16,
+        284,
+        288
+      ],
+      "minColor": 0
+    },
+    {
+      "label": 2,
+      "after": 1,
+      "box": [
+        288,
+        20,
+        554,
+        154
+      ],
+      "minColor": 0
+    },
+    {
+      "label": 3,
+      "after": 2,
+      "box": [
+        288,
+        158,
+        554,
+        294
+      ],
+      "minColor": 0
+    },
+    {
+      "label": 4,
+      "after": 3,
+      "box": [
+        10,
+        314,
+        340,
+        452
+      ],
+      "minColor": 0,
+      "minIou": 0.9,
+      "note": "띠 폭 B=0.16 은 도안보다 넓게 일부러 잡았다(6단계 생략 대신 귀를 길게)"
+    },
+    {
+      "label": 5,
+      "after": 4,
+      "box": [
+        360,
+        310,
+        552,
+        478
+      ],
+      "minColor": 0,
+      "minIou": 0.8,
+      "note": "넓은 띠 탓에 귀가 도안보다 굵다(의도). 뒤집기 화살표 고리도 겹침"
+    }
+  ]
+}
