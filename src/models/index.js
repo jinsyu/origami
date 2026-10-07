@@ -40,5 +40,6 @@ import { pencil } from './pencil.js';
 import { icecream } from './icecream.js';
 import { ufo } from './ufo.js';
 import { octopus } from './octopus.js';
+import { piano } from './piano.js';
 
-export const MODELS = [dog, cat, flower, cup, bookmark, house, cicada, kabuto, hat, airplane, glider, envelope, whale, heart, frame, duck, tulip, heron, masu, roofhouse, crane, fox, panda, boat, top2, ddakji, rabbit, watermelon, motorboat, fuji, chick, pig, koala, car, goldfish, mouse, frog, pencil, icecream, ufo, octopus].sort((a, b) => a.level - b.level);
+export const MODELS = [dog, cat, flower, cup, bookmark, house, cicada, kabuto, hat, airplane, glider, envelope, whale, heart, frame, duck, tulip, heron, masu, roofhouse, crane, fox, panda, boat, top2, ddakji, rabbit, watermelon, motorboat, fuji, chick, pig, koala, car, goldfish, mouse, frog, pencil, icecream, ufo, octopus, piano].sort((a, b) => a.level - b.level);

@@ -1,5 +1,17 @@
 // 영어 문구. 작품별 이름·설명·단계 안내, 화면 문구
 export const enModels = {
+  piano: {
+    name: 'Piano', desc: 'Fold narrow strips on both sides and a corner at an angle for a grand piano lid, then fold the bottom up for white keys.', paper: 'Square origami paper (black or gray)',
+    done: 'Your piano is done! Shall we play do-re-mi?',
+    steps: [
+      'Place the paper white side up. Fold in half both ways and unfold to make creases.',
+      'Fold both ends in narrowly along the dotted lines.',
+      'Fold the top left corner along the slanted dotted line. This is the piano lid.',
+      'Turn the paper over.',
+      'Fold the bottom edge up along the dotted line. These are the white keys.',
+      'Color the black keys with a pencil, and you are done!',
+    ],
+  },
   octopus: {
     name: 'Octopus', desc: 'Fold the sides to the center and the bottom corners outward for wide legs, then fold the top down for a round head.', paper: 'Square origami paper (red)',
     done: 'Your octopus is done!',
