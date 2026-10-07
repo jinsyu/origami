@@ -8,31 +8,39 @@ export function makeArrow(path, color, { r = 0.008, head = 0.085, w = 0.042 } = 
   if (vs.length < 2) return [];
   const curve = new THREE.CatmullRomCurve3(vs);
   const len = curve.getLength(), h = Math.min(head, len * 0.35);
-  const endU = 1 - h / len;
   const m = new THREE.MeshBasicMaterial({ color, transparent: true, depthTest: false, side: THREE.DoubleSide });
-  // 몸통은 촉 밑동까지만 (촉 안으로 관이 비치지 않게)
-  const sub = new THREE.CatmullRomCurve3(curve.getSpacedPoints(60).filter((_, i) => i / 60 <= endU + 1e-9));
-  const tube = new THREE.Mesh(new THREE.TubeGeometry(sub, 60, r, 8), m);
-  const tip = curve.getPointAt(1), base = curve.getPointAt(endU);
-  const dir = tip.clone().sub(base).normalize();
-  const g = new THREE.BufferGeometry().setFromPoints([base, base, tip]);
+  // 몸통은 끝까지 그린다 (촉 방향을 화면에서 정하므로, 촉 밑동에서 끊으면 몸통과 어긋날 수 있다)
+  const tube = new THREE.Mesh(new THREE.TubeGeometry(curve, 60, r, 8), m);
+  const tip = curve.getPointAt(1);
+  const g = new THREE.BufferGeometry().setFromPoints([tip, tip, tip]);
   const cone = new THREE.Mesh(g, m);
-  cone.userData.arrowHead = { tip, dir, h, w };
+  // 끝에서 거꾸로 짚어 갈 점들: 화면에서 촉 길이만큼 떨어진 점을 찾아 촉 방향으로 쓴다
+  const back = Array.from({ length: 41 }, (_, i) => curve.getPointAt(Math.max(0, 1 - (i / 40) * 0.6)));
+  cone.userData.arrowHead = { tip, back, h, w };
   cone.frustumCulled = false;
   tube.renderOrder = cone.renderOrder = 11;
   return [tube, cone];
 }
 
-// 촉 세모를 카메라 쪽으로 돌린다: 촉 방향은 화살표 끝의 방향을 화면에 보이는 성분으로 바꿔(시선 방향 성분을 뺌)
-// 끝이 화면 안쪽을 향해도 촉이 짧아지거나 찌그러지지 않게 하고, 날개는 그 방향과 시선에 모두 수직으로 편다
+// 촉 세모를 카메라 쪽으로 돌린다. 촉 방향은 끝점의 접선이 아니라, 화면에서 볼 때 몸통이 끝으로 들어오는 방향
+// (끝에서 촉 길이만큼 거슬러 올라간 점 → 끝점)으로 정한다. 접는 호의 끝은 종이 쪽(화면 안쪽)으로 꺾여 있어
+// 접선을 쓰면 몸통은 옆에서 들어오는데 촉은 엉뚱한 쪽을 향했다.
 const _v = new THREE.Vector3(), _d = new THREE.Vector3(), _s = new THREE.Vector3(), _b = new THREE.Vector3();
 export function faceCamera(root, camera) {
   root.traverse((o) => {
     const a = o.userData.arrowHead;
     if (!a) return;
     _v.copy(camera.position).sub(a.tip).normalize();
-    _d.copy(a.dir).addScaledVector(_v, -a.dir.dot(_v));
-    if (_d.lengthSq() < 1e-8) _d.copy(a.dir);
+    // 시선에 수직인 평면에 투영한 거리로 촉 길이만큼 떨어진 점을 찾는다
+    let q = a.back[a.back.length - 1];
+    for (const p of a.back) {
+      _d.copy(a.tip).sub(p);
+      _d.addScaledVector(_v, -_d.dot(_v));
+      if (_d.length() >= a.h) { q = p; break; }
+    }
+    _d.copy(a.tip).sub(q);
+    _d.addScaledVector(_v, -_d.dot(_v));
+    if (_d.lengthSq() < 1e-10) return;
     _d.normalize();
     _s.copy(_d).cross(_v).normalize().multiplyScalar(a.w);
     _b.copy(a.tip).addScaledVector(_d, -a.h);

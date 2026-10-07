@@ -715,11 +715,32 @@ export function moveGuides(plan, mi) {
   const path = [];
   if (tip) {
     const c = add(mv.o, mul(mv.d, dot(sub(tip, mv.o), mv.d)));
+    // 호를 접는 선 방향으로 비스듬히 눕힌다: 종이에서 솟는 높이의 일부를 옆으로 옮겨, 비스듬한 기본 시점에서도
+    // 반원이 겹쳐 갈고리처럼 보이지 않고 도안 화살표처럼 옆으로 휜 곡선으로 보이게 한다 
+    // 휘는 쪽: 종이 가운데에서 화살표(출발~도착) 가운데 쪽, 곧 바깥으로 (양쪽 접기에서 좌우 화살표가 엇갈리지 않고 대칭으로 벌어지게). 가운데에 있으면 기본 시점이 보는 쪽
+    let side = null;
+    if (!mv.spin && Math.abs(dot(mv.u, [0, 0, 1])) > 0.9) {
+      let cx = 0, cy = 0, cn = 0;
+      for (const q of plan.polys) for (const p of q.p) { cx += p[0]; cy += p[1]; cn++; }
+      const end = moveTo(tip, mv, 1), mid = [(tip[0] + end[0]) / 2 - cx / cn, (tip[1] + end[1]) / 2 - cy / cn, 0];
+      const out = dot(mv.d, mid);
+      const sg = Math.abs(out) > 0.02 ? out : dot(mv.d, [0.3, -0.45, 0]);
+      side = sg >= 0 ? mv.d : mul(mv.d, -1);
+    }
+    const raw = [];
     for (let k = 0; k <= 40; k++) {
       const s = k / 40;
       let q = moveTo(tip, mv, s);
       q = add(c, mul(sub(q, c), 1.05));
-      path.push(add(q, mul(mv.u, 0.012 * Math.sin(Math.PI * s))));
+      raw.push(add(q, mul(mv.u, 0.012 * Math.sin(Math.PI * s))));
+    }
+    // 높이는 35% 로 낮춰 종이 가까이 눕히고, 옆으로 휘는 폭은 출발점~도착점 거리의 30% 까지만 (크게 벌어지지 않게)
+    const chord = Math.hypot(...sub(raw[40], raw[0]));
+    const hmax = Math.max(...raw.map((q) => Math.abs(dot(sub(q, c), mv.u))));
+    const k = side && hmax > 1e-6 ? Math.min(0.45, (0.3 * chord) / hmax) : 0;
+    for (const q of raw) {
+      const hgt = dot(sub(q, c), mv.u);
+      path.push(k ? add(q, add(mul(mv.u, -0.65 * hgt), mul(side, k * Math.abs(hgt)))) : q);
     }
   }
   return { line, path };
