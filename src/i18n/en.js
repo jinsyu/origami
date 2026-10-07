@@ -1,5 +1,16 @@
 // 영어 문구. 작품별 이름·설명·단계 안내, 화면 문구
 export const enModels = {
+  frog: {
+    name: 'Frog', desc: 'Squash one side of a triangle into a square head with a white mouth. Good practice for the squash fold.', paper: 'Square origami paper',
+    done: 'Your frog is done! Ribbit ribbit!',
+    steps: [
+      'Place the paper colored side down as a diamond. Fold in half and unfold to make a center crease.',
+      'Fold the top corner down to the bottom corner.',
+      'Lift the right part along the dotted line, open the pocket and squash it flat into a square.',
+      'Fold the left end to the right along the vertical dotted line to make the body.',
+      'Draw two round eyes on the head with a pencil, and you are done!',
+    ],
+  },
   mouse: {
     name: 'Mouse Face', desc: 'Fold one corner of a triangle in and back out at an angle for a perky ear. The other end becomes a pointy nose.', paper: 'Square origami paper',
     done: 'Your mouse face is done! Squeak squeak!',
