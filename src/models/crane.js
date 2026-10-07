@@ -91,7 +91,7 @@ export const crane = {
         { line: [[-1, -K], [1, -K]], side: [0, 0.2], filter: (c) => c.tags.has('petalA'), angle: 90, toward: 1 },
       ],
       view: [0.35, 0.55, 1],
-      diagramView: [1, 0.5, 0.5],
+      diagramView: [0.9, 0.25, 0.9],
     },
   ],
 };
