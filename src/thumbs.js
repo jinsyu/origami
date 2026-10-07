@@ -129,8 +129,16 @@ export function diagram(model, plans, i) {
       axisView = [sgn * mv.d[0] * 0.8, sgn * mv.d[1] * 0.8 + 0.24, sgn * mv.d[2] * 0.8 + 0.4];
     }
   }
+  // 접는 선이 모두 나란한 단계: 접는 호는 선에 수직인 평면에 놓이므로, 정면에서 보면 짧은 선과 점(화살촉)으로 줄어든다.
+  // 시점을 접는 선 방향으로 기울여 호가 옆으로 드러나게 한다 (기본 시점 쪽으로 부호를 맞춘다)
+  let lineView = null;
+  if (!st.sim && !p.parts && p.moves.length && p.moves.every((mv) => !mv.spin && Math.abs(mv.d[0] * p.moves[0].d[0] + mv.d[1] * p.moves[0].d[1] + mv.d[2] * p.moves[0].d[2]) > 0.999)) {
+    let [dx, dy] = p.moves[0].d;
+    if (dx * 0.12 - dy * 0.25 < 0) { dx = -dx; dy = -dy; }
+    lineView = [dx * 0.55, dy * 0.55 - 0.1, 1];
+  }
   // diagramView: 도면에서만 쓰는 시점 (화면 시점으로는 화살표가 납작해지는 단계)
-  const dir = st.diagramView ? st.diagramView : axisView ? axisView : st.view && st.view[2] > 0.5 ? [st.view[0] * 0.5, st.view[1] * 0.5, 1] : sym ? [0, -0.45, 1] : symY ? [0.45, -0.1, 1] : [0.12, -0.25, 1];
+  const dir = st.diagramView ? st.diagramView : axisView ? axisView : st.view && st.view[2] > 0.5 ? [st.view[0] * 0.5, st.view[1] * 0.5, 1] : sym ? [0, -0.45, 1] : symY ? [0.45, -0.1, 1] : lineView || [0.12, -0.25, 1];
   // 꾸미기 단계는 접는 선이 없으므로 다 그린 모습을 보여 준다
   if (model.steps[i].draw) return snapshot(model, plans[i], 1, [0, 0, 1], 420, `${model.id}:d${i}`);
   return snapshot(model, plans[i], 0, dir, 420, `${model.id}:d${i}`, true);
