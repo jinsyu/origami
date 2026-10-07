@@ -107,6 +107,8 @@ export function stepThumb(model, plans, i) {
 // 인쇄 도면용: 접는 선·화살표까지 그린 큰 그림
 export function diagram(model, plans, i) {
   const dir = model.steps[i].view && model.steps[i].view[2] > 0.5 ? [model.steps[i].view[0] * 0.5, model.steps[i].view[1] * 0.5, 1] : [0.12, -0.25, 1];
+  // 꾸미기 단계는 접는 선이 없으므로 다 그린 모습을 보여 준다
+  if (model.steps[i].draw) return snapshot(model, plans[i], 1, [0, 0, 1], 420, `${model.id}:d${i}`);
   return snapshot(model, plans[i], 0, dir, 420, `${model.id}:d${i}`, true);
 }
 
