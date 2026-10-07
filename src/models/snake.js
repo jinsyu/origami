@@ -37,8 +37,8 @@ export function makeSnake() {
         text: '접은 것을 모두 펴요. 가로로 접는 선이 생겼어요.',
         sim: true,
         moves: [1, -1].flatMap((sy) => [
-          { line: H(sy * Q), side: [0, sy * 0.1], filter: has(`b${sy}`), toward: -1, at: [0, 0.5] },
-          { line: H(sy * 2 * Q), side: [0, sy * 0.2], filter: has(`a${sy}`), toward: -1, at: [0.5, 1] },
+          { line: H(sy * Q), side: [0, sy * 0.1], filter: has(`b${sy}`), toward: 1, at: [0, 0.5] },
+          { line: H(sy * 2 * Q), side: [0, sy * 0.2], filter: has(`a${sy}`), toward: 1, at: [0.5, 1] },
         ]),
       },
       ...zig(-1),

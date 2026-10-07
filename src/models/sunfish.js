@@ -45,7 +45,7 @@ export function makeSunfish() {
       },
       {
         text: '접은 위와 아래를 다시 펴요.',
-        moves: [1, -1].map((sy) => ({ line: [[-1, sy * Q], [1, sy * Q]], side: [0, sy * 0.1], filter: has(sy > 0 ? 'endT' : 'endB'), toward: -1 })),
+        moves: [1, -1].map((sy) => ({ line: [[-1, sy * Q], [1, sy * Q]], side: [0, sy * 0.1], filter: has(sy > 0 ? 'endT' : 'endB'), toward: 1 })),
       },
       {
         text: '아래쪽 가운데를 양옆으로 벌리고, 아래 끝을 위로 올리면서 꾹 눌러 펴요. 지느러미가 생겨요.',

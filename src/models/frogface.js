@@ -46,7 +46,7 @@ export function makeFrogface(P = frogfaceParams) {
       { text: '위 변도 가운데 선 조금 앞까지 접어요. 가운데에 흰 틈이 남아 입이 돼요.', moves: [{ line: [[-1, Q + MG / 2], [1, Q + MG / 2]], side: [0, H], tag: 'fT' }] },
       { text: '종이를 뒤집어요.', moves: [flip], view: [0, 0, 1] },
       { text: '양옆을 가운데 선 조금 앞까지 접어요.', moves: [1, -1].map((sx) => ({ line: [[sx * side, -1], [sx * side, 1]], side: [sx * H, 0], tag: `s${sx}` })) },
-      { text: '접은 양옆을 다시 펴요.', moves: [1, -1].map((sx) => ({ line: [[sx * side, -1], [sx * side, 1]], side: [sx * 0.1, 0], filter: has(`s${sx}`), toward: -1 })) },
+      { text: '접은 양옆을 다시 펴요.', moves: [1, -1].map((sx) => ({ line: [[sx * side, -1], [sx * side, 1]], side: [sx * 0.1, 0], filter: has(`s${sx}`), toward: 1 })) },
       { text: '위 변을 가운데 선에 맞춰 접어 내려요.', moves: [{ line: [[-1, top], [1, top]], side: [0, Q], tag: 'band' }] },
       { text: '오른쪽 위를 벌리고 꾹 눌러 펴요. 눈이 생겨요.', sim: true, moves: squash(1) },
       { text: '왼쪽 위도 똑같이 벌려 눌러요.', sim: true, moves: squash(-1) },
