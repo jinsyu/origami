@@ -6,6 +6,7 @@ const H = 0.5, Q = 0.25;
 const has = (t) => (c) => c.tags.has(t);
 const NECK = [[0, -Q], [0.27, 0]]; // 목을 세우는 바깥 뒤집어 접기 선
 const TAIL = [[-0.238, 0], [-0.197, -0.23]]; // 꼬리를 세우는 바깥 뒤집어 접기 선
+const HEAD = [[-0.24, 0], [-0.04, -0.24]]; // 머리 쪽 안으로 뒤집어 접기 선
 const base = (c) => !c.tags.has('ft') && !c.tags.has('fb');
 
 export const foxcub = {
@@ -76,5 +77,14 @@ export const foxcub = {
         { line: TAIL, side: [-0.4, -0.05], filter: (c) => c.tags.has('back'), toward: -1, spine: [[0, 0], [-1, 0]], tag: 'tail' },
       ],
     },
+    {
+      text: '왼쪽 끝을 점선에서 안쪽으로 뒤집어 접어 넣어요. 앞뒤 모두 같아요.',
+      sim: true,
+      moves: [
+        { line: HEAD, side: [-0.3, -0.2], filter: (c) => !c.tags.has('back'), toward: -1, spine: [[0, 0], [-1, 0]], tag: 'head' },
+        { line: HEAD, side: [-0.3, -0.2], filter: (c) => c.tags.has('back'), toward: 1, spine: [[0, 0], [-1, 0]], tag: 'head' },
+      ],
+    },
+    { text: '여우가 앉은 모습이 되도록 돌려요.', moves: [{ spin: { a: [0, 0, 0], b: [0, 0, 1], angle: 40 } }], view: [0, 0, 1] },
   ],
 };
