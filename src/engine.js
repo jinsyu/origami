@@ -510,18 +510,54 @@ function affineOf(U, P) {
 }
 
 // 단계마다 표시 보정 함수를 붙인다 (prev: 이전 단계 계획)
-function attachSettle(plan, prev, raw) {
+// 같은 평면(나란하고 거의 같은 높이)에 놓인 조각끼리 묶는다: 평평한 단계는 전체가 한 묶음,
+// 입체 단계(날개를 세운 학, 상자 벽)는 평면마다 따로 겹을 다진다
+function planeClusters(P) {
+  const info = P.map((L) => {
+    let n = polyNormal(L);
+    const m = Math.abs(n[0]) >= Math.abs(n[1]) && Math.abs(n[0]) >= Math.abs(n[2]) ? 0 : Math.abs(n[1]) >= Math.abs(n[2]) ? 1 : 2;
+    if (n[m] < 0) n = mul(n, -1);
+    const w = L.map((p) => dot(p, n));
+    return { n, w: (Math.min(...w) + Math.max(...w)) / 2, flat: Math.max(...w) - Math.min(...w) < 1e-6 };
+  });
+  const cl = [];
+  info.forEach((it, i) => {
+    if (!it.flat) return;
+    const c = cl.find((c2) => dot(c2.n, it.n) > 1 - 1e-9 && Math.abs(c2.w - it.w) < GAP * 40);
+    if (c) c.ids.push(i); else cl.push({ n: it.n, w: it.w, ids: [i] });
+  });
+  return cl;
+}
+
+// 단계마다 표시 보정 함수를 붙인다 (prev: 이전 단계 계획)
+function attachSettle(plan, prev) {
   const start = rawStart(plan);
-  const F0 = start.map(frameOf), F1 = raw.map(frameOf);
-  const levels = flatLevels(raw, GAP);
-  const aff = raw.map((L, i) => affineOf(plan.polys[i].uv, L));
+  // 끝 상태는 부풀리기 변형 전 위치로 (화면에서는 변형한 위치에 보정을 더한다)
+  const geom = plan.parts ? rigidPose(plan.parts[1], 1) : plan.sim ? plan.polys.map((q) => q.p) : rigidPose(plan, 1);
+  const F0 = start.map(frameOf), F1 = geom.map(frameOf);
+  const aff = geom.map((L, i) => affineOf(plan.polys[i].uv, L));
+  // 평면 묶음마다 그 평면의 2차원 좌표(u, v)와 높이(w, 가운데 겹 기준)로 겹을 다진다
+  const where = new Map(); // 면 → { levels, li, e1, e2, n }
+  for (const c of planeClusters(geom)) {
+    if (c.ids.length < 2) continue;
+    const n = c.n, t = Math.abs(n[0]) < 0.9 ? [1, 0, 0] : [0, 1, 0];
+    const e1 = norm(cross(t, n)), e2 = cross(n, e1);
+    const ws = c.ids.map((i) => dot(geom[i][0], n)).sort((x, y) => x - y);
+    const mid = (ws[0] + ws[ws.length - 1]) / 2;
+    const ref = ws.reduce((b2, w) => (Math.abs(w - mid) < Math.abs(b2 - mid) ? w : b2), ws[0]);
+    const PL = c.ids.map((i) => geom[i].map((p) => [dot(p, e1), dot(p, e2), dot(p, n) - ref]));
+    const levels = flatLevels(PL, GAP, c.ids.map((i) => plan.polys[i]));
+    if (!levels) continue;
+    c.ids.forEach((i, li) => where.set(i, { levels, li, e1, e2, n }));
+  }
   const memo = new Map();
-  // 끝 보정 (세계 좌표 벡터): 다음 단계가 이어 받는다
+  // 끝 보정 (세계 좌표 벡터): 다음 단계가 이어 받는다. 평면 묶음에 들지 않은 면은 시작 보정을 그대로 가지고 돈다
   plan.endOff = (i, uv) => {
     const key = `${i}|${uvKey(uv)}`;
     let v = memo.get(key);
     if (v) return v;
-    if (levels) { const p = aff[i](uv); v = [0, 0, levels.query(i, p[0], p[1])]; }
+    const c = where.get(i);
+    if (c) { const p = aff[i](uv); v = mul(c.n, c.levels.query(c.li, dot(p, c.e1), dot(p, c.e2))); }
     else v = toWorld(F1[i], toLocal(F0[i], startOff(i, uv)));
     memo.set(key, v);
     return v;
@@ -582,7 +618,7 @@ export function buildModel(model) {
     if (inked.length || step.draw) { plan.inked = inked; plan.draw = step.draw || []; inked = [...inked, ...plan.draw]; }
     // 화면용 겹 다지기 (엔진 상태는 그대로)
     const raw = rawEnd(plan);
-    attachSettle(plan, plans[plans.length - 1], raw);
+    attachSettle(plan, plans[plans.length - 1]);
     plans.push(plan);
     polys = plan.polys.map((q, i) => ({ ...clonePoly(q), p: raw[i].map((v) => v.slice()), hist: undefined, par: i }));
   }

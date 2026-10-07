@@ -199,8 +199,8 @@ export class PaperMesh {
       for (const a of L) for (const b of L) d = Math.max(d, Math.hypot(a[0] - b[0], a[1] - b[1]));
       const Sfine = Math.max(p.deform ? 4 : 1, Math.min(MAX_SUB, Math.ceil(d / SETTLE_CELL)));
       if (p.deform || Sfine === 1) return Sfine;
-      // 시험 격자에서 보정값이 꼭짓점·가운데의 일차 보간과 같은지
-      const St = Math.max(3, Math.min(8, Math.ceil(d / 0.1)));
+      // 나눌 격자(비탈 폭보다 촘촘함) 그대로에서 보정값이 꼭짓점·가운데의 일차 보간과 같은지
+      const St = Sfine;
       const c = [L.reduce((s2, v) => s2 + v[0], 0) / L.length, L.reduce((s2, v) => s2 + v[1], 0) / L.length];
       const oc = offAt(qi, c), oL = L.map((u) => offAt(qi, u));
       for (let i = 0; i < L.length; i++) {
