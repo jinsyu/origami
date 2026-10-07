@@ -80,8 +80,8 @@ export const masu = {
       text: '좌우를 선을 따라 직각으로 세워 옆벽을 만들고, 이어서 위아래 벽을 세우면서 모서리를 안쪽으로 밀어 넣어요.',
       sim: true,
       moves: [...sideWalls().map((m) => (m.angle ? { ...m, at: [0, 0.5] } : m)), ...endWalls().map((m) => ({ ...m, at: m.axis3 ? [0.35, 1] : [0.25, 0.85] }))],
-      view: [0.35, -0.9, 0.9],
+      view: [0.3, -0.35, 1],
     },
-    { text: '끝을 벽 너머 안쪽으로 넘겨 바닥에 눕혀요.', sim: true, moves: flaps(), view: [0.35, -0.9, 0.9] },
+    { text: '끝을 벽 너머 안쪽으로 넘겨 바닥에 눕혀요.', sim: true, moves: flaps(), view: [0.3, -0.35, 1] },
   ],
 };
