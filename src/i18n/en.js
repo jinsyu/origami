@@ -1,16 +1,6 @@
 // 영어 문구. 작품별 이름·설명·단계 안내, 화면 문구
 export const enModels = {
-  tv: {
-    name: 'TV', desc: 'Fold the top and sides in narrowly for a frame, then fold the bottom up for the control panel. Draw the buttons.', paper: 'Square origami paper',
-    done: 'Your TV is done! Draw your favorite picture on the screen.',
-    steps: [
-      'Place the paper colored side down. Fold in half both ways and unfold to make creases.',
-      'Fold the top edge down narrowly along the dotted line.',
-      'Fold both side edges in narrowly along the dotted lines.',
-      'Fold the bottom edge up along the dotted line. This is the control panel.',
-      'Draw a round power button and square buttons with a pencil, and you are done!',
-    ],
-  },
+
   piano: {
     name: 'Piano', desc: 'Fold narrow strips on both sides and a corner at an angle for a grand piano lid, then fold the bottom up for white keys.', paper: 'Square origami paper (black or gray)',
     done: 'Your piano is done! Shall we play do-re-mi?',
@@ -72,17 +62,7 @@ export const enModels = {
       'Fold the outer top corners behind along the dotted lines to make a pointy tip, and you are done!',
     ],
   },
-  frog: {
-    name: 'Frog', desc: 'Squash one side of a triangle into a square head with a white mouth. Good practice for the squash fold.', paper: 'Square origami paper',
-    done: 'Your frog is done! Ribbit ribbit!',
-    steps: [
-      'Place the paper colored side down as a diamond. Fold in half and unfold to make a center crease.',
-      'Fold the top corner down to the bottom corner.',
-      'Lift the right part along the dotted line, open the pocket and squash it flat into a square.',
-      'Fold the left end to the right along the vertical dotted line to make the body.',
-      'Draw two round eyes on the head with a pencil, and you are done!',
-    ],
-  },
+
   mouse: {
     name: 'Mouse Face', desc: 'Fold one corner of a triangle in and back out at an angle for a perky ear. The other end becomes a pointy nose.', paper: 'Square origami paper',
     done: 'Your mouse face is done! Squeak squeak!',
@@ -244,37 +224,8 @@ export const enModels = {
       'Color the cheeks pink with a colored pencil, and you are done!',
     ],
   },
-  ddakji: {
-    name: 'Ddakji', desc: 'Fold two sheets into strips and weave them together into a sturdy ddakji. Play ddakji-chigi with a friend.', paper: '2 sheets of square origami paper',
-    done: 'Your ddakji is done! Slam it down next to your friend’s ddakji and flip it over to win.',
-    steps: [
-      'Place both sheets colored side down. Fold the top edge down to the bottom edge.',
-      'Fold the bottom edge up to the top edge once more to make a long thin strip.',
-      'On the yellow strip, fold the right end up at an angle and the left end down.',
-      'Fold the green strip the same way: right end up, left end down.',
-      'Turn the green strip sideways and lay it across the yellow strip in a cross.',
-      'Fold the top end of the yellow strip underneath down over the green strip.',
-      'Fold the right end of the green strip over to the left.',
-      'Fold the bottom end of the yellow strip up over it.',
-      'Fold the left end of the green strip to the right, tucking its tip under the first yellow flap, and you are done!',
-    ],
-  },
-  top2: {
-    name: 'Ddakji Spinning Top', desc: 'Fold two sheets into strips, weave them together like ddakji, and push a toothpick through the center to spin it.', paper: '2 sheets of square origami paper, a toothpick',
-    done: 'Your spinning top is done! Pinch the top of the toothpick and twist to spin it. The two colors blend together.',
-    steps: [
-      'Place both sheets colored side down. Fold the top edge down to the bottom edge.',
-      'Fold the bottom edge up to the top edge once more to make a long thin strip.',
-      'On the red strip, fold the right end up at an angle and the left end down.',
-      'Fold the blue strip the same way: right end up, left end down.',
-      'Turn the blue strip sideways and lay it across the red strip in a cross.',
-      'Fold the top end of the red strip underneath down over the blue strip.',
-      'Fold the right end of the blue strip over to the left.',
-      'Fold the bottom end of the red strip up over it.',
-      'Fold the left end of the blue strip to the right, tucking its tip under the first red flap.',
-      'Push a toothpick through the center so it pokes out a little on both sides, and you are done!',
-    ],
-  },
+
+
 
   dog: {
     name: 'Dog Face', desc: 'Four folds make a puppy with floppy ears. Perfect for a first fold.', paper: 'Square origami paper',
