@@ -50,6 +50,8 @@ const BACK = 0.04; // 등이 솟는 높이 (몸통 폭 0.234 의 약 1/6)
 const inner = (q) => !['faceA', 'faceB', 'leg'].some((t) => q.tags.has(t));
 const puff = (p, e, q) => {
   const [x, y, z] = p;
+  // 이 단계에 돌아가는 날개 조각은 밀지 않는다 (접기 전에는 몸통 자리에 겹쳐 있어, 밀면 몸통 겹을 지나친다. 끝에서는 경첩선 위라 0)
+  if (q.owner >= 0) return p;
   if (y >= 0 || y <= -0.207 || Math.abs(x) >= 0.117) return p;
   const tx = 1 - Math.abs(x) / 0.117;
   const ty = y > -0.117 ? -y / 0.117 : (y + 0.207) / 0.09;
@@ -84,8 +86,8 @@ export const crane = {
       text: '양쪽 날개를 옆으로 펼치면서 살살 당기면 등이 볼록 솟아요. 학 완성!',
       deform: puff,
       moves: [
-        { line: [[-1, -K], [1, -K]], side: [0, 0.2], filter: (c) => c.tags.has('petalB'), angle: 90, toward: 1 },
-        { line: [[-1, -K], [1, -K]], side: [0, 0.2], filter: (c) => c.tags.has('petalA'), angle: 90, toward: -1 },
+        { line: [[-1, -K], [1, -K]], side: [0, 0.2], filter: (c) => c.tags.has('petalB'), angle: 90, toward: -1 }, // 뒤 날개(petalB)는 뒤로, 앞 날개는 앞으로 (서로·몸통을 지나치지 않게)
+        { line: [[-1, -K], [1, -K]], side: [0, 0.2], filter: (c) => c.tags.has('petalA'), angle: 90, toward: 1 },
       ],
       view: [0.35, 0.55, 1],
       diagramView: [1, 0.5, 0.5],
