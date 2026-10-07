@@ -119,12 +119,15 @@ function selectMove(cur, m, mi) {
   const d = norm(sub([m.line[1][0], m.line[1][1], 0], o));
   const n = norm(cross(d, u));
   const sideOf = (c) => dot(sub([c[0], c[1], 0], o), n);
-  const ref = m.side ? Math.sign(sideOf(m.side)) : 0;
+  const ref = m.side ? Math.sign(sideOf(m.side)) : m.grab ? Math.sign(sideOf(m.grab)) : 0;
   const sel = (q) => {
     const c = centroid(q.p);
     if (ref && sideOf(c) * ref <= 1e-6) return false;
     return m.filter ? m.filter({ x: c[0], y: c[1], z: c[2], uv: centroid(q.uv), tags: q.tags }) : true;
   };
+
+  // grab: 잡은 점에서 시작해, 접는 선 너머로 넘어가지 않고 종이로 이어진 조각만 함께 접는다 (실제 종이처럼)
+  if (m.grab) return grabMove(cur, m, mi, o, d, n, u, sideOf, ref);
 
   const next = [];
   for (const q of cur) {
@@ -141,6 +144,95 @@ function selectMove(cur, m, mi) {
     next.push(q);
   }
 
+  return finishMove(next, m, mi, o, d, n, u);
+}
+
+// 2D 점이 볼록 다각형 안에 있는지 (변 위 포함)
+function inPoly2(pt, P) {
+  let sgn = 0;
+  for (let i = 0; i < P.length; i++) {
+    const a = P[i], b = P[(i + 1) % P.length];
+    const c = (b[0] - a[0]) * (pt[1] - a[1]) - (b[1] - a[1]) * (pt[0] - a[0]);
+    if (Math.abs(c) < 1e-9) continue;
+    if (sgn && Math.sign(c) !== sgn) return false;
+    sgn = Math.sign(c);
+  }
+  return true;
+}
+// 맞댄 변이 있지만 그 변이 skip(위치) 조건을 만족하면 건너뛴다 (등선처럼 넘지 않을 변)
+function shareEdgeOff(A, B, skip) {
+  for (let i = 0; i < A.uv.length; i++) {
+    const i2 = (i + 1) % A.uv.length;
+    if (skip(A.p[i]) && skip(A.p[i2])) continue;
+    if (shareEdge({ uv: [A.uv[i], A.uv[i2]] }, B, true)) return true;
+  }
+  return false;
+}
+// 두 다각형이 종이 위에서 변을 (일부라도) 맞대고 있는지 (open: A를 닫히지 않은 선분 목록으로 본다)
+function shareEdge(A, B, open = false) {
+  for (let i = 0; i < (open ? A.uv.length - 1 : A.uv.length); i++) {
+    const a1 = A.uv[i], a2 = A.uv[(i + 1) % A.uv.length];
+    const dx = a2[0] - a1[0], dy = a2[1] - a1[1], L = Math.hypot(dx, dy);
+    if (L < 1e-9) continue;
+    for (let j = 0; j < B.uv.length; j++) {
+      const b1 = B.uv[j], b2 = B.uv[(j + 1) % B.uv.length];
+      const c1 = (dx * (b1[1] - a1[1]) - dy * (b1[0] - a1[0])) / L, c2 = (dx * (b2[1] - a1[1]) - dy * (b2[0] - a1[0])) / L;
+      if (Math.abs(c1) > 1e-6 || Math.abs(c2) > 1e-6) continue;
+      const t1 = (dx * (b1[0] - a1[0]) + dy * (b1[1] - a1[1])) / L, t2 = (dx * (b2[0] - a1[0]) + dy * (b2[1] - a1[1])) / L;
+      if (Math.min(L, Math.max(t1, t2)) - Math.max(0, Math.min(t1, t2)) > 1e-6) return true;
+    }
+  }
+  return false;
+}
+
+// grab 선택: 접는 선으로 모든 조각을 잘라 본 뒤, 움직이는 쪽 조각들 가운데 잡은 점을 덮는 조각
+// (layers: 'top' 맨 위 한 장, 'all' 그 점의 모든 겹, 숫자 n 위에서 n장)에서 출발해 변으로 이어진 조각을 모은다.
+// 접는 선 반대쪽으로는 넘어가지 않으므로, 같은 쪽에서 접힌 선으로 이어진 겹은 함께 움직이고 그렇지 않은 겹은 남는다.
+function grabMove(cur, m, mi, o, d, n, u, sideOf, ref) {
+  const pieces = [];
+  for (const q of cur) {
+    if (q.owner !== -1) { pieces.push({ q, src: q, cand: false }); continue; }
+    const parts = splitPoly(q, o, n);
+    const list = parts || [q];
+    for (const pt of list) {
+      const c = centroid(pt.p);
+      const on = sideOf(c) * ref > 1e-6 && (!m.filter || m.filter({ x: c[0], y: c[1], z: c[2], uv: centroid(pt.uv), tags: pt.tags }));
+      pieces.push({ q: pt, src: q, split: !!parts, cand: on });
+    }
+  }
+  const cands = pieces.filter((p) => p.cand);
+  const g = m.grab, under = cands.filter((p) => inPoly2(g, p.q.p.map((v) => [v[0], v[1]])));
+  under.sort((a, b) => dot(centroid(b.q.p), u) - dot(centroid(a.q.p), u)); // 접는 쪽(toward)에서 가까운 겹부터
+  const k = m.layers === 'all' ? under.length : typeof m.layers === 'number' ? m.layers : 1;
+  const seen = new Set(under.slice(0, k)), queue = [...seen];
+  while (queue.length) {
+    const a = queue.pop();
+    for (const b of cands) if (!seen.has(b) && shareEdge(a.q, b.q)) { seen.add(b); queue.push(b); }
+  }
+  // half: 잡은 날개의 겹을 높이로 앞 절반('front')·뒤 절반('back')으로 나눈다 (뒤집어 접기에서 두 쪽이 반대로 접힌다)
+  // half: 잡은 날개의 겹을 보는 쪽(z) 높이 순으로 세워 위 절반('front')·아래 절반('back')으로 나눈다.
+  // 뒤집어 접기에서 날개의 앞 겹과 뒤 겹은 장수가 같으므로 장수로 반을 가른다
+  if (m.half) {
+    const all = [...seen].sort((p1, p2) => centroid(p2.q.p)[2] - centroid(p1.q.p)[2]);
+    const keep = m.half === 'front' ? all.slice(0, Math.ceil(all.length / 2)) : all.slice(Math.floor(all.length / 2));
+    for (const p of all) if (!keep.includes(p)) seen.delete(p);
+  }
+  // 나뉜 조각 가운데 한쪽만 움직이면 나눈 채로, 아니면 원래 다각형으로 되돌린다
+  const next = [];
+  const bySrc = new Map();
+  for (const p of pieces) { if (!bySrc.has(p.src)) bySrc.set(p.src, []); bySrc.get(p.src).push(p); }
+  for (const [src, ps] of bySrc) {
+    if (src.owner !== -1) { next.push(src); continue; }
+    const moved = ps.map((p) => seen.has(p));
+    if (ps.length > 1 && moved.some((x) => x) && !moved.every((x) => x)) {
+      ps.forEach((p, i) => { p.q.e = p.q.e.map((f) => (f === CUT ? 2 : f)); p.q.owner = moved[i] ? mi : -1; next.push(p.q); });
+    } else { src.owner = moved.some((x) => x) ? mi : -1; next.push(src); }
+  }
+  return finishMove(next, m, mi, o, d, n, u);
+}
+
+// 고른 조각들로 회전축·방향을 정한다
+function finishMove(next, m, mi, o, d, n, u) {
   const mem = next.filter((q) => q.owner === mi);
   if (m.tag) mem.forEach((q) => q.tags.add(m.tag));
   if (m.untag) mem.forEach((q) => q.tags.delete(m.untag));
