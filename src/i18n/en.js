@@ -751,7 +751,8 @@ export const enModels = {
       'Fold the next layer down too, a little higher than the first, so a stripe shows.',
       'Turn the paper over.',
       'Fold both sides in at an angle to shape the body.',
-      'Turn it back over. Your cicada is done!',
+      'Turn it over again.',
+      'Draw round eyes on both top corners of the head with a pencil, and your cicada is done!',
     ],
   },
   kabuto: {

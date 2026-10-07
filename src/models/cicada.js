@@ -1,11 +1,18 @@
 // 매미 (정사각형 색종이, 마름모 방향으로 놓음)
+// 출처: Origami Club "Cicada"(전통, Fumiaki Shingu 도안) https://en.origami-club.com/traditional/cicada/
 // 좌표: 화면 오른쪽 +x, 위쪽 +y, 보는 사람 쪽 +z. 앞면=흰 면, 뒷면=색깔 면
+import { eye } from './parts/draw.js';
 const R = Math.SQRT1_2;
 const has = (t) => (c) => c.tags.has(t);
 const isFlap = (c) => c.tags.has('flapR') || c.tags.has('flapL');
 const flip = { spin: { a: [0, 0, 0], b: [0, 1, 0], angle: 180 } };
 
-export const cicada = {
+export const cicadaParams = { w: 0.326, f1: 0.422, f2: 0.461, st: 0.054, sb: 0.23 };
+
+export function makeCicada({ w, f1, f2, st, sb } = cicadaParams) {
+  return {
+  params: { w, f1, f2, st, sb },
+  make: makeCicada,
   id: 'cicada',
   name: '매미',
   level: 2,
@@ -32,26 +39,30 @@ export const cicada = {
     {
       text: '접어 올린 두 장을 끝이 아래 바깥쪽으로 비스듬히 나오게 접어 내려요. 매미의 날개가 돼요.',
       moves: [
-        { line: [[0, 0.38 * R], [R / 2, R / 2]], side: [0, R], filter: has('flapR') },
-        { line: [[0, 0.38 * R], [-R / 2, R / 2]], side: [0, R], filter: has('flapL') },
+        { line: [[0, w], [R / 2, R / 2]], side: [0, R], filter: has('flapR') },
+        { line: [[0, w], [-R / 2, R / 2]], side: [0, R], filter: has('flapL') },
       ],
     },
     {
       text: '위쪽 꼭짓점에서 맨 앞 한 장만 아래로 접어 내려요.',
-      moves: [{ line: [[-1, 0.383], [1, 0.383]], side: [0, 1], filter: (c) => c.tags.has('front') && !isFlap(c) }],
+      moves: [{ line: [[-1, f1], [1, f1]], side: [0, 1], filter: (c) => c.tags.has('front') && !isFlap(c) }],
     },
     {
       text: '남은 한 장도 접어 내려요. 앞 장보다 조금 위에서 접어 줄무늬가 보이게 해요.',
-      moves: [{ line: [[-1, 0.43], [1, 0.43]], side: [0, 1], filter: (c) => !c.tags.has('front') && !isFlap(c) }],
+      moves: [{ line: [[-1, f2], [1, f2]], side: [0, 1], filter: (c) => !c.tags.has('front') && !isFlap(c) }],
     },
     { text: '종이를 뒤집어요.', moves: [flip], view: [0, 0.4, 1] },
     {
       text: '양쪽 옆을 비스듬히 접어 몸통 모양을 다듬어요.',
       moves: [
-        { line: [[0.22, 0.75], [0.3, -0.1]], side: [1, 0.4] },
-        { line: [[-0.22, 0.75], [-0.3, -0.1]], side: [-1, 0.4] },
+        { line: [[st, 0.75], [sb, -0.1]], side: [1, 0.4] },
+        { line: [[-st, 0.75], [-sb, -0.1]], side: [-1, 0.4] },
       ],
     },
-    { text: '다시 뒤집으면 매미 완성!', moves: [flip], view: [0, 0.4, 1] },
+    { text: '다시 뒤집어요.', moves: [flip], view: [0, 0.4, 1] },
+    { text: '연필로 머리 양쪽 위에 동그란 눈을 그리면 매미 완성!', view: [0, 0, 1], draw: [...eye(-0.08, 0.42, 0.018), ...eye(0.08, 0.42, 0.018)] },
   ],
 };
+}
+
+export const cicada = makeCicada();
