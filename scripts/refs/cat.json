@@ -1,0 +1,56 @@
+{
+  "src": "https://en.origami-club.com/easy/animal-face/cat/zu.gif",
+  "note": "도안 순서대로 접는다",
+  "panels": [
+    {
+      "label": 2,
+      "after": 1,
+      "box": [
+        280,
+        32,
+        564,
+        186
+      ]
+    },
+    {
+      "label": 3,
+      "after": 2,
+      "box": [
+        280,
+        226,
+        564,
+        376
+      ]
+    },
+    {
+      "label": 4,
+      "after": 3,
+      "box": [
+        58,
+        294,
+        252,
+        476
+      ]
+    },
+    {
+      "label": 5,
+      "after": 4,
+      "box": [
+        82,
+        506,
+        284,
+        674
+      ]
+    },
+    {
+      "label": "완성",
+      "after": 7,
+      "box": [
+        318,
+        470,
+        548,
+        662
+      ]
+    }
+  ]
+}

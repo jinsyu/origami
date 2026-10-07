@@ -682,12 +682,14 @@ export const enModels = {
     ],
   },
   cat: {
-    name: 'Cat Face', desc: 'Fold a triangle and lift both ends up into pointy ears. Done in three folds.', paper: 'Square origami paper',
+    name: 'Cat Face', desc: 'Fold a triangle, lift both corners up into pointy ears, then fold the top down and turn it over.', paper: 'Square origami paper',
     done: 'Your cat face is done! Give it a name and show your friends.',
     steps: [
-      'Place the paper colored side down as a diamond. Fold the top corner down to the bottom corner.',
-      'Fold both side corners up at an angle. The tips poke up as ears.',
-      'Fold the bottom tip behind a little to round off the chin.',
+      'Place the paper colored side down as a diamond. Fold the bottom corner up to the top corner.',
+      'Fold in half and unfold to make a center crease.',
+      'Fold both corners up at an angle from the bottom center. The tips poke up as ears.',
+      'Fold the middle top corner down along the dotted line.',
+      'Turn the paper over.',
       'With a pencil, draw the eyes, the mouth and whiskers on both sides.',
       'Color the nose and cheeks pink with a colored pencil, and you are done!',
     ],
