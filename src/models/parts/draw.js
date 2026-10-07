@@ -20,3 +20,8 @@ export const box = (x0, y0, x1, y1, color = PENCIL) => ({ line: [[x0, y0], [x1, 
 export const fill = (x0, y0, x1, y1, color) => ({ poly: [[x0, y0], [x1, y0], [x1, y1], [x0, y1]], color, under: true });
 // 다각형 칠하기 (윤곽 아래에 깔린다)
 export const fillPoly = (pts, color) => ({ poly: pts, color, under: true });
+// 하트 모양 꼭짓점 (중심 c, 크기 r)
+export const heart = (c, r, n = 40) => Array.from({ length: n }, (_, i) => {
+  const t = (i / n) * Math.PI * 2;
+  return [c[0] + r * 0.0625 * 16 * Math.sin(t) ** 3, c[1] + r * 0.0625 * (13 * Math.cos(t) - 5 * Math.cos(2 * t) - 2 * Math.cos(3 * t) - Math.cos(4 * t))];
+});

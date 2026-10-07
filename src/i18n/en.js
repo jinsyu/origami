@@ -190,7 +190,9 @@ export const enModels = {
       'Fold the bottom corner up to a little above the center line.',
       'Fold the right corner in a little past the middle.',
       'Fold the left corner in over the right flap.',
-      'Fold the top corner down to close the flap. Your envelope is done!',
+      'Fold the top corner down to close the flap.',
+      'With a pencil, draw a stamp outline at the top right and lines for your friend’s name.',
+      'Color a heart sticker on the tip of the flap and fill in the stamp with colored pencils, and you are done!',
     ],
   },
 
