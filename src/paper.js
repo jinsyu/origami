@@ -84,11 +84,11 @@ export class PaperMesh {
     this.ink.clear();
     this.inkItems = [];
     if (!p.draw) return;
-    const weight = (s) => (s.line ? s.line.reduce((a, q, i) => (i ? a + Math.hypot(q[0] - s.line[i - 1][0], q[1] - s.line[i - 1][1]) : 0), 0) : 0.06);
+    const weight = (s) => (s.line ? s.line.reduce((a, q, i) => (i ? a + Math.hypot(q[0] - s.line[i - 1][0], q[1] - s.line[i - 1][1]) : 0), 0) : s.poly ? 0.25 : 0.06);
     const total = p.draw.reduce((a, s) => a + weight(s), 0) || 1;
     let acc = 0;
     const add = (s, animated) => {
-      const mat = new THREE.MeshBasicMaterial({ color: s.color || '#34363a', transparent: true, opacity: s.line ? 0.92 : 0.85, side: THREE.DoubleSide, depthWrite: false });
+      const mat = new THREE.MeshBasicMaterial({ color: s.color || '#34363a', transparent: true, opacity: s.line ? 0.92 : s.poly ? 0.96 : 0.85, side: THREE.DoubleSide, depthWrite: false });
       let mesh;
       if (s.line) {
         // 획을 촘촘히 나눠 얇은 띠로 만든다 (앞에서부터 그려지게)
@@ -108,6 +108,10 @@ export class PaperMesh {
         const geo = new THREE.BufferGeometry();
         geo.setAttribute('position', new THREE.Float32BufferAttribute(v, 3));
         mesh = new THREE.Mesh(geo, mat);
+      } else if (s.poly) {
+        // 색칠 면: 다각형을 채우고, 차례가 오면 서서히 진해진다
+        mesh = new THREE.Mesh(new THREE.ShapeGeometry(new THREE.Shape(s.poly.map(([x, y]) => new THREE.Vector2(x, y)))), mat);
+        mesh.userData.fade = mat.opacity;
       } else {
         const r = s.r || 0.02;
         mesh = new THREE.Mesh(new THREE.CircleGeometry(1, 28), mat);
@@ -135,6 +139,7 @@ export class PaperMesh {
     for (const it of this.inkItems) {
       const f = Math.max(0, Math.min(1, (e - it.from) / (it.to - it.from || 1)));
       if (it.segs) it.mesh.geometry.setDrawRange(0, Math.round(it.segs * f) * 6);
+      else if (it.mesh.userData.fade) it.mesh.material.opacity = it.mesh.userData.fade * f;
       else { const [rx, ry] = it.mesh.userData.r, k = f > 0 ? 1 - Math.pow(1 - f, 3) : 0.0001; it.mesh.scale.set(rx * k, ry * k, 1); }
     }
   }

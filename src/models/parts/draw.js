@@ -16,9 +16,7 @@ export const eye = (x, y, r = 0.024) => [
 export const cheek = (x, y, r = 0.032) => ({ dot: [x, y], r, ry: r * 0.7, color: PINK });
 // 네모 윤곽 (왼쪽 아래 x0,y0 / 오른쪽 위 x1,y1)
 export const box = (x0, y0, x1, y1, color = PENCIL) => ({ line: [[x0, y0], [x1, y0], [x1, y1], [x0, y1], [x0, y0 - 0.004]], color });
-// 네모 칠하기: 색연필로 한 줄씩 칠하듯 (윤곽 아래에 깔린다)
-export const fill = (x0, y0, x1, y1, color) => {
-  const n = Math.max(1, Math.round((y1 - y0) / 0.03)), h = (y1 - y0) / n, w = h * 1.15, a = x0 + w / 2, b = x1 - w / 2, line = [];
-  for (let i = 0; i < n; i++) { const y = y0 + h * (i + 0.5); line.push(i % 2 ? [b, y] : [a, y], i % 2 ? [a, y] : [b, y]); }
-  return { line, w, color, under: true };
-};
+// 네모 칠하기 (윤곽 아래에 깔린다)
+export const fill = (x0, y0, x1, y1, color) => ({ poly: [[x0, y0], [x1, y0], [x1, y1], [x0, y1]], color, under: true });
+// 다각형 칠하기 (윤곽 아래에 깔린다)
+export const fillPoly = (pts, color) => ({ poly: pts, color, under: true });

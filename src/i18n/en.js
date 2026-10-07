@@ -1,5 +1,14 @@
 // 영어 문구. 작품별 이름·설명·단계 안내, 화면 문구
 export const enModels = {
+  boat: {
+    name: 'Sailboat', desc: 'One fold makes a triangle sail and a boat body. Color it, add a flag and waves, and set sail.', paper: 'Square origami paper',
+    done: 'Your sailboat is done! Glue it on blue paper and it will sail across the sea.',
+    steps: [
+      'Place the paper white side up as a diamond. Fold the bottom corner up to the center. The top becomes the sail and the bottom the boat.',
+      'With a pencil, draw a mast down the middle of the sail and a small flag at the top.',
+      'Color the boat body and make the flag red with colored pencils, and you are done!',
+    ],
+  },
   panda: {
     name: 'Panda Face', desc: 'Fold it like the cat face, then fold the ear tips down to make them round. Color black ears and eye patches to turn it into a panda.', paper: 'Square origami paper (white side)',
     done: 'Your panda face is done! Draw some bamboo leaves and it will be happy.',
