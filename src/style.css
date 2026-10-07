@@ -192,6 +192,7 @@ button.print-link { cursor: pointer; font: inherit; font-weight: 600; }
 @media (max-width: 900px) {
   .g-head { grid-template-columns: 1fr; }
   .hero { max-width: 420px; }
+  @media (max-width: 560px) { .hero { aspect-ratio: 16 / 9; max-width: none; } }
   .p-steps { grid-template-columns: repeat(2, 1fr); }
   .p-sheet { padding: 20px 16px; }
   #viewer { height: auto; min-height: 100vh; }

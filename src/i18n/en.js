@@ -317,8 +317,8 @@ export const enUI = {
   prev: 'Previous step', fold: 'Fold this step', draw: 'Draw this step', auto: 'Play to the end', stop: 'Stop', replay: 'Watch again from the start',
   speed: 'Speed', slow: 'Slow', normal: 'Normal', fast: 'Fast', steps: 'Steps', done: 'Done', peek: 'Result',
   valley: 'Valley fold', mountain: 'Mountain fold', next: (n) => `Next: ${n}`, stepsCount: (n) => `${n} steps`,
-  startBtn: (n) => `Start with the ${n}`, continueBtn: (n, i, k) => `Continue the ${n} (${i}/${k})`,
-  folded: 'Folded', resume: (i, n) => `Continue ${i}/${n}`, level: (l) => ['Beginner', 'Easy', 'Intermediate', 'Advanced'][l - 1], printTitle: (n) => `How to fold a ${n}`, printBtn: 'Print', toViewer: 'Back to folding',
+  startBtn: (n) => `Start with the ${n}`, continueBtn: (n, i) => `Continue the ${n} from step ${i}`,
+  folded: 'Folded', resume: (i) => `Continue from step ${i}`, level: (l) => ['Beginner', 'Easy', 'Intermediate', 'Advanced'][l - 1], printTitle: (n) => `How to fold a ${n}`, printBtn: 'Print', toViewer: 'Back to folding',
   sym: [
     ['Valley fold', 'Fold forward along the short dashed line. The crease sinks like a valley.'],
     ['Mountain fold', 'Fold backward along the long dashed line. The crease rises like a mountain.'],
