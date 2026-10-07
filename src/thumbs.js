@@ -3,7 +3,7 @@ import * as THREE from 'three';
 import { PaperMesh, addLights, fitCamera, loopsOf, simOf, toVecs } from './paper.js';
 import { moveGuides } from './engine.js';
 import { simGuides, simArrows } from './sim.js';
-import { makeArrow } from './arrow.js';
+import { makeArrow, faceCamera } from './arrow.js';
 
 let r = null;
 function ctx() {
@@ -90,6 +90,7 @@ export function snapshot(model, plan, t, dir, size = 320, key, withGuides = fals
   const fit = fitCamera(camera, pts, dir, 1, withGuides ? 1.04 : 1.18);
   camera.position.copy(fit.pos);
   camera.lookAt(fit.target);
+  faceCamera(guides, camera);
   renderer.render(scene, camera);
   const url = renderer.domElement.toDataURL('image/png');
   if (key) cache.set(key, url);

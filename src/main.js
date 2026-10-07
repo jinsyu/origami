@@ -5,7 +5,7 @@ import { LineGeometry } from 'three/addons/lines/LineGeometry.js';
 import { LineMaterial } from 'three/addons/lines/LineMaterial.js';
 import { buildModel, moveGuides } from './engine.js';
 import { simGuides, simArrows } from './sim.js';
-import { makeArrow } from './arrow.js';
+import { makeArrow, faceCamera } from './arrow.js';
 import { PaperMesh, addLights, fitCamera, loopsOf, simOf, toVecs } from './paper.js';
 import { finalThumb, stepThumb, diagram, snapshot } from './thumbs.js';
 import { MODELS } from './models/index.js';
@@ -625,5 +625,6 @@ renderer.setAnimationLoop(() => {
     if (camTween.k >= 1) camTween = null;
   }
   controls.update();
+  faceCamera(guideGroup, camera);
   renderer.render(scene, camera);
 });
