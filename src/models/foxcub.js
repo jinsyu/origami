@@ -4,12 +4,14 @@
 import { squashFlap } from './parts/folds.js';
 const H = 0.5, Q = 0.25;
 const has = (t) => (c) => c.tags.has(t);
+const NECK = [[0, -Q], [0.27, 0]]; // 목을 세우는 바깥 뒤집어 접기 선
 const base = (c) => !c.tags.has('ft') && !c.tags.has('fb');
 
 export const foxcub = {
   id: 'foxcub',
   name: '아기 여우',
   level: 4,
+  maxJump: 0.12, // 목을 세우는 뒤집어 접기에서 목 끝이 한 프레임에 크게 움직인다
   desc: '펼쳐 누르기와 뒤집어 접기로 머리와 꼬리를 세우는, 몸 전체가 있는 여우예요.',
   paper: '정사각형 색종이',
   colors: { front: '#fbf8f1', back: '#f2b234' },
@@ -54,6 +56,15 @@ export const foxcub = {
       moves: [
         { line: [[0.217, 0.217], [0.262, 0]], side: [0.1, 0.05], filter: (c) => c.y > 0 && (c.tags.has('sqT_in') || c.x > Q), tag: 'earT' },
         { line: [[0.217, -0.217], [0.262, 0]], side: [0.1, -0.05], filter: (c) => c.y < 0 && (c.tags.has('sqB_in') || c.x > Q), tag: 'earB' },
+      ],
+    },
+    { text: '가운데 가로 선에서 위쪽을 뒤로 반 접어요.', moves: [{ line: [[-1, 0], [1, 0]], side: [0, 0.2], toward: -1, tag: 'back' }] },
+    {
+      text: '오른쪽 부분을 점선에서 바깥으로 뒤집어 접어 위로 세워요. 목과 머리가 돼요.',
+      sim: true,
+      moves: [
+        { line: NECK, side: [0.45, -0.1], filter: (c) => !c.tags.has('back'), toward: 1, spine: [[0, 0], [1, 0]], tag: 'neck' },
+        { line: NECK, side: [0.45, -0.1], filter: (c) => c.tags.has('back'), toward: -1, spine: [[0, 0], [1, 0]], tag: 'neck' },
       ],
     },
   ],
