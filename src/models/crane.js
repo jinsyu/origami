@@ -52,7 +52,8 @@ const head = () => {
 const puff = (p, e) => {
   const [x, y, z] = p;
   const fx = Math.abs(x) < 0.11 ? Math.cos((Math.PI / 2) * (x / 0.11)) ** 2 : 0; // 꺾이는 곳 없이 매끄럽게
-  const fy = y < 0 && y > -0.32 ? Math.sin((Math.PI * -y) / 0.32) : 0;
+  // 날개가 붙는 선(y≈-0.207) 위쪽 등만 부풀린다. 그 아래에는 목·꼬리 밑동이 있어 밀면 겹이 부채처럼 벌어진다
+  const fy = y < 0 && y > -0.2 ? Math.sin((Math.PI * -y) / 0.2) : 0;
   const s = Math.max(-1, Math.min(1, z / 0.019)); // 0.019 = 몸통 바깥 겹 높이
   return [x, y, z + 0.09 * e * fx * fy * s];
 };
