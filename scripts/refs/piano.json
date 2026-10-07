@@ -1,0 +1,72 @@
+{
+  "src": "https://en.origami-club.com/easy/other/piano2/zu.gif",
+  "note": "회색 종이 도안이라 색 면을 채도로 가르지 못한다 — 종이 모양만 본다",
+  "panels": [
+    {
+      "label": 1,
+      "after": 0,
+      "box": [
+        43,
+        31,
+        442,
+        430
+      ],
+      "minColor": 0
+    },
+    {
+      "label": 2,
+      "after": 1,
+      "box": [
+        541,
+        31,
+        940,
+        430
+      ],
+      "minColor": 0
+    },
+    {
+      "label": 3,
+      "after": 2,
+      "box": [
+        109,
+        494,
+        411,
+        892
+      ],
+      "minColor": 0
+    },
+    {
+      "label": 4,
+      "after": 3,
+      "box": [
+        587,
+        494,
+        889,
+        892
+      ],
+      "minColor": 0
+    },
+    {
+      "label": 5,
+      "after": 4,
+      "box": [
+        108,
+        951,
+        397,
+        1350
+      ],
+      "minColor": 0
+    },
+    {
+      "label": "완성",
+      "after": 6,
+      "box": [
+        561,
+        1018,
+        934,
+        1447
+      ],
+      "minColor": 0
+    }
+  ]
+}
