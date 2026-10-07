@@ -24,7 +24,7 @@ function metaOf(p) {
 }
 
 // 부풀리기 단계에서 부채꼴 삼각형 하나를 나누는 수
-const SUB = 12;
+const SUB = 8;
 // 삼각형 (가운데, a, b)를 S×S 개로 나눈 작은 삼각형들의 무게 (가운데·a·b 비율)
 const subCache = new Map();
 function subTris(S) {
