@@ -1,0 +1,46 @@
+{
+  "src": "https://en.origami-club.com/newspaper/samuraihat/zu.gif",
+  "panels": [
+    {
+      "label": 2,
+      "after": 1,
+      "box": [
+        176,
+        20,
+        424,
+        172
+      ]
+    },
+    {
+      "label": 3,
+      "after": 2,
+      "box": [
+        404,
+        20,
+        552,
+        164
+      ]
+    },
+    {
+      "label": 4,
+      "after": 3,
+      "box": [
+        220,
+        178,
+        394,
+        314
+      ]
+    },
+    {
+      "label": 5,
+      "after": 4,
+      "box": [
+        404,
+        178,
+        554,
+        314
+      ]
+    }
+  ],
+  "note": "Origami Club Samurai Hat(전통). 6·7번(앞 장 올리기→챙 한 번 더→뒷장 넣기)은 그림에 아래 뒷장이 보이지 않게 그려져 해석이 확실하지 않아 아직 비교하지 않음. 앱은 앞 장을 올려 챙을 만들고 뒷장을 뒤로 접는다"
+}
