@@ -604,6 +604,18 @@ export const enModels = {
       'Draw a tongue sticking out with a red colored pencil, and you are done!',
     ],
   },
+  frog: {
+    name: 'Frog', desc: 'Open and squash one pocket of a triangle to make a frog with a big open mouth. Draw its eyes!', paper: 'Square origami paper',
+    done: 'Your frog is done! Ribbit ribbit~',
+    steps: [
+      'Place the paper colored side down like a diamond. Fold it in half and unfold to make a crease down the middle.',
+      'Fold the top corner down to the bottom corner.',
+      'Open the right pocket and press it flat along the slanted dotted line. The head and mouth appear.',
+      'Turn it so the head is at the upper right.',
+      'Fold the left end to the right along the dotted line and tuck it under the head and mouth. It becomes a front leg.',
+      'Draw round eyes on both sides of the head with a pencil, and you are done!',
+    ],
+  },
   neuli: {
     name: 'Neuli Face', desc: 'Our school friend Neuli! Fold a triangle, stand the ears up and fold the chin to make a wide, cute face.', paper: 'Square origami paper (light yellow or apricot)',
     done: 'Neuli face is done! You can draw a flower on top of the head too.',
