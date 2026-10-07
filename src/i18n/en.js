@@ -857,6 +857,21 @@ export const enModels = {
       'Turn it back over. Your picture frame is done!',
     ],
   },
+  giyeok: {
+    name: 'Hangul ㄱ', desc: 'Make a frame with two blintz folds, then fold two sides behind to leave the Korean letter ㄱ (giyeok).', paper: 'Square origami paper',
+    done: 'Your ㄱ is done! Fold other letters too and make a word.',
+    steps: [
+      'Place the paper colored side down. Fold it in half into a triangle and unfold.',
+      'Fold it into a triangle the other way and unfold. You get an X in the middle.',
+      'Fold all four corners to the center point. This is a blintz fold.',
+      'Fold the four tips at the center back out so they touch the outer folded edges.',
+      'Fold the four points of the diamond in so they touch the edges of the white square.',
+      'Fold the top border down along the edge of the white square. This is the stroke across the top of ㄱ.',
+      'Fold the right border inward along the edge of the white square too. This is the stroke down the side of ㄱ.',
+      'Fold the left border behind along the edge of the white square.',
+      'Fold the bottom border behind too. Only the top and right strokes are left, and you have ㄱ.',
+    ],
+  },
   duck: {
     name: 'Duck', desc: 'Reverse fold the thin end up into a neck, then reverse fold its tip once more for the head and beak. Two reverse folds in a row.', paper: 'Square origami paper',
     done: 'Your duck is done! Draw an eye and float it on water.',

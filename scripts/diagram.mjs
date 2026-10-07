@@ -8,7 +8,7 @@
 // --img: 그림마다 [도안 | 엔진 | 차이(빨강: 도안에만, 파랑: 엔진에만, 노랑: 색이 다름)] 를 한 장으로 저장
 //
 // 기준 파일 scripts/refs/<id>.json:
-//   { "src": "zu.gif 주소", "panels": [{ "after": 접은 단계 수, "box": [x0, y0, x1, y1], "rot": 도, "note": "", "minIou": 0.9 }], "fit": { "이름": [최소, 최대] } }
+//   { "src": "zu.gif 주소", "panels": [{ "after": 접은 단계 수, "box": [x0, y0, x1, y1], "rot": 도, "note": "", "minIou": 0.9, "minColor": 0.85 }], "fit": { "이름": [최소, 최대] } }
 //   after = 그 그림이 보여 주는 상태가 몇 단계를 접은 뒤인지 (도안의 n번 그림 = n-1 단계 뒤, 완성 그림 = 접기 단계 전부)
 import { buildModel, rawPose, polyNormal } from '../src/engine.js';
 import { MODELS, DEV } from '../src/models/index.js';
@@ -42,7 +42,9 @@ const ref = JSON.parse(readFileSync(join(ROOT, 'scripts/refs', `${id}.json`), 'u
 const cache = join(tmpdir(), 'origami-refs');
 mkdirSync(cache, { recursive: true });
 const gif = join(cache, `${id}.gif`);
-if (!existsSync(gif)) execFileSync('curl', ['-sfL', '-o', gif, ref.src]);
+// src 가 주소가 아니면 저장소 안의 그림 (영상 장면을 배경을 지우고 색 면만 칠해 둔 것 등)
+if (!/^https?:/.test(ref.src)) execFileSync('cp', [join(ROOT, ref.src), gif]);
+else if (!existsSync(gif)) execFileSync('curl', ['-sfL', '-o', gif, ref.src]);
 const py = (code, input) => execFileSync('python3', ['-c', code], { input, maxBuffer: 1 << 28 });
 const raw = py(`import sys; from PIL import Image
 im = Image.open(sys.argv[1] if len(sys.argv) > 1 else ${JSON.stringify(gif)}).convert('RGBA')
@@ -126,7 +128,9 @@ function engineGrid(P, colors) {
   const cell = Math.max(x1 - x0, y1 - y0) / G;
   const gw = Math.ceil((x1 - x0) / cell), gh = Math.ceil((y1 - y0) / cell);
   const cls = new Uint8Array(gw * gh), zb = new Float64Array(gw * gh).fill(-Infinity);
-  const fw = isWhite(colors.front) ? 1 : 2, bw = isWhite(colors.back) ? 1 : 2;
+  let fw = isWhite(colors.front) ? 1 : 2, bw = isWhite(colors.back) ? 1 : 2;
+  // dark: 검정·짙은 회색 종이처럼 채도가 없는 색 면 — 둘 중 어두운 면을 색 면으로 본다 (도안 그림도 그 면을 색으로 칠해 둔다)
+  if (ref.dark) { const lum = (h) => { const v = parseInt(h.slice(1), 16); return (v >> 16) + ((v >> 8) & 255) + (v & 255); }; [fw, bw] = lum(colors.front) < lum(colors.back) ? [2, 1] : [1, 2]; }
   for (const L of P) {
     const n = polyNormal(L);
     if (Math.abs(n[2]) < 0.05) continue; // 옆으로 선 면은 정면에서 안 보인다
@@ -246,8 +250,8 @@ if (FIT && model.make && ref.fit) {
 console.log(`${model.name} (${id}) 도안 비교`);
 const { res, mean } = evaluate(mdl);
 console.log(`  평균 점수 ${mean.toFixed(3)} (종이 IoU + 0.25×색 일치, 최대 1.25)`);
-// minIou: 도안 그림 자체가 실제로 접히는 모양과 다르게 그려진 그림에만 쓴다 (note 에 이유를 적는다)
-const off = res.filter((r) => r.iou < (r.p.minIou ?? 0.9) || r.color < 0.85);
+// minIou·minColor: 도안 그림 자체가 실제로 접히는 모양과 다르게 그려진(찍힌) 그림에만 쓴다 (note 에 이유를 적는다)
+const off = res.filter((r) => r.iou < (r.p.minIou ?? 0.9) || r.color < (r.p.minColor ?? 0.85));
 if (off.length) console.log(`  ✗ 도안과 다른 그림: ${off.map((r) => r.p.label ?? r.p.after).join(', ')}`);
 process.exitCode = off.length ? 1 : 0;
 
