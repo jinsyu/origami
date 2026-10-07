@@ -1,0 +1,19 @@
+{
+  "src": "https://en.origami-club.com/traditional/crane/zu.gif",
+  "note": "선만 있는 흰 도안이라 색 비교를 끈다(minColor 0). 완성 그림은 입체 원근 그림이라 뺐다. 도안 그림이 빽빽하게 겹쳐 있어(9·10·12번은 옆 그림과 상자가 겹침) 13번만 비교한다. 학 기본형까지는 엔진 검사(check.mjs)와 CLAUDE.md 기록으로 확인됨",
+  "panels": [
+    {
+      "label": 13,
+      "after": 17,
+      "box": [
+        158,
+        496,
+        236,
+        642
+      ],
+      "minColor": 0,
+      "minIou": 0.85,
+      "note": "가운데로 접기·주머니 접기 화살표가 몸통에 겹쳐 그려졌다"
+    }
+  ]
+}
