@@ -79,6 +79,7 @@ GitHub `jinsyu/origami` → Vercel 자동 배포 (main 푸시 = 배포). 빌드 
   - 고릴라(animal/gorilla): 5단계 펼쳐 누르기에서 세모가 윗변 위로 솟아야 하는데 축 해석 실패(경첩 x=-0.25·x=0 둘 다 시도) — 보류
   - 카네이션(flowers/carnation2): 가위·풀 사용 — 제외
   - 신칸센(vehicle/shinkansen): 주머니 접기·안으로 접기 — 보류
+  - 말 얼굴(animal-face/horse): 5~7단계 주름 접기 높이가 불분명 — 보류
   - 호랑이·곰·소 얼굴: 코알라·지붕 집과 접는 법이 거의 같아 제외
   - 나무(flowers/tree): 세 조각을 풀로 붙이는 작품이라 제외
   - 케이크: 작은 주름·계단 접기 높이를 도면에서 읽기 어려움
