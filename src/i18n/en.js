@@ -558,6 +558,21 @@ export const enModels = {
       'Color the cheek with a colored pencil and draw a shell on its tummy, and you are done!',
     ],
   },
+  sunfish: {
+    name: 'Sunfish', desc: 'Spread and squash the bottom to make big fins above and below. Draw its eye!', paper: 'Square origami paper',
+    done: 'Your sunfish is done! It floats around the sea.',
+    steps: [
+      'Place the paper colored side down. Fold it in half and unfold to make a crease down the middle.',
+      'Fold both sides to the center line.',
+      'Fold the top and bottom to the middle.',
+      'Unfold the top and bottom again.',
+      'Spread the bottom middle out to both sides and press it flat while lifting the bottom end. Fins appear.',
+      'Turn it so the fins are on the right.',
+      'Fold the two corners of the left end along the dotted lines to make a pointed head.',
+      'Turn it over top to bottom.',
+      'Draw a round eye with a pencil, and you are done!',
+    ],
+  },
   neuli: {
     name: 'Neuli Face', desc: 'Our school friend Neuli! Fold a triangle, stand the ears up and fold the chin to make a wide, cute face.', paper: 'Square origami paper (light yellow or apricot)',
     done: 'Neuli face is done! You can draw a flower on top of the head too.',
