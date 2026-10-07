@@ -57,7 +57,7 @@ const puff = (p, e) => {
   // 목·꼬리는 겹 사이를 눌러 얇게 한다 (두꺼우면 아래에서 볼 때 속의 흰 면이 들여다보인다)
   const k = Math.min(1, Math.max(0, (Math.abs(x) - 0.12) / 0.08));
   const w = k * k * (3 - 2 * k) * e;
-  return [x, y, z * (1 - 0.65 * w) + 0.07 * e * fx * fy * s];
+  return [x, y, z * (1 - 0.65 * w) + 0.09 * e * fx * fy * s];
 };
 const tagged = (moves, tag) => moves.map((m) => ({ ...m, tag }));
 const preAndPetal = (front, face, petalTag, side) => [
