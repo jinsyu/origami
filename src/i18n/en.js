@@ -1,5 +1,18 @@
 // 영어 문구. 작품별 이름·설명·단계 안내, 화면 문구
 export const enModels = {
+  ufo: {
+    name: 'UFO', desc: 'Fold a band down in a V for legs, then fold the top corners for a round UFO. Draw round windows.', paper: 'Square origami paper',
+    done: 'Your UFO is done! Off to outer space!',
+    steps: [
+      'Place the paper colored side down. Fold in half and unfold to make a center crease.',
+      'Fold the bottom edge up to the top edge.',
+      'Fold only the front layer down at the middle. A white band appears.',
+      'Fold both sides of the band down in a V along the dotted lines. These are the legs.',
+      'Fold both top corners along the dotted lines.',
+      'Turn the paper over.',
+      'Draw three round windows with a pencil, and you are done!',
+    ],
+  },
   icecream: {
     name: 'Ice Cream Cone', desc: 'Fold the two bottom edges to the center for the cone, then fold the top down and back up for a pointy swirl of cream.', paper: 'Square origami paper (orange)',
     done: 'Your ice cream is done! You can draw colorful sprinkles on the cream.',
