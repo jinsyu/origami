@@ -183,13 +183,14 @@ export const rieul = letter({
       tag: 'leg', pull: [H / 4, 0],
     }),
     stroke('top'), stroke('bottom'),
-    glue('bar', { from: 'left', rot: 90, move: [0, 5 * H / 8] }, '왼쪽에서 떼어 낸 긴 띠를 돌려 흰 네모 가운데에 가로로 붙여요. ㄹ 의 가운데 획이에요.', 'Turn the long strip cut from the left and glue it across the middle of the white square. This is the middle stroke of ㄹ.'),
+    // 시계 방향으로 돌려 긴 변(자른 변)이 아래로: 왼쪽 끝이 아래에서 오른쪽 위로 비스듬해 왼쪽 아래 획과 이어진다 (영상 완성 모습)
+    glue('bar', { from: 'left', rot: -90, move: [0, -H / 2] }, '왼쪽에서 떼어 낸 긴 띠를 돌려 흰 네모 가운데에 가로로 붙여요. ㄹ 의 가운데 획이에요.', 'Turn the long strip cut from the left and glue it across the middle of the white square. This is the middle stroke of ㄹ.'),
     { ...stroke('right'), ko: '오른쪽 띠를 흰 네모의 변을 따라 안쪽으로 접어 가운데 획의 끝을 덮어요.', en: 'Fold the right strip inward along the edge of the white square so it covers the end of the middle stroke.' },
     {
       ko: '오른쪽에서 잘라 낸 짧은 띠를 펼쳐, 반대쪽으로 다시 접어요.',
       en: 'Open the short strip cut from the right and fold it again the other way.',
       // 떼어 놓은 자리 x∈[3H/4, 7H/8], 바깥 변 x=7H/8 이 반 접은 선. 펼친 뒤 같은 선에서 뒤로 접는다
-      sim: true,
+      sim: true, tearOk: true, // 잘린 조각만 움직이므로 이웃과 끌어당기지 않게
       moves: [foldPiece('leg', foldX(7 * H / 8, -1)), foldPiece('leg', { ...foldX(7 * H / 8, 1), toward: -1 })],
     },
     {
@@ -310,6 +311,7 @@ export const hieut = letter({
   ],
 });
 
-export const HANGUL = [giyeok, nieun, digeut, rieul, mieum, bieup, siot, ieung, jieut, chieut, kieuk, tieut, pieup, hieut, a, ya, i];
+export const HANGUL = [giyeok, nieun, digeut, rieul, mieum, bieup, siot, ieung, jieut, chieut, kieuk, tieut, pieup, hieut, a, i];
+// ㅑ: 지금은 가위로 잘라 붙인 대체 방법이라 영상(펼쳐 누르기)대로 다시 만들 때까지 개발용 목록(?dev)에만 둔다
 // 한글 자모 필터에서 보이는 순서 (ㄱㄴㄷ… 사전 순서; 갤러리 전체는 난이도 순이라 따로 둔다)
 HANGUL.forEach((m, i) => { m.groupOrder = i; });

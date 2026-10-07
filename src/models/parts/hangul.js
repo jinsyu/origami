@@ -115,6 +115,7 @@ export const cutBand = (dir, tag) => {
     ko: `${SIDE_KO[dir]} 테두리 띠를 흰 네모의 변을 따라 가위로 잘라 떼어 내요.`,
     en: `Cut off the ${SIDE_EN[dir]} border strip with scissors along the edge of the white square.`,
     sim: true, // 자른 뒤 띠를 바깥으로 조금 떼어 놓는다 (잘렸다는 것이 보이게)
+    tearOk: true, // 잘린 조각은 이어진 종이가 아니므로 이완(이음매 끌어당기기)을 하지 않는다 — 하면 이웃 겹이 따라 들려 펄럭인다
     moves: [
       { line: [a, b], side, angle: 0, seam: true, cut: true, tag: PIECE(tag) },
       { axis3: { a: [0, 0, 0], b: [0, 0, 1], angle: 0 }, offset: [Math.sign(side[0]) * PULL, Math.sign(side[1]) * PULL, 0], filter: (c) => c.tags.has(PIECE(tag)) },
@@ -141,7 +142,7 @@ export const glue = (tag, { from, rot = 0, move: [dx, dy] }, ko, en) => {
 
 // 여러 번 잘라 한 조각 떼어 내기: cuts = [{ line, side, filter, cut }] 를 차례로 자르고 (cut: false 는 겹을 나누기만 하는 보이지 않는 선), 마지막 조각(tag)을 pull 만큼 떼어 놓는다
 export const cutPiece = ({ ko, en, cuts, tag, pull: [px, py] }) => ({
-  ko, en, sim: true, torn: true,
+  ko, en, sim: true, torn: true, tearOk: true, // 잘린 조각끼리 끌어당기지 않게 (cutBand 참고)
   moves: [
     ...cuts.map((c, i) => ({ angle: 0, seam: true, cut: true, ...c, ...(i === cuts.length - 1 ? { tag: PIECE(tag) } : {}) })),
     { axis3: { a: [0, 0, 0], b: [0, 0, 1], angle: 0 }, offset: [px, py, 0], filter: (q) => q.tags.has(PIECE(tag)) },
