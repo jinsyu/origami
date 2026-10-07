@@ -1,0 +1,16 @@
+{
+  "src": "https://en.origami-club.com/valentine/easyheart/zu.gif",
+  "note": "앱은 띠 접기 하트(전통 변형)라 접는 순서가 달라 완성 모양만 비교",
+  "panels": [
+    {
+      "label": "완성",
+      "after": 10,
+      "box": [
+        360,
+        492,
+        554,
+        666
+      ]
+    }
+  ]
+}

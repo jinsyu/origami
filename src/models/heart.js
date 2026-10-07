@@ -1,9 +1,14 @@
 // 하트 (정사각형 색종이)
 // 띠 모양으로 접은 뒤 양쪽 아래를 가운데 선에 맞춰 올리고, 모서리를 다듬는다.
-const C = 0.09; // 모서리를 접는 크기
 const flip = { spin: { a: [0, 0, 0], b: [0, 1, 0], angle: 180 } };
 
-export const heart = {
+export const heartParams = { C1: 0.2, C2: 0.08 };
+
+export function makeHeart({ C1, C2 } = heartParams) {
+  const C = C2;
+  return {
+  params: { C1, C2 },
+  make: makeHeart,
   id: 'heart',
   name: '하트',
   level: 2,
@@ -26,8 +31,8 @@ export const heart = {
     {
       text: '위쪽 바깥 모서리 두 개를 작게 접어요.',
       moves: [
-        { line: [[0.375 - C, 0.375], [0.375, 0.375 - C]], side: [0.4, 0.4] },
-        { line: [[-0.375 + C, 0.375], [-0.375, 0.375 - C]], side: [-0.4, 0.4] },
+        { line: [[0.5 - C1, 0.25], [0.5, 0.25 - C1]], side: [0.5, 0.25] },
+        { line: [[-0.5 + C1, 0.25], [-0.5, 0.25 - C1]], side: [-0.5, 0.25] },
       ],
     },
     {
@@ -40,3 +45,6 @@ export const heart = {
     { text: '뒤집으면 하트 완성!', moves: [flip], view: [0, 0.4, 1] },
   ],
 };
+}
+
+export const heart = makeHeart();
