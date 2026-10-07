@@ -1,5 +1,17 @@
 // 영어 문구. 작품별 이름·설명·단계 안내, 화면 문구
 export const enModels = {
+  mouse: {
+    name: 'Mouse Face', desc: 'Fold one corner of a triangle in and back out at an angle for a perky ear. The other end becomes a pointy nose.', paper: 'Square origami paper',
+    done: 'Your mouse face is done! Squeak squeak!',
+    steps: [
+      'Place the paper colored side down as a diamond. Fold in half and unfold to make a center crease.',
+      'Fold the top corner down to the bottom corner.',
+      'Fold the right corner to the left along the vertical dotted line.',
+      'Fold it back up and to the right along the slanted dotted line. This is the ear.',
+      'Fold the bottom tip behind along the dotted line.',
+      'Color the pointy nose tip black with a pencil, then draw an eye and whiskers, and you are done!',
+    ],
+  },
   goldfish: {
     name: 'Goldfish', desc: 'Fold in half, fold the front and back along a diagonal, then fold a fin down for a goldfish with a big tail.', paper: 'Square origami paper',
     done: 'Your goldfish is done!',
