@@ -1,0 +1,16 @@
+{
+  "src": "scripts/refs/rieul.png",
+  "note": "영상 https://www.youtube.com/watch?v=tzuSzLH3usE 의 12:22 완성 장면. 분홍 배경을 지우고 검은 면을 색 면(보라)으로, 종이 가장자리에 선(회색)을 그림",
+  "dark": true,
+  "panels": [
+    {
+      "after": 13,
+      "box": [
+        157,
+        147,
+        461,
+        435
+      ]
+    }
+  ]
+}

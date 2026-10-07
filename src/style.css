@@ -115,8 +115,10 @@ button, select, input { font: inherit; color: inherit; }
 .stage canvas { position: absolute; inset: 0; width: 100%; height: 100%; display: block; touch-action: none; cursor: grab; }
 .stage canvas:active { cursor: grabbing; }
 .legend { position: absolute; left: 16px; bottom: 12px; display: flex; gap: 16px; font-size: 13px; color: var(--ink-soft); background: rgba(251, 250, 246, .85); padding: 6px 10px; border-radius: 6px; }
+.legend span[hidden] { display: none; }
 .legend span { display: inline-flex; align-items: center; gap: 6px; }
 .lg { display: inline-block; width: 28px; height: 3px; background: repeating-linear-gradient(90deg, var(--accent) 0 6px, transparent 6px 10px); }
+.lg.cut { background: repeating-linear-gradient(90deg, #d23c3c 0 4px, transparent 4px 8px); }
 .lg.mountain { background: repeating-linear-gradient(90deg, #9a5b13 0 10px, transparent 10px 13px, #9a5b13 13px 15px, transparent 15px 18px); }
 
 .controls { padding: 14px 24px 18px; background: var(--page); }

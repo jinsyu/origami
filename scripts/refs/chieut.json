@@ -1,0 +1,16 @@
+{
+  "src": "scripts/refs/chieut.png",
+  "note": "영상 https://www.youtube.com/watch?v=qZsjb5P1tpg 의 13:22 완성 장면. 분홍 배경을 지우고 검은 면을 색 면(보라)으로, 종이 가장자리에 선(회색)을 그림",
+  "dark": true,
+  "panels": [
+    {
+      "after": 26,
+      "box": [
+        94,
+        162,
+        490,
+        424
+      ]
+    }
+  ]
+}

@@ -1,0 +1,16 @@
+{
+  "src": "scripts/refs/pieup.png",
+  "note": "영상 https://www.youtube.com/watch?v=w5s8iuARnKk 의 12:45 완성 장면. 분홍 배경을 지우고 검은 면을 색 면(보라)으로, 종이 가장자리에 선(회색)을 그림",
+  "dark": true,
+  "panels": [
+    {
+      "after": 11,
+      "box": [
+        161,
+        144,
+        442,
+        411
+      ]
+    }
+  ]
+}

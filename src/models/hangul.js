@@ -1,5 +1,5 @@
 // 한글 자모 (종이쌤 '한글 종이접기 시리즈'). 공통 틀·띠 접기·작품 만들기는 parts/hangul.js
-import { H, letter, frameBase, stroke, tuck, turn, halfBehind, stripBase, flipOver, foldX, foldY } from './parts/hangul.js';
+import { H, PIECE, letter, frameBase, stroke, tuck, turn, halfBehind, stripBase, flipOver, foldX, foldY, cutBand, glue, foldPiece, flipGlue, cutPiece, halveBands, discard, place, onSheet, onFirst } from './parts/hangul.js';
 
 const ACROSS = { ko: '가로 획', en: 'the stroke across' };
 const DOWN = { ko: '세로 획', en: 'the stroke down' };
@@ -31,18 +31,20 @@ export const mieum = letter({
 const Q = (3 * H) / 4; // ㅇ 귀퉁이 접는 선 |x|+|y|=3H/4: 흰 창의 변을 늘인 선이 바깥 변과 만나는 점을 지난다
 const corner = (sx, sy) => ({ line: [[sx * Q, 0], [0, sy * Q]], side: [sx * H, sy * H], toward: -1 });
 
+const ringSteps = () => [
+  ...frameBase(), stroke('top'), stroke('bottom'), stroke('left'), stroke('right'),
+  {
+    ko: '네 귀퉁이를 비스듬히 뒤로 접어요. 가운데 흰 창의 변을 늘인 선이 바깥 변과 만나는 점을 이어 접어요.',
+    en: 'Fold the four corners behind at a slant, along lines joining the points where the edges of the white window, extended, meet the outer edges.',
+    moves: [corner(1, 1), corner(1, -1), corner(-1, -1), corner(-1, 1)],
+    view: [0.3, 0.3, 1],
+  },
+];
+
 export const ieung = letter({
   id: 'ieung', char: 'ㅇ', roman: 'ieung', video: 'dBbWGqU1pmM',
   desc: ['ㅁ 처럼 네 띠를 접은 뒤 네 귀퉁이를 뒤로 접으면 팔각형 고리 모양 한글 ㅇ 이 돼요.', 'Fold all four strips in like ㅁ, then fold the four corners behind to make the ring-shaped Korean letter ㅇ (ieung).'],
-  steps: [
-    ...frameBase(), stroke('top'), stroke('bottom'), stroke('left'), stroke('right'),
-    {
-      ko: '네 귀퉁이를 비스듬히 뒤로 접어요. 가운데 흰 창의 변을 늘인 선이 바깥 변과 만나는 점을 이어 접어요.',
-      en: 'Fold the four corners behind at a slant, along lines joining the points where the edges of the white window, extended, meet the outer edges.',
-      moves: [corner(1, 1), corner(1, -1), corner(-1, -1), corner(-1, 1)],
-      view: [0.3, 0.3, 1],
-    },
-  ],
+  steps: ringSteps(),
 });
 
 export const siot = letter({
@@ -98,4 +100,172 @@ export const a = letter({
   ],
 });
 
-export const HANGUL = [giyeok, nieun, digeut, mieum, siot, ieung, i, a];
+export const bieup = letter({
+  id: 'bieup', char: 'ㅂ', roman: 'bieup', video: '-xVLMJNclHY',
+  desc: ['테두리 틀의 위쪽 띠를 가위로 잘라 가운데에 풀로 붙이고, 나머지 띠를 접으면 한글 ㅂ 이 돼요.', 'Cut the top strip off the frame, glue it across the middle and fold the other strips in to make the Korean letter ㅂ (bieup).'],
+  steps: [
+    ...frameBase(),
+    cutBand('top', 'bar'),
+    stroke('bottom'),
+    glue('bar', { from: 'top', move: [0, -5 * H / 8] }, '떼어 낸 띠를 검은 면이 위로 오게 가운데에 가로로 놓고 풀로 붙여요.', 'Lay the cut strip across the middle, black side up, and glue it down.'),
+    stroke('left'), stroke('right'),
+  ],
+});
+
+export const kieuk = letter({
+  id: 'kieuk', char: 'ㅋ', roman: 'kieuk', video: 'N3nEvq11kS8',
+  desc: ['테두리 틀의 왼쪽 띠를 가위로 잘라 가운데 가로 획으로 붙이면 한글 ㅋ 이 돼요.', 'Cut the left strip off the frame and glue it across the middle to make the Korean letter ㅋ (kieuk).'],
+  steps: [
+    ...frameBase(),
+    cutBand('left', 'bar'),
+    stroke('top'),
+    glue('bar', { from: 'left', rot: 90, move: [0, 5 * H / 8] }, '떼어 낸 띠를 돌려 가운데에 가로로 놓고 풀로 붙여요. 오른쪽 끝은 오른쪽 띠 자리까지 닿게 해요.', 'Turn the cut strip, lay it across the middle and glue it down so its right end reaches the right strip.'),
+    stroke('right'),
+    tuck('bottom'),
+  ],
+});
+
+export const tieut = letter({
+  id: 'tieut', char: 'ㅌ', roman: 'tieut', video: 'ca4QSfRyVC8',
+  desc: ['테두리 틀의 오른쪽 띠를 가위로 잘라 가운데 가로 획으로 붙이면 한글 ㅌ 이 돼요.', 'Cut the right strip off the frame and glue it across the middle to make the Korean letter ㅌ (tieut).'],
+  steps: [
+    ...frameBase(),
+    cutBand('right', 'bar'),
+    stroke('top'), stroke('bottom'),
+    glue('bar', { from: 'right', rot: -90, move: [0, 5 * H / 8] }, '떼어 낸 띠를 돌려 가운데에 가로로 놓고 풀로 붙여요.', 'Turn the cut strip, lay it across the middle and glue it down.'),
+    stroke('left'),
+  ],
+});
+
+// ㅍ: 좌우 띠를 잘라 길이 방향으로 반 접어 가는 막대로 만들고, 뒤집어 안쪽 세로 획으로 붙인다.
+// 잘라 낸 오른쪽 조각은 떼어 놓아 x∈[3H/4, H] (안쪽 변 = 자른 변). 가운데 x=7H/8 에서 바깥 절반을 접으면 x∈[3H/4, 7H/8].
+// x=H/2 를 축으로 뒤집으면 x∈[H/8, H/4] — 긴 변(자른 변)이 바깥 H/4, 접힌 변이 안쪽 H/8 (영상 측정과 같음)
+export const pieup = letter({
+  id: 'pieup', char: 'ㅍ', roman: 'pieup', video: 'w5s8iuARnKk',
+  desc: ['테두리 틀의 양옆 띠를 잘라 가늘게 접은 뒤 안쪽 세로 획으로 붙이면 한글 ㅍ 이 돼요.', 'Cut off the side strips of the frame, fold them thin and glue them on as the inner strokes to make the Korean letter ㅍ (pieup).'],
+  steps: [
+    ...frameBase(),
+    cutBand('right', 'barR'),
+    cutBand('left', 'barL'),
+    {
+      ko: '떼어 낸 띠 두 개를 각각 길이 방향으로 반 접어 가는 막대를 만들어요.',
+      en: 'Fold each cut strip in half lengthwise to make two thin bars.',
+      moves: [foldPiece('barR', foldX(7 * H / 4 / 2, 1)), foldPiece('barL', foldX(-7 * H / 4 / 2, -1))],
+    },
+    {
+      ko: '막대를 뒤집어 흰 네모 위에 세로로 붙여요. 가운데에 흰 창이 남게 두 막대를 나란히 놓아요.',
+      en: 'Turn the bars over and glue them upright on the white square, side by side with a white gap in the middle.',
+      moves: [flipGlue('barR', [[H / 2, -1], [H / 2, 1]]), flipGlue('barL', [[-H / 2, -1], [-H / 2, 1]])],
+      torn: true,
+      view: [0, 0, 1],
+    },
+    stroke('top'), stroke('bottom'),
+  ],
+});
+
+// ㄹ: 띠를 한 번 더 반 접어 가늘게(H/8). 왼쪽 띠를 통째로 잘라 가운데 가로 획으로, 오른쪽 띠의 아래 반을 잘라 뒤집어 왼쪽 아래 세로 획으로
+export const rieul = letter({
+  id: 'rieul', char: 'ㄹ', roman: 'rieul', video: 'tzuSzLH3usE',
+  desc: ['가늘게 접은 테두리 띠 두 조각을 가위로 잘라 가운데 획과 왼쪽 아래 획으로 붙이면 한글 ㄹ 이 돼요.', 'Cut two pieces off the thin border strips and glue them on as the middle stroke and the lower left stroke to make the Korean letter ㄹ (rieul).'],
+  steps: [
+    ...frameBase(), halveBands(),
+    cutBand('left', 'bar'),
+    cutPiece({
+      ko: '오른쪽 띠는 아래 절반만 잘라 내요. 가운데 높이에서 가로로 한 번, 흰 네모의 변을 따라 아래로 한 번 잘라요.',
+      en: 'Cut off only the lower half of the right strip: once across at the middle, then down along the edge of the white square.',
+      cuts: [
+        // 흰 네모 변 x=H/2 로 모든 겹(띠 밑에 깔린 바탕 층까지)을 먼저 나눠 두고, 그 오른쪽을 가운데 높이에서 가로로 자른다
+        { line: [[H / 2, -1], [H / 2, 1]], side: [H, 0], cut: false },
+        { line: [[-1, 0], [1, 0]], side: [H, -H], filter: (c) => c.x > H / 2 },
+      ],
+      tag: 'leg', pull: [H / 4, 0],
+    }),
+    stroke('top'),
+    glue('bar', { from: 'left', rot: 90, move: [0, 5 * H / 8] }, '가운데 획: 왼쪽에서 떼어 낸 띠를 돌려 가운데에 가로로 붙여요. 오른쪽 끝은 오른쪽 띠 자리까지 닿게 해요.', 'Middle stroke: turn the strip cut from the left and glue it across the middle so its right end reaches the right strip.'),
+    stroke('right'),
+    {
+      ko: '오른쪽에서 잘라 낸 짧은 띠를 뒤집어 왼쪽 아래에 세로로 붙여요.',
+      en: 'Turn over the short strip cut from the right and glue it upright at the lower left.',
+      moves: [flipGlue('leg', [[3 * H / 16, -1], [3 * H / 16, 1]])],
+      torn: true,
+      view: [0, 0, 1],
+    },
+    stroke('bottom'),
+  ],
+});
+
+// ---- 두 장: 첫 장은 ㅅ 지붕(네 띠를 모두 접은 ㅁ 을 45° 돌려 반 접기), 둘째 장으로 위 가로 막대(ㅊ 은 꼭지까지) ----
+const SX = 1.4; // 둘째 장을 놓는 자리 (첫 장 오른쪽)
+const APEX = Math.SQRT2 / 4; // 지붕 꼭대기 높이 (ㅁ 의 반 폭 H/2 를 45° 돌린 것)
+const roof = () => onFirst([
+  ...frameBase(), stroke('top'), stroke('bottom'), stroke('left'), stroke('right'),
+  turn(45, '모서리가 위로 오게 비스듬히 돌려 마름모로 놓아요.', 'Turn it on its corner like a diamond.'),
+  halfBehind('아래 절반을 가로 가운데 선에서 뒤로 반 접어요. 지붕 모양이 돼요.', 'Fold the bottom half behind along the middle line. It looks like a roof.'),
+]);
+const sheet2 = (steps) => onSheet(steps, 1, [SX, 0]);
+// 둘째 장: ㅁ 테두리 → 가로 가운데를 잘라 위 반쪽만 막대로 (아래 반쪽은 scrap)
+const barSheet = () => sheet2([
+  ...frameBase().map((st, i) => (i === 0 ? { ...st, ko: '두 번째 색종이도 ' + st.ko, en: 'With a second sheet: ' + st.en } : st)),
+  stroke('top'), stroke('bottom'), stroke('left'), stroke('right'),
+  cutPiece({
+    ko: '가로 가운데 선을 따라 가위로 잘라 반으로 나눠요.', en: 'Cut it in half along the middle line with scissors.',
+    cuts: [{ line: [[-1, 0], [1, 0]], side: [0, -H] }], tag: 'scrap', pull: [0, -H / 4],
+  }),
+]);
+const foldBar = () => sheet2([
+  { ko: '위 반쪽을 가로로 반 접어 검은 막대를 만들어요.', en: 'Fold the top half in half across to make a black bar.', moves: [foldY(H / 4, 1)] },
+]);
+// 막대(둘째 장 위 반쪽을 반 접은 것, 처음 y∈[0, H/4])를 가운데로 옮겨 위 변이 top 에 오게 얹는다
+const placeBar = (top, ko = '막대를 지붕 꼭대기에 가로로 얹어 풀로 붙여요.', en = 'Lay the bar across the top of the roof and glue it on.') => ({
+  ko, en,
+  moves: [{ axis3: { a: [0, 0, 0], b: [0, 0, 1], angle: 0 }, offset: [-SX, top - H / 4, 0.02], filter: (c) => c.tags.has('sheet1') && ![...c.tags].some((t) => t.startsWith('cut:')) }],
+  view: [0, 0, 1],
+});
+// 꼭지: 아래 반쪽(H/4 내려 둠)의 오른쪽 띠 x∈[H/4, H/2] 를 잘라 H/4 떼어 놓은 조각 → 가운데 x=0, 위 끝 top, 막대·지붕 뒤에
+const stemCut = () => sheet2([cutPiece({
+  ko: '아래 반쪽에서 오른쪽 검은 띠만 가위로 잘라 내요. 꼭지가 될 조각이에요.', en: 'From the bottom half, cut off just the black strip on the right. It becomes the stem.',
+  cuts: [{ line: [[H / 4, -1], [H / 4, 1]], side: [H, 0], filter: (c) => c.tags.has(PIECE('scrap')) }], tag: 'stem', pull: [H / 4, 0],
+})])[0];
+const dropScrap = () => ({
+  ...discard('scrap', [0, -2], '나머지 반쪽은 쓰지 않아요. 치워 두세요.', 'You do not need the rest of the bottom half. Put it aside.'),
+  moves: [{ axis3: { a: [0, 0, 0], b: [0, 0, 1], angle: 0 }, offset: [0, -2, 0], filter: (q) => q.tags.has(PIECE('scrap')) && !q.tags.has(PIECE('stem')) }],
+  drop: (q) => q.tags.has(PIECE('scrap')) && !q.tags.has(PIECE('stem')),
+});
+const placeStem = (top) => ({
+  ko: '꼭지를 막대 뒤에 세로로 붙여요. 위쪽 끝만 막대 위로 나오게 해요.', en: 'Glue the stem upright behind the bar so only its top sticks out above the bar.',
+  // 꼭지 처음 자리: x∈[SX+H/2, SX+3H/4], 위 끝 y=-H/4
+  moves: [{ axis3: { a: [0, 0, 0], b: [0, 0, 1], angle: 0 }, offset: [-(SX + 5 * H / 8), top + H / 4, -0.05], filter: (q) => q.tags.has(PIECE('stem')) }],
+  view: [0, 0, 1],
+});
+
+export const jieut = letter({
+  id: 'jieut', char: 'ㅈ', roman: 'jieut', video: 'pi50oefrI4Q', sheets: [{ x: SX, y: 0 }],
+  desc: ['색종이 두 장으로 지붕 모양과 막대를 접고, 막대를 가위로 잘라 지붕 위에 붙이면 한글 ㅈ 이 돼요.', 'Fold a roof and a bar from two sheets, cut the bar to size and glue it on top of the roof to make the Korean letter ㅈ (jieut).'],
+  steps: [
+    ...roof(), ...barSheet(),
+    discard('scrap', [0, -2], '아래 반쪽은 쓰지 않아요. 치워 두세요.', 'You do not need the bottom half. Put it aside.'),
+    ...foldBar(), placeBar(APEX),
+  ],
+});
+
+export const chieut = letter({
+  id: 'chieut', char: 'ㅊ', roman: 'chieut', video: 'qZsjb5P1tpg', sheets: [{ x: SX, y: 0 }],
+  desc: ['ㅈ 처럼 지붕과 막대를 만들고, 남은 반쪽에서 꼭지를 잘라 막대 위에 붙이면 한글 ㅊ 이 돼요.', 'Make the roof and bar like ㅈ, then cut a small stem from the leftover half and glue it above the bar to make the Korean letter ㅊ (chieut).'],
+  steps: [...roof(), ...barSheet(), stemCut(), dropScrap(), ...foldBar(), placeBar(APEX), placeStem(APEX + H / 5)],
+});
+
+// ㅎ: 첫 장은 ㅇ 고리를 45° 돌려 놓고(창이 마름모), 둘째 장으로 ㅊ 과 같이 막대·꼭지를 만들어 고리 위에 붙인다.
+// 막대 위치는 영상 측정 y∈[0.16, 0.275] → 위 변 9H/16, 꼭지는 막대 위로 H/5
+const RING_TOP = (9 * H) / 16;
+export const hieut = letter({
+  id: 'hieut', char: 'ㅎ', roman: 'hieut', video: 'o0Ipo5MfFPo', sheets: [{ x: SX, y: 0 }],
+  desc: ['ㅇ 고리를 접고, 둘째 색종이로 만든 막대와 꼭지를 가위로 잘라 위에 붙이면 한글 ㅎ 이 돼요.', 'Fold a ㅇ ring, then cut a bar and a stem from a second sheet and glue them on top to make the Korean letter ㅎ (hieut).'],
+  steps: [
+    ...onFirst([...ringSteps(), turn(45, '고리를 비스듬히 돌려 가운데 창이 마름모가 되게 놓아요.', 'Turn the ring so the window in the middle becomes a diamond.')]),
+    ...barSheet(), stemCut(), dropScrap(), ...foldBar(),
+    placeBar(RING_TOP, '막대를 고리 위쪽에 가로로 얹어 풀로 붙여요.', 'Lay the bar across the top of the ring and glue it on.'),
+    placeStem(RING_TOP + H / 5),
+  ],
+});
+
+export const HANGUL = [giyeok, nieun, digeut, rieul, mieum, bieup, siot, ieung, jieut, chieut, kieuk, tieut, pieup, hieut, a, i];

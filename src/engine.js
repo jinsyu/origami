@@ -11,6 +11,8 @@ const E = 1e-7;
 import { flatLevels } from './settle.js';
 const CUT = 3; // 임시: 방금 자른 모서리
 // 모서리 종류: 1 = 종이 가장자리, 2 = 접힌 선, 0 = seam(계산용으로만 나눈 자리, 그리지 않음)
+// cut: 가위로 자른 자리 — 접지 않고(angle: 0) 나누되, 새 변은 종이 가장자리(1)로 그린다
+const edgeKind = (m) => (m.cut ? 1 : m.seam ? 0 : 2);
 
 export const add = (a, b) => [a[0] + b[0], a[1] + b[1], a[2] + b[2]];
 export const sub = (a, b) => [a[0] - b[0], a[1] - b[1], a[2] - b[2]];
@@ -138,7 +140,7 @@ function selectMove(cur, m, mi) {
     if (parts) {
       const s = parts.map(sel);
       if (s[0] !== s[1]) {
-        parts.forEach((pt, k) => { pt.e = pt.e.map((f) => (f === CUT ? (m.seam ? 0 : 2) : f)); pt.owner = s[k] ? mi : -1; next.push(pt); });
+        parts.forEach((pt, k) => { pt.e = pt.e.map((f) => (f === CUT ? edgeKind(m) : f)); pt.owner = s[k] ? mi : -1; next.push(pt); });
         continue;
       }
     }
@@ -227,7 +229,7 @@ function grabMove(cur, m, mi, o, d, n, u, sideOf, ref) {
     if (src.owner !== -1) { next.push(src); continue; }
     const moved = ps.map((p) => seen.has(p));
     if (ps.length > 1 && moved.some((x) => x) && !moved.every((x) => x)) {
-      ps.forEach((p, i) => { p.q.e = p.q.e.map((f) => (f === CUT ? (m.seam ? 0 : 2) : f)); p.q.owner = moved[i] ? mi : -1; next.push(p.q); });
+      ps.forEach((p, i) => { p.q.e = p.q.e.map((f) => (f === CUT ? edgeKind(m) : f)); p.q.owner = moved[i] ? mi : -1; next.push(p.q); });
     } else { src.owner = moved.some((x) => x) ? mi : -1; next.push(src); }
   }
   return finishMove(next, m, mi, o, d, n, u);
@@ -249,7 +251,7 @@ function finishMove(next, m, mi, o, d, n, u) {
     if (Math.abs(t) > 1e-6) { sg = Math.sign(t); break outer; }
   }
   const angle = m.angle ?? 180;
-  const mv = { o, d, n, u, theta: (sg * angle * Math.PI) / 180, shift: 0, flat: angle >= 179, unfold: !!m.unfold, fixedShift: m.shift, insert: m.insert, noRejoin: !!m.noRejoin };
+  const mv = { o, d, n, u, theta: (sg * angle * Math.PI) / 180, shift: 0, flat: angle >= 179, unfold: !!m.unfold, fixedShift: m.shift, insert: m.insert, noRejoin: !!m.noRejoin, cut: !!m.cut };
 
   // 뒤집어 접기 경로: 날개(flap)가 등선을 축으로 책처럼 펼쳐졌다 반대로 닫히면서(180°),
   // 동시에 접는 선과 등선이 만나는 점을 중심으로 평면 안에서 2(α-β)만큼 돈다.
@@ -403,13 +405,22 @@ function planSeqStep(polys, step) {
     for (const t of [...c.tags]) if (t.startsWith('__s')) c.tags.delete(t); // 이전 단계의 하위 동작 표시는 지운다
     return c;
   });
-  const subs = [];
+  const subs = [], cutLines = [];
   step.moves.forEach((m, k) => {
     cur.forEach((q) => { q.owner = -1; });
     m = resolveMove(m, cur); // 앞 하위 동작까지 반영한 상태에서 선을 정한다
     const r = selectMove(cur, m, 0);
     cur = r.cur;
     const mv = r.mv;
+    // 가위로 자르는 선: 잘린 조각의 꼭짓점 가운데 선 위에 있는 것들로 선분을 정한다 (안내선용)
+    if (mv.cut) {
+      let smin = Infinity, smax = -Infinity, h = -Infinity;
+      for (const q of cur) if (q.owner === 0) for (const p of q.p) {
+        if (Math.abs(dot(sub(p, mv.o), mv.n)) > 1e-6) continue;
+        const t = dot(sub(p, mv.o), mv.d); smin = Math.min(smin, t); smax = Math.max(smax, t); h = Math.max(h, p[2]);
+      }
+      if (smax > smin) cutLines.push([add(mv.o, mul(mv.d, smin)), add(mv.o, mul(mv.d, smax))].map((v) => [v[0], v[1], h + 0.004]));
+    }
     // transient: 움직이는 도중에만 들렸다가 제자리로 돌아오는 동작 (최종 상태에는 영향 없음)
     mv.transient = !!m.transient;
     mv.shift = mv.transient ? 0 : computeShift(cur, mv, 0);
@@ -425,7 +436,7 @@ function planSeqStep(polys, step) {
   cur.forEach((q) => { q.owner = -1; });
   // 펼쳐 누르기·꽃잎 접기처럼 포개진 겹을 들어 올려 다시 배치하는 단계 (role 이 붙은 하위 동작)
   const unstack = step.moves.some((m) => m.role);
-  return { polys: cur, moves: [], subs, sim: true, unstack, tearOk: !!step.tearOk, swing: step.swing === false ? false : step.swing === 'tuck' ? 'tuck' : true, edges: edgeList(cur) };
+  return { polys: cur, moves: [], subs, cutLines, sim: true, unstack, tearOk: !!step.tearOk, swing: step.swing === false ? false : step.swing === 'tuck' ? 'tuck' : true, edges: edgeList(cur) };
 }
 
 // 서로 엇갈리는 두 '접었다 펴기'를 한 단계에서 하면, 동시에 움직일 때 한 조각이 한 동작에만 속해
@@ -666,6 +677,8 @@ export function buildModel(model) {
     attachSettle(plan, plans[plans.length - 1]);
     plans.push(plan);
     polys = plan.polys.map((q, i) => ({ ...clonePoly(q), p: raw[i].map((v) => v.slice()), hist: undefined, par: i }));
+    // drop: 가위로 잘라 쓰지 않는 조각 — 이 단계에서 치운 뒤 다음 단계부터 없앤다
+    if (step0.drop) polys = polys.filter((q) => !step0.drop({ tags: q.tags }));
   }
   return plans;
 }

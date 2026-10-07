@@ -56,6 +56,7 @@ if (new URLSearchParams(location.search).has('dev')) {
 const FOLD_SEC = 2.2;   // 한 단계 접는 시간 (보통 속도)
 const WAIT_SEC = 0.9;   // 접기 전 접는 선·화살표를 보여 주는 시간
 const MOUNTAIN = '#9a5b13';
+const CUT = '#d23c3c'; // 가위로 자르는 선
 const $ = (id) => document.getElementById(id);
 
 // 접어 본 작품 기록 (이 기기에만 저장, 실패해도 동작에는 영향 없음)
@@ -223,7 +224,7 @@ function clearGuides() {
   guideMats = [];
 }
 
-function dashed(a, b, color, mountain) {
+function dashed(a, b, color, mountain, cut) {
   // 밝은 테두리(헤일로)를 먼저 깔아 어떤 색 종이 위에서도 점선이 보이게
   const hg = new LineGeometry();
   hg.setPositions([...a, ...b]);
@@ -235,7 +236,7 @@ function dashed(a, b, color, mountain) {
   guideMats.push(hm);
   const g = new LineGeometry();
   g.setPositions([...a, ...b]);
-  const m = new LineMaterial({ color, linewidth: 3, dashed: true, dashSize: mountain ? 0.06 : 0.03, gapSize: mountain ? 0.03 : 0.022, transparent: true, depthTest: false });
+  const m = new LineMaterial({ color, linewidth: 3, dashed: true, dashSize: cut ? 0.012 : mountain ? 0.06 : 0.03, gapSize: cut ? 0.012 : mountain ? 0.03 : 0.022, transparent: true, depthTest: false });
   m.resolution.set(canvas.clientWidth, canvas.clientHeight);
   const l = new Line2(g, m);
   l.computeLineDistances();
@@ -255,13 +256,14 @@ function buildGuides(p) {
   clearGuides();
   const color = new THREE.Color(model.accent);
   const pts = [];
-  let mountain = false;
+  let mountain = false, cut = false;
   if (p.sim) {
     for (const g of simGuides(simOf(p))) {
       dashed([g.a[0], g.a[1], g.a[2] + 0.006], [g.b[0], g.b[1], g.b[2] + 0.006], g.valley ? color : new THREE.Color(MOUNTAIN), !g.valley);
       if (!g.valley) mountain = true;
     }
     for (const path of simArrows(simOf(p))) pts.push(...arrow(path, color));
+    for (const [a, b] of p.cutLines || []) { cut = true; dashed(a, b, new THREE.Color(CUT), false, true); }
   } else {
     const gs = p.moves.map((mv, mi) => ({ mv, ...moveGuides(p, mi) }));
     // 화살표는 많이 움직이는 것 2개까지만 (여러 동작이 겹치면 읽기 어려움)
@@ -269,13 +271,15 @@ function buildGuides(p) {
     const keep = new Set(gs.map((g, i) => [i, lenOf(g.path)]).sort((a, b) => b[1] - a[1]).slice(0, 2).map(([i]) => i));
     gs.forEach(({ mv, line, path }, i) => {
       // 보는 쪽(+z)으로 접으면 골짜기, 뒤로 접으면 산
+      if (mv.cut) { cut = true; if (line) dashed(line[0], line[1], new THREE.Color(CUT), false, true); return; }
       const isMountain = !mv.spin && mv.u[2] < 0;
       if (isMountain) mountain = true;
       if (line) dashed(line[0], line[1], isMountain ? new THREE.Color(MOUNTAIN) : color, isMountain);
       if (keep.has(i) && path.length > 2) pts.push(...arrow(path, isMountain ? new THREE.Color(MOUNTAIN) : color));
     });
   }
-  $('legend').hidden = !mountain && !p.sim;
+  $('legend').hidden = !mountain && !cut && !p.sim;
+  $('lgCut').hidden = !cut;
   return pts;
 }
 

@@ -1,0 +1,18 @@
+{
+  "src": "scripts/refs/kieuk.png",
+  "note": "영상 https://www.youtube.com/watch?v=N3nEvq11kS8 의 10:10 완성 장면. 분홍 배경을 지우고 검은 면을 색 면(보라)으로, 종이 가장자리에 선(회색)을 그림",
+  "dark": true,
+  "panels": [
+    {
+      "after": 10,
+      "box": [
+        171,
+        138,
+        463,
+        414
+      ],
+      "minColor": 0.78,
+      "note": "종이가 비스듬히 놓여 오른쪽 띠가 좁게 찍히고, 아래 가장자리 그림자가 검은 면으로 잡힘. 획 위치·겹 순서는 같음"
+    }
+  ]
+}
