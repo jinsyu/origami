@@ -5,6 +5,7 @@ import { LineGeometry } from 'three/addons/lines/LineGeometry.js';
 import { LineMaterial } from 'three/addons/lines/LineMaterial.js';
 import { buildModel, moveGuides } from './engine.js';
 import { simGuides, simArrows } from './sim.js';
+import { makeArrow } from './arrow.js';
 import { PaperMesh, addLights, fitCamera, loopsOf, simOf, toVecs } from './paper.js';
 import { finalThumb, stepThumb, diagram, snapshot } from './thumbs.js';
 import { MODELS } from './models/index.js';
@@ -241,22 +242,10 @@ function dashed(a, b, color, mountain) {
 }
 
 function arrow(path, color) {
-  const vs = path.map((v) => new THREE.Vector3(...v));
-  const curve = new THREE.CatmullRomCurve3(vs);
-  const len = curve.getLength(), head = Math.min(0.07, len * 0.3);
-  const endU = 1 - head / len;
-  const sub = new THREE.CatmullRomCurve3(curve.getSpacedPoints(60).filter((_, i) => i / 60 <= endU));
-  const m = new THREE.MeshBasicMaterial({ color, transparent: true, depthTest: false });
-  const tube = new THREE.Mesh(new THREE.TubeGeometry(sub, 60, 0.008, 8), m);
-  const tipPos = curve.getPointAt(1), basePos = curve.getPointAt(endU);
-  const dir = tipPos.clone().sub(basePos).normalize();
-  const cone = new THREE.Mesh(new THREE.ConeGeometry(0.026, head, 16), m);
-  cone.position.copy(basePos).addScaledVector(dir, head / 2);
-  cone.quaternion.setFromUnitVectors(new THREE.Vector3(0, 1, 0), dir);
-  tube.renderOrder = cone.renderOrder = 11;
-  guideGroup.add(tube, cone);
-  guideMats.push(m);
-  return vs;
+  const parts = makeArrow(path, color);
+  guideGroup.add(...parts);
+  guideMats.push(...parts.map((o) => o.material));
+  return path.map((v) => new THREE.Vector3(...v));
 }
 
 function buildGuides(p) {

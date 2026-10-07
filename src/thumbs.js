@@ -3,6 +3,7 @@ import * as THREE from 'three';
 import { PaperMesh, addLights, fitCamera, loopsOf, simOf, toVecs } from './paper.js';
 import { moveGuides } from './engine.js';
 import { simGuides, simArrows } from './sim.js';
+import { makeArrow } from './arrow.js';
 
 let r = null;
 function ctx() {
@@ -51,19 +52,10 @@ function drawGuides(group, model, plan) {
     }
   };
   const arrow = (path, color) => {
-    const vs = path.map((v) => new THREE.Vector3(...v));
-    if (vs.length < 2) return;
-    const m = new THREE.MeshBasicMaterial({ color, depthTest: false });
-    const curve = new THREE.CatmullRomCurve3(vs);
-    const tube = new THREE.Mesh(new THREE.TubeGeometry(curve, 40, 0.006, 6), m);
-    const end = curve.getPointAt(1), before = curve.getPointAt(0.93);
-    const dir = end.clone().sub(before).normalize();
-    const cone = new THREE.Mesh(new THREE.ConeGeometry(0.022, 0.06, 12), m);
-    cone.position.copy(end);
-    cone.quaternion.setFromUnitVectors(new THREE.Vector3(0, 1, 0), dir);
-    tube.renderOrder = cone.renderOrder = 11;
-    group.add(tube, cone);
+    const parts = makeArrow(path, color, { r: 0.006, head: 0.07, w: 0.034 });
+    if (parts.length) group.add(...parts);
   };
+
   if (plan.sim) {
     for (const g of simGuides(simOf(plan))) dashed([g.a[0], g.a[1], g.a[2] + 0.006], [g.b[0], g.b[1], g.b[2] + 0.006], g.valley ? accent : new THREE.Color(MOUNTAIN), !g.valley);
     for (const p of simArrows(simOf(plan))) arrow(p, accent);
