@@ -1,5 +1,6 @@
 // 매미 (정사각형 색종이, 마름모 방향으로 놓음)
 // 좌표: 화면 오른쪽 +x, 위쪽 +y, 보는 사람 쪽 +z. 앞면=흰 면, 뒷면=색깔 면
+import { eye } from './parts/draw.js';
 const R = Math.SQRT1_2;
 const has = (t) => (c) => c.tags.has(t);
 const isFlap = (c) => c.tags.has('flapR') || c.tags.has('flapL');
@@ -52,6 +53,11 @@ export const cicada = {
         { line: [[-0.22, 0.75], [-0.3, -0.1]], side: [-1, 0.4] },
       ],
     },
-    { text: '다시 뒤집으면 매미 완성!', moves: [flip], view: [0, 0.4, 1] },
+    { text: '다시 뒤집어요.', moves: [flip], view: [0, 0.4, 1] },
+    {
+      text: '연필로 머리 양쪽 끝에 동그란 눈을 그리면 완성!',
+      view: [0, -0.2, 1],
+      draw: [...eye(-0.205, 0.36, 0.024), ...eye(0.205, 0.36, 0.024)],
+    },
   ],
 };
