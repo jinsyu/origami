@@ -10,7 +10,8 @@ const open = (p, e) => {
   const half = R + Math.min(0, y); // 그 높이에서 몸통 반폭
   const gx = half > 0 ? Math.max(0, 1 - (x / half) ** 2) : 0, gy = Math.max(0, Math.min(1, -y / 0.5)) ** 1.5;
   const sd = Math.tanh((z - 0.0007) / 0.0003);
-  return [x, y, z + 0.08 * e * gx * gy * sd];
+  // 벌어지는 만큼 겹 사이도 넓혀, 휜 면끼리 서로 뚫고 나오지 않게 한다
+  return [x, y, z * (1 + 3 * e * gx * gy) + 0.08 * e * gx * gy * sd];
 };
 
 export const kabuto = {
