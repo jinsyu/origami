@@ -1,5 +1,14 @@
 // 영어 문구. 작품별 이름·설명·단계 안내, 화면 문구
 export const enModels = {
+  sandwich: {
+    name: 'Sandwich', desc: 'Fold the bottom up a little short of the top to leave a strip of filling, then fold in half for a triangle sandwich.', paper: 'Square origami paper (pink)',
+    done: 'Your sandwich is done! Fold several colors to fill a lunch box.',
+    steps: [
+      'Place the paper colored side up as a diamond. Fold the bottom corner up along the dotted line a little below the center. A colored strip stays at the top.',
+      'Turn the paper over.',
+      'Fold the right half over to the left, and you are done!',
+    ],
+  },
   owl: {
     name: 'Owl', desc: 'Fold the top and bottom corners, then bring both sides to the center for a square owl. Draw big eyes.', paper: 'Square origami paper (brown)',
     done: 'Your owl is done! Hoot hoot!',
