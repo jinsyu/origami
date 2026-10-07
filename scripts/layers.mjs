@@ -3,7 +3,16 @@
 import { buildModel, rawPose, polyNormal, GAP } from '../src/engine.js';
 import { prepareSim, simRaw } from '../src/sim.js';
 import { MODELS } from '../src/models/index.js';
-const only = process.argv[2];
+// --strict: 단순 단계(복합 아님)의 관통만, 끝 두 프레임(끼워 넣기 순서 바뀜) 빼고 세어 있으면 실패 (npm run layers)
+const strict = process.argv.includes('--strict');
+const only = process.argv.slice(2).find((a) => !a.startsWith('--'));
+let strictBad = 0;
+// 알려진 예외: 작품 id → 단계 번호(1부터)와 이유
+const KNOWN = {
+  crane: { 21: '날개 펼치기 변형(deform): 경첩 위 다리 조각이 몸통 속에서 끊김(CLAUDE.md knownTears)' },
+  pieup: { 9: '한글 자모 — 다른 작업에서 다루는 중' },
+  ya: { 7: '한글 자모 — 다른 작업에서 다루는 중' },
+};
 const sub = (a, b) => [a[0] - b[0], a[1] - b[1], a[2] - b[2]], dot = (a, b) => a[0] * b[0] + a[1] * b[1] + a[2] * b[2];
 const cross = (a, b) => [a[1] * b[2] - a[2] * b[1], a[2] * b[0] - a[0] * b[2], a[0] * b[1] - a[1] * b[0]];
 const norm = (a) => { const l = Math.hypot(...a); return a.map((x) => x / l); };
@@ -22,6 +31,7 @@ for (const m of MODELS) {
   if (only && m.id !== only) continue;
   const plans = buildModel(m);
   plans.forEach((p, si) => {
+    if (strict && (p.sim || KNOWN[m.id]?.[si + 1])) return;
     const s = p.sim ? prepareSim(p) : null;
     const F = 48, frames = [];
     for (let f = 0; f <= F; f++) frames.push(s ? simRaw(s, f / F) : rawPose(p, f / F));
@@ -36,11 +46,13 @@ for (const m of MODELS) {
         if (Math.abs(d) > 0.03) { prevSign.delete(i + ',' + j); continue; }
         if (!insideAny(C[i], P[j], N[j], 0.01)) { prevSign.delete(i + ',' + j); continue; }
         const key = i + ',' + j, sg = Math.abs(d) > GAP * 0.4 ? Math.sign(d) : 0, ps = prevSign.get(key);
-        if (ps !== undefined && sg !== 0 && ps !== sg) hits.set(`관통 ${i}/${j}`, f);
-        if (f === F && Math.abs(d) < GAP * 0.25) hits.set(`끝상태 밀착 ${i}/${j} d=${d.toExponential(1)}`, f);
+        if (ps !== undefined && sg !== 0 && ps !== sg && !(strict && f >= F - 1)) hits.set(`관통 ${i}/${j}`, f);
+        if (!strict && f === F && Math.abs(d) < GAP * 0.25) hits.set(`끝상태 밀착 ${i}/${j} d=${d.toExponential(1)}`, f);
         if (sg) prevSign.set(key, sg);
       }
     });
+    if (hits.size) strictBad++;
     if (hits.size) console.log(`${m.id} ${si + 1}단계${p.sim ? '(복합)' : ''}: ${[...hits].slice(0, 6).map(([k, f]) => `${k}@${f}`).join(', ')}${hits.size > 6 ? ` 외 ${hits.size - 6}` : ''}`);
   });
 }
+if (strict) { console.log(strictBad ? `단순 단계 관통 ${strictBad}곳` : '단순 단계 관통 없음'); process.exitCode = strictBad ? 1 : 0; }

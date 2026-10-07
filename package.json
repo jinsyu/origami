@@ -1,1 +1,1 @@
-{"type":"module","private":true,"scripts":{"check":"node scripts/check.mjs","diagrams":"node scripts/diagram.mjs --all","inkcheck":"node scripts/inkcheck.mjs"}}
+{"type":"module","private":true,"scripts":{"check":"node scripts/check.mjs","diagrams":"node scripts/diagram.mjs --all","inkcheck":"node scripts/inkcheck.mjs","layers":"node scripts/layers.mjs --strict"}}
