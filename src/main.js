@@ -22,6 +22,7 @@ const LANG = (() => {
 const EN = LANG === 'en';
 const KO = {
   title: '종이접기 교실', full: '크게 보기', unfull: '작게 보기', stop: '멈추기', replay: '처음부터 다시 보기', auto: '끝까지 이어서 보기',
+  startBtn: (n) => `${n}부터 시작하기`, continueBtn: (n, i, k) => `${n} 이어서 접기 (${i}/${k})`,
   done: '완성', folded: '접어 봤어요', resume: (i, n) => `이어서 ${i}/${n}`, next: (n) => `다음 작품: ${n}`, stepsCount: (n) => `${n}단계`, level: (l) => ['입문', '초급', '중급', '고급'][l - 1],
   printTitle: (n) => `${n} 접는 방법`,
   bands: [['all', '전체'], ['1', '입문'], ['2', '초급'], ['3', '중급'], ['4', '고급']], bandLabel: '난이도로 보기',
@@ -123,7 +124,20 @@ function renderBands() {
   }
 }
 
+// 첫 화면 시작 버튼: 접다 만 작품이 있으면 이어서, 없으면 가장 쉬운 작품부터
+function renderStart() {
+  let r = {};
+  try { r = JSON.parse(localStorage.getItem('origami.resume') || '{}'); } catch { /* 무시 */ }
+  let last = null;
+  try { last = localStorage.getItem('origami.last'); } catch { /* 무시 */ }
+  const m = MODELS.find((x) => x.id === last && r[x.id]) || MODELS.find((x) => r[x.id]);
+  const btn = $('startBtn');
+  if (m) { btn.href = `#/m/${m.id}`; btn.textContent = T.continueBtn(m.name, r[m.id] + 1, m.steps.length); }
+  else { btn.href = `#/m/${MODELS[0].id}`; btn.textContent = T.startBtn(MODELS[0].name); }
+}
+
 function renderGallery() {
+  renderStart();
   const ol = $('cards');
   renderBands();
   if (ol.childElementCount) { refreshDone(); applyBand(); return; }
@@ -314,7 +328,7 @@ function loadResume() { try { return JSON.parse(localStorage.getItem(resumeKey) 
 function saveResume(id, i) {
   const r = loadResume();
   if (i) r[id] = i; else delete r[id];
-  try { localStorage.setItem(resumeKey, JSON.stringify(r)); } catch { /* 무시 */ }
+  try { localStorage.setItem(resumeKey, JSON.stringify(r)); if (i) localStorage.setItem('origami.last', id); } catch { /* 무시 */ }
 }
 
 function openModel(m, startStep = 0) {
