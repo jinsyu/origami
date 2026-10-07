@@ -120,7 +120,25 @@ export function prepareSim(plan) {
   // swing: 뒤집어 접기를 '겹을 책처럼 벌리기' 대신 '날개를 평면 안에서 돌리며 앞뒤 겹이 등선 쪽으로 좁아졌다 자리를 바꾸기'로 보여 준다.
   // 벌어진 틈으로 안쪽 면이 보이지 않아 겉면 색이 유지된다. 끝 상태는 같다.
   const rv = plan.swing && plan.subs.find((s) => s.mv.rev);
-  if (rv) sim.swing = { P: rv.mv.rev.P, delta: rv.mv.rev.delta };
+  if (rv) {
+    sim.swing = { P: rv.mv.rev.P, delta: rv.mv.rev.delta };
+    // 뒤집어 넘기기: 날개 끝의 앞뒤 겹이 함께 접는 선을 축으로 보는 사람 반대쪽(뒤)으로 180° 넘어간다.
+    // 180° 회전은 어느 쪽으로 돌아도 끝 자리가 같으므로, 두 겹 모두 뒤로 돌린다 (앞 겹은 뒤로 넘어가 겹 사이로 들어가고,
+    // 뒤 겹은 그 뒤를 돌아 앞으로 나온다). 같은 축을 같이 돌아 등선·접는 선 이음이 끊기지 않는다
+    const subOf = member.map((ms) => ms.find((k) => plan.subs[k].mv.rev));
+    if (member.every((ms, pi) => !ms.length || subOf[pi] !== undefined)) {
+      sim.tuck = start.map((L, pi) => {
+        const k = subOf[pi];
+        if (k === undefined) return null;
+        const { o, d } = plan.subs[k].mv;
+        const c = L.reduce((a, p) => [a[0] + p[0] / L.length, a[1] + p[1] / L.length, a[2] + p[2] / L.length], [0, 0, 0]);
+        const v = [c[0] - o[0], c[1] - o[1], c[2] - o[2]], dz = d[0] * v[1] - d[1] * v[0]; // 작은 각도로 돌릴 때 z 변화 (d × v)_z
+        const sg = dz > 0 ? -1 : 1;
+        const R1 = L.map((p) => rotate(p, o, d, sg * Math.PI));
+        return { o, d, sg, corr: L.map((p, li) => [0, 1, 2].map((c2) => end[pi][li][c2] - R1[li][c2])) };
+      });
+    }
+  }
   // 꽃잎 접기 묶음(역할: plift, ptop/psec R·L)이 있으면 옆 조각 각도를 들어 올리는 각도에 맞춰 푼다
   if (['plift', 'ptopR', 'ptopL', 'psecR', 'psecL'].every((r) => r in roleIdx)) solvePetal(sim, roleIdx);
   if (squash) {
@@ -385,6 +403,14 @@ function simPose0(sim, t) {
   if (sim.swing) {
     // 앞뒤 겹이 자리를 바꾸는(면이 뒤집히는) 보정은 가운데 짧은 구간에 몰아, 겹마다 뒤집히는 때가 달라
     // 일부만 먼저 뒤집혀 안쪽 면이 보이는 시간을 줄인다 (앞뒤 겹이 대칭이 아닌 날개)
+    if (sim.tuck) {
+      const e = ease(t);
+      return sim.start.map((L, pi) => {
+        const T = sim.tuck[pi];
+        if (!T) return L;
+        return L.map((p, li) => { const r = rotate(p, T.o, T.d, T.sg * Math.PI * e), c = T.corr[li]; return [r[0] + c[0] * e, r[1] + c[1] * e, r[2] + c[2] * e]; });
+      });
+    }
     const { P, delta } = sim.swing, e = ease(t), w = ease((e - 0.35) / 0.3);
     return sim.start.map((L, pi) => (sim.member[pi].length ? L.map((p, li) => {
       const r = rotate(p, P, Z, delta * e), r1 = rotate(p, P, Z, delta), q = sim.end[pi][li];
@@ -439,6 +465,15 @@ export function simArrows(sim, n = 2) {
     picked.push(c);
   }
   // swing(뒤집어 접기를 평면 안에서 돌리기): 실제 움직임대로 회전 중심 P 를 도는 호. 직선으로 그리면 도는 방향을 알 수 없다
+  if (sim.tuck) {
+    // 실제 경로: 접는 선을 축으로 뒤로 넘어가는 호
+    return picked.map((c) => {
+      const T = sim.tuck[c.pi], path = [];
+      if (!T) return [c.a, c.b];
+      for (let k = 0; k <= 24; k++) path.push(rotate(c.a, T.o, T.d, (T.sg * Math.PI * k) / 24));
+      return path;
+    });
+  }
   if (sim.swing) {
     const { P, delta } = sim.swing;
     return picked.map((c) => {
