@@ -228,7 +228,7 @@ export const enModels = {
   },
   frame: {
     name: 'Picture Frame', desc: 'Fold the four corners to the center on both sides to make a frame with a white border. Lots of layers, so fold carefully.', paper: 'Square origami paper',
-    done: 'Your picture frame is done! Draw a picture or stick a photo in the middle.',
+    done: 'Your picture frame is done! You can also draw another picture or stick in a photo.',
     steps: [
       'Place the paper colored side up. Fold it in half diagonally and unfold.',
       'Fold it in half along the other diagonal and unfold too. You get an X.',
@@ -236,12 +236,14 @@ export const enModels = {
       'Fold the four tips at the center back outward a little. Colored triangles appear.',
       'Turn the paper over.',
       'Fold the four corners to the center point again.',
-      'Turn it back over. Your picture frame is done!',
+      'Turn it back over.',
+      'With a pencil, draw a flower in the middle of the frame: round petals, a stem and a leaf.',
+      'Color the petals pink, the center yellow and the leaf green with colored pencils, and you are done!',
     ],
   },
   duck: {
     name: 'Duck', desc: 'Reverse fold the thin end up into a neck, then reverse fold its tip once more for the head and beak. Two reverse folds in a row.', paper: 'Square origami paper',
-    done: 'Your duck is done! Draw an eye and float it on water.',
+    done: 'Your duck is done! Float it on water.',
     steps: [
       'Place the paper colored side down as a diamond. Fold it in half vertically and unfold to make a center line.',
       'Fold the two lower edges to the center line to make a kite.',
@@ -249,7 +251,8 @@ export const enModels = {
       'Fold the paper in half backward along the center line.',
       'Lay it down with the fold at the bottom. The thin end points right.',
       'Outside reverse fold the thin end so it stands up. This is the neck.',
-      'Reverse fold the tip of the neck forward for the head and beak. Your duck is done!',
+      'Reverse fold the tip of the neck forward for the head and beak.',
+      'Dot an eye on the head with a pencil, then color the beak orange with a colored pencil, and you are done!',
     ],
   },
   tulip: {

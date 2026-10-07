@@ -1,5 +1,6 @@
 // 오리 (정사각형 색종이, 마름모 방향)
 // 연 모양 → 위 끝을 내려 뭉툭한 꼬리 → 뒤로 반 접기 → 가는 끝을 뒤집어 접어 목 → 목 끝을 다시 뒤집어 접어 머리.
+import { fillPoly, PENCIL } from './parts/draw.js';
 const R = Math.SQRT1_2;
 const s1 = Math.sin(Math.PI / 8), c1 = Math.cos(Math.PI / 8);
 const deg = Math.PI / 180;
@@ -25,7 +26,7 @@ export const duck = {
   outline: [[0, -R], [R, 0], [0, R], [-R, 0]],
   view: [0.3, -0.45, 1],
   finalView: [0.35, 0.3, 1],
-  done: '오리 완성! 눈을 그리고 물 위에 띄워 보세요.',
+  done: '오리 완성! 물 위에 띄워 보세요.',
   steps: [
     { text: '색깔 면이 아래로 가게 마름모로 놓고, 세로로 반 접었다 펴서 가운데 선을 만들어요.', moves: [{ line: [[0, -1], [0, 1]], side: [1, 0], unfold: true }] },
     {
@@ -47,12 +48,17 @@ export const duck = {
       ],
     },
     {
-      text: '목 끝을 앞으로 뒤집어 접어 머리와 부리를 만들어요. 오리 완성!',
+      text: '목 끝을 앞으로 뒤집어 접어 머리와 부리를 만들어요.',
       sim: true,
       moves: [
         { line: HEAD_LINE, side: TIP, spine: [P, [P[0] + nd[0], nd[1]]], filter: (c) => c.tags.has('neck') && !c.tags.has('back'), toward: 1 },
         { line: HEAD_LINE, side: TIP, spine: [P, [P[0] + nd[0], nd[1]]], filter: (c) => c.tags.has('neck') && c.tags.has('back'), toward: -1 },
       ],
+    },
+    {
+      text: '연필로 머리에 눈을 콕 찍고, 색연필로 부리를 주황색으로 칠하면 완성!',
+      view: [0.15, 0.1, 1],
+      draw: [{ dot: [0.392, 0.296], r: 0.011, color: PENCIL }, fillPoly([[0.494, 0.249], [0.44, 0.272], [0.43, 0.258]], '#f08a24')],
     },
   ],
 };
