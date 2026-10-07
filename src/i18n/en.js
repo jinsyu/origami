@@ -1,5 +1,16 @@
 // 영어 문구. 작품별 이름·설명·단계 안내, 화면 문구
 export const enModels = {
+  monkey: {
+    name: 'Monkey', desc: 'Fold in half, then squash one side open to reveal a white face. Draw the eyes and hair.', paper: 'Square origami paper',
+    done: 'Your monkey is done!',
+    steps: [
+      'Place the paper colored side down. Fold in half and unfold to make a center crease.',
+      'Fold the top half down.',
+      'Open the pocket on the right and squash it flat along the slanted dotted line. A white face appears.',
+      'Fold the left side behind along the vertical dotted line.',
+      'Draw the eyes and hair with a pencil, then color the mouth with a colored pencil, and you are done!',
+    ],
+  },
   elephant: {
     name: 'Elephant', desc: 'Fold the left side at an angle, fold in half and squash it open for an elephant face with a long trunk and big ears.', paper: 'Square origami paper',
     done: 'Your elephant is done!',
