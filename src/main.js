@@ -6,7 +6,7 @@ import { LineMaterial } from 'three/addons/lines/LineMaterial.js';
 import { buildModel, moveGuides } from './engine.js';
 import { simGuides, simArrows } from './sim.js';
 import { PaperMesh, addLights, fitCamera, loopsOf, simOf, toVecs } from './paper.js';
-import { finalThumb, stepThumb, diagram } from './thumbs.js';
+import { finalThumb, stepThumb, diagram, snapshot } from './thumbs.js';
 import { MODELS } from './models/index.js';
 import { createHero } from './hero.js';
 import { enModels, enUI } from './i18n/en.js';
@@ -379,6 +379,7 @@ function updateUI() {
   if (done) markDone(model.id);
   const nextM = MODELS[MODELS.indexOf(model) + 1];
   $('nextModel').hidden = !done || !nextM;
+  $('saveImg').hidden = !done;
   $('fold').hidden = done && !!nextM;
   if (nextM) { $('nextModel').href = `#/m/${nextM.id}`; $('nextModel').textContent = T.next(nextM.name); }
   $('badge').textContent = done ? T.done : `${step + 1}/${N}`;
@@ -448,6 +449,36 @@ slider.oninput = () => {
   phase = 'idle';
   updateUI();
 };
+// 완성 그림을 이미지로 저장 (방금 그린 화면을 바로 읽어 종이 바탕·이름과 함께 한 장으로)
+$('saveImg').onclick = () => {
+  // 화면 렌더러는 그린 내용을 보존하지 않으므로, 지금 보는 방향으로 따로 그린다
+  const dir = camera.position.clone().sub(controls.target).normalize();
+  const src = new Image();
+  src.onload = () => saveComposite(src);
+  src.src = snapshot(model, plan, t, [dir.x, dir.y, dir.z], 900);
+};
+function saveComposite(src) {
+  const W = 1080, H = 1080;
+  const c = document.createElement('canvas');
+  c.width = W; c.height = H;
+  const g = c.getContext('2d');
+  g.fillStyle = getComputedStyle(document.documentElement).getPropertyValue('--mat').trim() || '#e3eadf';
+  g.fillRect(0, 0, W, H);
+  const k = Math.min(W / src.width, (H - 140) / src.height);
+  g.drawImage(src, (W - src.width * k) / 2, 30 + (H - 140 - src.height * k) / 2, src.width * k, src.height * k);
+  g.fillStyle = '#1e2b3a';
+  g.font = '600 44px Pretendard, system-ui, sans-serif';
+  g.fillText(model.name, 56, H - 60);
+  g.font = '24px Pretendard, system-ui, sans-serif';
+  g.fillStyle = '#5c6875';
+  g.textAlign = 'right';
+  g.fillText('origami.gyosil.app', W - 56, H - 64);
+  const a = document.createElement('a');
+  a.href = c.toDataURL('image/png');
+  a.download = `${model.name}.png`;
+  a.click();
+}
+
 window.addEventListener('keydown', (e) => {
   if ($('viewer').hidden || e.target.closest('input, select, textarea')) return;
   // 버튼·링크·단계 항목에 초점이 있으면 스페이스는 그 항목을 누르는 키로 둔다
