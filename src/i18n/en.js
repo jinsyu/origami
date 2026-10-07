@@ -369,15 +369,16 @@ export const enModels = {
   },
 
   panda: {
-    name: 'Panda Face', desc: 'Fold it like the cat face, then fold the ear tips down to make them round. Color black ears and eye patches to turn it into a panda.', paper: 'Square origami paper (white side)',
+    name: 'Panda Face', desc: 'Fold the side corners in to make black ears, then fold the bottom up and tuck it to make a black nose. Draw the eyes to finish the panda.', paper: 'Square origami paper (black)',
     done: 'Your panda face is done! Draw some bamboo leaves and it will be happy.',
     steps: [
-      'Place the paper white side down as a diamond. Fold the top corner down to the bottom corner. The white side shows on the outside.',
-      'Fold both side corners up at an angle to stand the ears up.',
-      'Fold the pointy ear tips down a little to make round ears.',
-      'Fold the bottom tip behind a little to round off the chin.',
-      'With a black colored pencil, color both ears and the patches around the eyes.',
-      'Draw white eyes inside the patches, then draw the nose and mouth with a pencil, and you are done!',
+      'Place the paper white side up as a diamond. Fold in half both ways and unfold to make creases.',
+      'Fold the side corners in a little along the dotted lines. Black triangles appear.',
+      'Fold the top half behind along the center line.',
+      'Fold both sides behind along the vertical dotted lines. Black ears stay at the top corners.',
+      'Fold the bottom corner up along the dotted line.',
+      'Tuck the tip you folded up inside the white part. A black nose appears.',
+      'Color the patches around the eyes with a black colored pencil, draw white eyes, and you are done!',
     ],
   },
   fox: {

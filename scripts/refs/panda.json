@@ -1,0 +1,46 @@
+{
+  "src": "https://en.origami-club.com/easy/animal-face/panda/zu.gif",
+  "panels": [
+    {
+      "label": 1,
+      "after": 0,
+      "box": [
+        40,
+        22,
+        272,
+        260
+      ]
+    },
+    {
+      "label": 2,
+      "after": 1,
+      "box": [
+        286,
+        22,
+        548,
+        260
+      ]
+    },
+    {
+      "label": 6,
+      "after": 5,
+      "box": [
+        78,
+        542,
+        196,
+        640
+      ]
+    },
+    {
+      "label": "완성",
+      "after": 7,
+      "box": [
+        368,
+        540,
+        534,
+        674
+      ]
+    }
+  ],
+  "note": "3~5번 그림은 짙은 회색 면이 선으로 분류돼 마스크가 깨져 뺐다"
+}
