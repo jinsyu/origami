@@ -49,16 +49,7 @@ export const enModels = {
       'Fold the bottom edge up a little to make a base strip. Your house is done!',
     ],
   },
-  penguin: {
-    name: 'Penguin', desc: 'Fold the sides in for black wings and a white belly, then fold the top twice for the head and beak. Your first mountain fold too.', paper: 'Square origami paper',
-    done: 'Your penguin is done! Draw the eyes and stand it up.',
-    steps: [
-      'Place the paper colored side down as a diamond. Fold both side corners in close to the middle. These are the black wings.',
-      'Fold the top corner down. This is the head.',
-      'Fold that tip back up a little. This is the beak.',
-      'Fold the bottom corner behind so it can stand. Your penguin is done!',
-    ],
-  },
+
   cicada: {
     name: 'Cicada', desc: 'A striped head and slanted wings. Practice picking out layers one at a time.', paper: 'Square origami paper',
     done: 'Your cicada is done! Look at the striped head and the wings spreading out.',
@@ -275,57 +266,8 @@ export const enModels = {
       'Squash the left flap the same way to finish the roof. Your house is done!',
     ],
   },
-  bird: {
-    name: 'Flapping Bird', desc: 'Raise the neck and tail straight from the bird base and spread the wings at an angle. Pull the tail and the wings flap.', paper: 'Square origami paper',
-    done: 'Your flapping bird is done! Hold below the neck and gently pull the tail to make the wings flap.',
-    steps: [
-      'Place the paper white side up as a diamond. Fold the top corner down to the bottom corner.',
-      'Fold the right corner over to the left corner.',
-      'Lift the top flap, open the pocket and squash it into a diamond.',
-      'Turn the paper over.',
-      'Squash this flap the same way. The square (preliminary) base is done.',
-      'Fold the lower edges of the front two layers to the center line.',
-      'Fold the top triangle down and unfold to make a horizontal crease.',
-      'Unfold the two flaps you just folded.',
-      'Lift the bottom point of the top layer up along the crease, folding the sides in along the creases. This is a petal fold.',
-      'Turn the paper over.',
-      'Fold the lower edges of these two layers to the center line.',
-      'Fold the top triangle down and unfold to make a horizontal crease.',
-      'Unfold the two flaps you just folded.',
-      'Lift the bottom point of the top layer up along the crease, folding the sides in. Petal fold again.',
-      'Inside reverse fold the right leg up between the wings at an angle. This is the neck.',
-      'Inside reverse fold the left leg up too. This is the tail.',
-      'Inside reverse fold the tip of the neck to make the head.',
-      'Spread both wings down at an angle. Your flapping bird is done!',
-    ],
-  },
-  lily: {
-    name: 'Lily', desc: 'Squash all four flaps of the waterbomb base, petal fold all four faces and open the petals. The longest challenge.', paper: 'Square origami paper',
-    done: 'Your lily is done! Curl the petal tips around a pencil to open the flower.',
-    steps: [
-      'Place the paper white side up. Fold the top half down.',
-      'Fold the right half over to the left to make a small square.',
-      'Lift the top flap, open the pocket and press it flat into a triangle.',
-      'Turn the paper over.',
-      'Squash the other flap the same way. The triangle (waterbomb) base is done.',
-      'Lift the right flap, open it and squash it into a diamond centered on the middle line.',
-      'Turn the left half over to the right like a page.',
-      'Squash the left flap that appears.',
-      'Turn the paper over.',
-      'Squash the right flap on this side too.',
-      'Turn the left half over to the right.',
-      'Squash the last flap. The lily base is done.',
-      'Lift the bottom point of the top layer all the way to the top, folding the sides in. This is a petal fold.',
-      'Turn the paper over.',
-      'Petal fold this face the same way.',
-      'Turn the right bundle over to the left like a page to show a new face.',
-      'Petal fold the new face too.',
-      'Turn the paper over.',
-      'Turn the right bundle over to the left to show a new face.',
-      'Petal fold the last face. Now you have four petals.',
-      'Curve the four petals outward. Your lily is done!',
-    ],
-  },
+
+
 };
 
 export const enUI = {

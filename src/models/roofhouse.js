@@ -12,7 +12,7 @@ const roof = (sx, tag) => squashFlap({
 export const roofhouse = {
   id: 'roofhouse',
   name: '지붕 집',
-  level: 4,
+  level: 2,
   desc: '양옆 날개의 위쪽을 펼쳐 눌러 삼각 지붕을 만드는 집이에요. 펼쳐 누르기를 가장 쉽게 연습할 수 있어요.',
   paper: '정사각형 색종이',
   colors: { front: '#fbf8f1', back: '#4f7cac' },
