@@ -2,11 +2,16 @@
 // 출처: Origami Club "Penguin" (Fumiaki Shingu) https://en.origami-club.com/easy/sea/penguin/
 // 아래를 올려 하얀 배를 만들고, 뒤집어 양옆을 가운데로 접었다가 다시 바깥으로 접어 날개를 낸다.
 import { eye } from './parts/draw.js';
-const R = Math.SQRT1_2, Y2 = -0.164, Y3 = 0.24, X5 = R / 2, X6 = 0.26;
+const R = Math.SQRT1_2;
 const flip = { spin: { a: [0, 0, 0], b: [0, 1, 0], angle: 180 } };
 const has = (t) => (c) => c.tags.has(t);
 
-export const penguin = {
+export const penguinParams = { Y2: -0.164, Y3: 0.236, X5: 0.27, X6: 0.12, T: 0.617 };
+
+export function makePenguin({ Y2, Y3, X5, X6, T } = penguinParams) {
+  return {
+  params: { Y2, Y3, X5, X6, T },
+  make: makePenguin,
   id: 'penguin',
   name: '펭귄',
   level: 2,
@@ -27,8 +32,11 @@ export const penguin = {
     { text: '오른쪽도 접어 왼쪽 날개 위에 겹쳐요.', moves: [{ line: [[X5, -1], [X5, 1]], side: [0.5, -0.1], tag: 'wR' }] },
     { text: '왼쪽 날개를 점선에서 다시 바깥으로 접어 내요.', moves: [{ line: [[-X6, -1], [-X6, 1]], side: [0, -0.1], filter: has('wL') }] },
     { text: '오른쪽 날개도 다시 바깥으로 접어 내요.', moves: [{ line: [[X6, -1], [X6, 1]], side: [0, -0.1], filter: has('wR') }] },
-    { text: '위 꼭짓점을 조금 접어 내려요.', moves: [{ line: [[-1, 0.62], [1, 0.62]], side: [0, R] }] },
+    { text: '위 꼭짓점을 조금 접어 내려요.', moves: [{ line: [[-1, T], [1, T]], side: [0, R] }] },
     { text: '종이를 뒤집어요.', moves: [flip], view: [0, 0.4, 1] },
-    { text: '연필로 눈을 그리면 완성!', view: [0, 0, 1], draw: [...eye(-0.1, 0.4, 0.026), ...eye(0.1, 0.4, 0.026)] },
+    { text: '연필로 눈을 그리면 완성!', view: [0, 0, 1], draw: [...eye(-0.115, 0.4, 0.026), ...eye(0.115, 0.4, 0.026)] },
   ],
 };
+}
+
+export const penguin = makePenguin();
