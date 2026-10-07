@@ -542,6 +542,22 @@ export const enModels = {
       'Draw spots on the body with a colored pencil, and you are done!',
     ],
   },
+  seaotter: {
+    name: 'Sea Otter', desc: 'Make a band and fold both sides up at a slant to make a sea otter floating on the water. Draw its face!', paper: 'Square origami paper',
+    done: 'Your sea otter is done! You can draw a shell for it to hold.',
+    steps: [
+      'Place the paper colored side down like a diamond. Fold it in half both ways and unfold to make creases.',
+      'Fold the bottom corner to the center point and unfold.',
+      'Fold the bottom corner up along the dotted line.',
+      'Fold the top corner behind along the dotted line. Leave the triangle in front as it is.',
+      'Fold the right side up along the slanted dotted line.',
+      'Fold the left side up the same way.',
+      'Fold the left tip down a little along the dotted line.',
+      'Fold the left end behind a little along the dotted line. It becomes the head.',
+      'Draw the eye and nose with a pencil, and color the inside of the ear.',
+      'Color the cheek with a colored pencil and draw a shell on its tummy, and you are done!',
+    ],
+  },
   neuli: {
     name: 'Neuli Face', desc: 'Our school friend Neuli! Fold a triangle, stand the ears up and fold the chin to make a wide, cute face.', paper: 'Square origami paper (light yellow or apricot)',
     done: 'Neuli face is done! You can draw a flower on top of the head too.',
