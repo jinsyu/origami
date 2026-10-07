@@ -498,7 +498,7 @@ export const enModels = {
 
 export const enUI = {
   title: 'Origami Classroom',
-  lede: 'Get a sheet of origami paper. Each step shows the fold line and direction first, then folds slowly in 3D.',
+  lede: 'Get some origami paper. Each step shows the fold line and direction first, then folds slowly in 3D.',
   ladder: 'From easiest to hardest',
   bands: [['all', 'All'], ['1', 'Beginner'], ['2', 'Easy'], ['3', 'Intermediate'], ['4', 'Advanced']], bandLabel: 'Filter by level',
   symbols: 'Learn the fold symbols',
