@@ -232,3 +232,6 @@ button.print-link { cursor: pointer; font: inherit; font-weight: 600; }
   #stepList .num { font-size: 24px; }
   .legend { font-size: 15px; }
 }
+
+/* 작은 단계 그림: 흰 종이가 바탕에 묻히지 않도록 얇은 윤곽 그림자 */
+#stepList img, .peek img { background: none; border: 0; filter: drop-shadow(0 0 0.6px rgba(30, 43, 58, 0.55)) drop-shadow(0 1px 1.5px rgba(30, 43, 58, 0.18)); }
