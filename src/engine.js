@@ -295,8 +295,27 @@ function planSeqStep(polys, step) {
   return { polys: cur, moves: [], subs, sim: true, tearOk: !!step.tearOk, edges: edgeList(cur) };
 }
 
+// 서로 엇갈리는 두 '접었다 펴기'를 한 단계에서 하면, 동시에 움직일 때 한 조각이 한 동작에만 속해
+// 두 번째 선이 종이 절반에만 생긴다(종이가 잘린 것처럼 보임). 그래서 앞 절반·뒤 절반에 차례로 한다.
+function crossUnfold(step) {
+  const ms = step.moves || [];
+  if (ms.length !== 2 || !ms.every((m) => m.unfold && m.line)) return false;
+  const d = ms.map((m) => [m.line[1][0] - m.line[0][0], m.line[1][1] - m.line[0][1]]);
+  return Math.abs(d[0][0] * d[1][1] - d[0][1] * d[1][0]) > 1e-6 * Math.hypot(...d[0]) * Math.hypot(...d[1]);
+}
+function planCrossUnfold(polys, step) {
+  const [a, b] = step.moves;
+  const pA = planStep(polys, { moves: [a] });
+  const rest = pA.polys.map((q) => ({ ...clonePoly(q), p: q.p.map((v) => v.slice()) }));
+  const pB = planStep(rest, { moves: [b] });
+  // 첫 동작도 두 선으로 이미 나뉜 조각으로 다시 계산해 두 구간의 다각형 목록을 같게 맞춘다
+  const pA2 = planStep(pB.polys.map((q) => ({ ...clonePoly(q), p: q.p.map((v) => v.slice()) })), { moves: [a] });
+  return { ...pB, moves: [pA2.moves[0], pB.moves[0]], parts: [pA2, pB] };
+}
+
 // 단순 단계에서 진행률 t(0~1)일 때 각 다각형의 꼭짓점 위치
 export function pose(plan, t) {
+  if (plan.parts) return t < 0.5 ? pose(plan.parts[0], t * 2) : pose(plan.parts[1], t * 2 - 1);
   if (plan.sim) return t < 0.5 ? plan.polys.map((q) => q.hist[0]) : plan.polys.map((q) => q.p);
   const e = t * t * (3 - 2 * t);
   const out = plan.polys.map((q) => {
@@ -359,7 +378,7 @@ export function buildModel(model) {
   const plans = [];
   let inked = []; // 꾸미기 단계에서 이미 그린 획 (다음 꾸미기 단계에도 그대로 보인다)
   for (const step of model.steps) {
-    const plan = step.sim ? planSeqStep(polys, step) : planStep(polys, step);
+    const plan = step.sim ? planSeqStep(polys, step) : crossUnfold(step) ? planCrossUnfold(polys, step) : planStep(polys, step);
     if (inked.length || step.draw) { plan.inked = inked; plan.draw = step.draw || []; inked = [...inked, ...plan.draw]; }
     plans.push(plan);
     const fin = endPose(plan);
@@ -370,6 +389,7 @@ export function buildModel(model) {
 
 // 미리보기용: 접힘선 구간과 대표 꼭짓점의 이동 경로 (단순 단계)
 export function moveGuides(plan, mi) {
+  if (plan.parts) return moveGuides(plan.parts[mi], 0);
   const mv = plan.moves[mi];
   const mem = plan.polys.filter((q) => q.owner === mi);
   let line = null;
