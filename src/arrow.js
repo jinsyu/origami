@@ -6,7 +6,7 @@ import { Line2 } from 'three/addons/lines/Line2.js';
 import { LineGeometry } from 'three/addons/lines/LineGeometry.js';
 import { LineMaterial } from 'three/addons/lines/LineMaterial.js';
 
-export function makeArrow(path, color, { r = 0.008, head = 0.085, w = 0.042 } = {}) {
+export function makeArrow(path, color, { r = 0.008, head = 0.085, w = 0.032 } = {}) {
   const vs = path.map((v) => new THREE.Vector3(...v));
   if (vs.length < 2) return [];
   const curve = new THREE.CatmullRomCurve3(vs);
@@ -52,10 +52,11 @@ export function faceCamera(root, camera, size) {
     if (size) a.line.material.resolution.set(size.x, size.y);
     _d.copy(a.tip).sub(q);
     _d.addScaledVector(_v, -_d.dot(_v));
-    if (_d.lengthSq() < 1e-10) return;
+    const hl = _d.length(); // 촉 길이 = 끊은 몸통 끝까지의 화면 거리 (몸통과 촉 사이에 틈이 없게)
+    if (hl < 1e-5) return;
     _d.normalize();
     _s.copy(_d).cross(_v).normalize().multiplyScalar(a.w);
-    _b.copy(a.tip).addScaledVector(_d, -a.h);
+    _b.copy(a.tip).addScaledVector(_d, -hl);
     const P = o.geometry.attributes.position;
     P.setXYZ(0, _b.x + _s.x, _b.y + _s.y, _b.z + _s.z);
     P.setXYZ(1, _b.x - _s.x, _b.y - _s.y, _b.z - _s.z);

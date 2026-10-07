@@ -52,7 +52,7 @@ function drawGuides(group, model, plan) {
     }
   };
   const arrow = (path, color) => {
-    const parts = makeArrow(path, color, { r: 0.006, head: 0.07, w: 0.034 });
+    const parts = makeArrow(path, color, { r: 0.006, head: 0.07, w: 0.026 });
     if (parts.length) group.add(...parts);
   };
 
