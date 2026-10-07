@@ -1,5 +1,18 @@
 // 영어 문구. 작품별 이름·설명·단계 안내, 화면 문구
 export const enModels = {
+  goldfish: {
+    name: 'Goldfish', desc: 'Fold in half, fold the front and back along a diagonal, then fold a fin down for a goldfish with a big tail.', paper: 'Square origami paper',
+    done: 'Your goldfish is done!',
+    steps: [
+      'Place the paper colored side up. Fold the bottom edge up to the top edge.',
+      'Fold the front layer down at an angle along the dotted line.',
+      'Fold the back layer behind along the same line.',
+      'Fold the top right of the front down along the dotted line. This is the fin.',
+      'Turn the goldfish so it lies on its side.',
+      'Fold the mouth tip behind a little along the dotted line.',
+      'Draw an eye with a pencil, and you are done!',
+    ],
+  },
   car: {
     name: 'Car', desc: 'Fold the ends of a band down for wheels and fold a corner at an angle for the windshield. Draw a window.', paper: 'Square origami paper',
     done: 'Your car is done! Vroom vroom!',
