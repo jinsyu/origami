@@ -10,9 +10,9 @@ const flip = { spin: { a: [0, 0, 0], b: [0, 1, 0], angle: 180 } };
 // 도안 그림에서 잰 값 (scripts/diagram.mjs --fit)
 //  hornA: 뿔 접는 선이 왼쪽 비탈(y=x)과 만나는 점의 x, hornB: 그 선이 밑변과 만나는 점의 x
 //  leg: 뒤집은 뒤 왼쪽 끝을 접는 선이 밑변과 만나는 x, legTilt: 그 선이 세로에서 기운 각도(도) — 도안 완성 그림처럼 다리 끝이 몸 아래로 조금 나온다
-export const triceratopsParams = { hornA: -0.385, hornB: -0.186, leg: -0.284, legTilt: 10 };
+export const triceratopsParams = { hornA: -0.385, hornB: -0.186, leg: -0.284, legTilt: 10, fc: -0.05 };
 export function makeTriceratops(P = triceratopsParams) {
-  const { hornA, hornB, leg, legTilt } = P;
+  const { hornA, hornB, leg, legTilt, fc = 0 } = P;
   return {
     id: 'triceratops',
     name: '트리케라톱스',
@@ -30,7 +30,7 @@ export function makeTriceratops(P = triceratopsParams) {
     steps: [
       { text: '색깔 면이 아래로 가게 놓고, 대각선으로 반 접었다 펴요.', moves: [{ line: [[-H, -H], [H, H]], side: [-H, H], unfold: true }] },
       { text: '다른 대각선으로 반 접어 세모를 만들어요.', moves: [{ line: [[-H, H], [H, -H]], side: [H, H], tag: 'half' }] },
-      { text: '앞장의 왼쪽 아래 모서리를 가운데 점에 맞춰 접어요.', moves: [{ line: [[-H, 0], [0, -H]], side: [-H, -H], filter: has('half'), tag: 'flap' }] },
+      { text: '앞장의 왼쪽 아래 모서리를 가운데 점보다 조금 못 미치게 접어요.', moves: [{ line: [[-H, fc], [fc, -H]], side: [-H, -H], filter: has('half'), tag: 'flap' }] },
       { text: '접은 선을 따라 왼쪽 위를 뒤로 접어요.', moves: [{ line: [[-1, -1], [1, 1]], side: [-H, H], toward: -1, tag: 'back' }] },
       { text: '왼쪽 끝을 비스듬한 점선에서 위로 접어 올려요. 뿔이 돼요.', moves: [{ line: [[hornA, hornA], [hornB, -H]], side: [-H, -H], tag: 'horn' }] },
       { text: '종이를 뒤집어요.', moves: [flip], view: [0, -0.25, 1] },

@@ -520,7 +520,7 @@ export const enModels = {
     steps: [
       'Place the paper colored side down. Fold it in half along a diagonal and unfold.',
       'Fold it in half along the other diagonal to make a triangle.',
-      'Fold the lower-left corner of the front layer to the center point.',
+      'Fold the lower-left corner of the front layer up to just short of the center point.',
       'Fold the upper-left part behind along the crease.',
       'Fold the left tip up along the slanted dotted line. It becomes the horns.',
       'Turn the paper over.',
