@@ -1,0 +1,15 @@
+{
+  "src": "https://en.origami-club.com/easy/dinosaur/spinosaurus/zu.gif",
+  "panels": [
+    { "label": 1, "after": 0, "box": [8, 12, 237, 241] },
+    { "label": 2, "after": 1, "box": [244, 11, 473, 241] },
+    { "label": 3, "after": 2, "box": [89, 200, 318, 383] },
+    { "label": 4, "after": 3, "box": [321, 202, 549, 346] },
+    { "label": 5, "after": 4, "box": [24, 398, 251, 494] },
+    { "label": 6, "after": 5, "box": [302, 400, 509, 495] },
+    { "label": 7, "after": 6, "box": [124, 508, 329, 605] },
+    { "label": 8, "after": 7, "box": [21, 564, 226, 661] },
+    { "label": "완성", "after": 8, "box": [325, 530, 545, 677] }
+  ],
+  "fit": { "low": [-0.22, -0.08], "top": [0.08, 0.22], "right": [0.45, 0.68], "head": [-0.5, -0.2] }
+}

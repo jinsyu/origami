@@ -526,6 +526,22 @@ export const enModels = {
       'Draw spots on the body with a colored pencil, and you are done!',
     ],
   },
+  spinosaurus: {
+    name: 'Spinosaurus', desc: 'Fold a long band and turn it over to make a Spinosaurus with a big sail on its back. Draw the face and spines!', paper: 'Square origami paper',
+    done: 'Your Spinosaurus is done! What a sail.',
+    steps: [
+      'Place the paper colored side down like a diamond. Fold it in half both ways and unfold to make creases.',
+      'Fold the lower-left edge to the center line.',
+      'Fold the bottom up along the dotted line.',
+      'Fold the top corner down along the dotted line.',
+      'Fold the right end along the dotted line.',
+      'Fold the lower right up at a slant to line up with the edge of the triangle.',
+      'Turn it over top to bottom. A white triangle sticks up.',
+      'Fold the left end to the right along the dotted line. It becomes the head.',
+      'Draw the eye, the teeth and the spines on the sail with a pencil.',
+      'Draw spots on the body with a colored pencil, and you are done!',
+    ],
+  },
   neuli: {
     name: 'Neuli Face', desc: 'Our school friend Neuli! Fold a triangle, stand the ears up and fold the chin to make a wide, cute face.', paper: 'Square origami paper (light yellow or apricot)',
     done: 'Neuli face is done! You can draw a flower on top of the head too.',
