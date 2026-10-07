@@ -1,6 +1,6 @@
 // 종이 메시: 단계 계획(plan)과 진행률 t를 받아 앞·뒷면, 가장자리·접힌 선을 그린다.
 import * as THREE from 'three';
-import { pose, polyNormal } from './engine.js';
+import { pose, polyNormal, sheetsOf, sheetOfU } from './engine.js';
 import { prepareSim, simPose } from './sim.js';
 
 export const simOf = (p) => p._sim || (p._sim = prepareSim(p));
@@ -145,11 +145,19 @@ export class PaperMesh {
   }
 
   setModel(model) {
-    const us = model.outline.map((v) => v[0]), vs = model.outline.map((v) => v[1]);
+    const sheets = sheetsOf(model), outline = sheets[0].outline;
+    const us = outline.map((v) => v[0]), vs = outline.map((v) => v[1]);
     this.uvMin = [Math.min(...us), Math.min(...vs)];
     this.uvScale = 1.6 / Math.max(Math.max(...us) - this.uvMin[0], Math.max(...vs) - this.uvMin[1]);
-    this.frontMat.color.set(model.colors.front);
-    this.backMat.color.set(model.colors.back);
+    // 장마다 앞·뒷면 색이 다를 수 있으므로 꼭짓점 색으로 칠한다
+    this.sheetColors = sheets.map((sh) => {
+      const c = sh.colors || model.colors;
+      return { front: new THREE.Color(c.front), back: new THREE.Color(c.back) };
+    });
+    this.frontMat.color.set('#ffffff');
+    this.backMat.color.set('#ffffff');
+    this.frontMat.vertexColors = this.backMat.vertexColors = true;
+    this.frontMat.needsUpdate = this.backMat.needsUpdate = true;
     this.plan = null;
   }
 
@@ -170,8 +178,24 @@ export class PaperMesh {
       for (let i = 0; i < L.length; i++) { put(c); put(L[i]); put(L[(i + 1) % L.length]); }
     }
     geo.setAttribute('uv', new THREE.BufferAttribute(uv, 2));
+    // 앞면·뒷면 메시는 위치·법선·uv를 함께 쓰고 색만 따로 가진다
+    const colF = new Float32Array(tris * 9), colB = new Float32Array(tris * 9);
+    let ci = 0;
+    for (const L of meta.uv) {
+      const cs = this.sheetColors[Math.min(this.sheetColors.length - 1, sheetOfU(L.reduce((a, v) => a + v[0], 0) / L.length))];
+      for (let i = 0; i < L.length * 3; i++, ci += 3) {
+        colF[ci] = cs.front.r; colF[ci + 1] = cs.front.g; colF[ci + 2] = cs.front.b;
+        colB[ci] = cs.back.r; colB[ci + 1] = cs.back.g; colB[ci + 2] = cs.back.b;
+      }
+    }
+    geo.setAttribute('color', new THREE.BufferAttribute(colF, 3));
+    const geoB = new THREE.BufferGeometry();
+    for (const a of ['position', 'normal', 'uv']) geoB.setAttribute(a, geo.attributes[a]);
+    geoB.setAttribute('color', new THREE.BufferAttribute(colB, 3));
     this.front.geometry.dispose();
-    this.front.geometry = this.back.geometry = geo;
+    if (this.back.geometry !== this.front.geometry) this.back.geometry.dispose();
+    this.front.geometry = geo;
+    this.back.geometry = geoB;
     const n = p.edges.length * 6;
     for (const l of [this.dark, this.light]) {
       l.geometry.dispose();
@@ -202,6 +226,7 @@ export class PaperMesh {
     geo.attributes.position.needsUpdate = true;
     geo.attributes.normal.needsUpdate = true;
     geo.computeBoundingSphere();
+    this.back.geometry.boundingSphere = geo.boundingSphere;
 
     const D = this.dark.geometry.attributes.position.array, L = this.light.geometry.attributes.position.array;
     let di = 0, li = 0;

@@ -331,9 +331,25 @@ function edgeList(polys) {
   return res;
 }
 
+// 종이 여러 장: model.sheets = [{ outline, colors, place }], 한 장이면 model.outline·colors
+export const SHEET_U = 10;
+export const sheetsOf = (model) => model.sheets || [{ outline: model.outline, colors: model.colors }];
+export const sheetOfU = (u) => Math.max(0, Math.round(u / SHEET_U));
+
 // 작품 전체를 미리 계산: 단계별 계획 목록
 export function buildModel(model) {
-  let polys = [{ p: model.outline.map(([x, y]) => [x, y, 0]), uv: model.outline.map((v) => v.slice()), e: model.outline.map(() => 1), tags: new Set(), owner: -1 }];
+  let polys = sheetsOf(model).map((sh, k) => {
+    // 여러 장일 때: 종이 좌표(uv)는 장마다 SHEET_U 만큼 떼어 두어 서로 이어진 종이로 보지 않게 하고,
+    // 처음 놓는 자리는 place {x, y, z, rot(도)} 로 정한다
+    const pl = sh.place || {}, a = ((pl.rot || 0) * Math.PI) / 180, c = Math.cos(a), si = Math.sin(a);
+    return {
+      p: sh.outline.map(([x, y]) => [x * c - y * si + (pl.x || 0), x * si + y * c + (pl.y || 0), pl.z || 0]),
+      uv: sh.outline.map(([x, y]) => [x + k * SHEET_U, y]),
+      e: sh.outline.map(() => 1),
+      tags: new Set(model.sheets ? [`sheet${k}`] : []),
+      owner: -1,
+    };
+  });
   const plans = [];
   let inked = []; // 꾸미기 단계에서 이미 그린 획 (다음 꾸미기 단계에도 그대로 보인다)
   for (const step of model.steps) {
