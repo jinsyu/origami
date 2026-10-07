@@ -1,7 +1,7 @@
 // 게 (정사각형 색종이)
 // 출처: Origami Club "Crab 2" (Fumiaki Shingu) https://en.origami-club.com/easy/sea/crab2/
 // 세모 기본형(물풍선 기본형)을 만들어 거꾸로 놓고, 양쪽 끝을 안으로 뒤집어 접어 집게를 세운 뒤 다리를 접는다.
-import { tulip } from './tulip.js';
+import { waterbombBase } from './parts/bases.js';
 import { eye } from './parts/draw.js';
 const H = 0.5;
 const flip = { spin: { a: [0, 0, 0], b: [0, 1, 0], angle: 180 } };
@@ -23,7 +23,7 @@ export const crab = {
   finalView: [0, 0, 1],
   done: '게 완성!',
   steps: [
-    ...tulip.steps.slice(0, 5).map((s) => ({ ...s })),
+    ...waterbombBase(),
     { text: '꼭짓점이 아래로 오게 돌려 놓아요.', moves: [{ spin: { a: [0, 0, 0], b: [0, 0, 1], angle: 180 } }], view: [0, 0, 1] },
     {
       text: '왼쪽 끝을 점선에서 안쪽으로 뒤집어 접어 위로 세워요. 집게가 돼요.',

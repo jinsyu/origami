@@ -28,6 +28,7 @@ GitHub `jinsyu/origami` → Vercel 자동 배포 (main 푸시 = 배포). 빌드 
 | `src/i18n/en.js` | 영어 문구 (작품별 steps 배열 길이를 한국어와 맞출 것) |
 | `src/models/*.js`, `index.js` | 작품 데이터와 목록 (level 순 정렬) |
 | `src/models/parts/folds.js` | squash, petal, flip 등 공용 접기 |
+| `src/models/parts/bases.js` | 기본형 단계 묶음: `squareBase()`(사각, 5단계), `birdBase()`(학, 14단계), `waterbombBase()`(물풍선, 5단계). 작품 steps 앞에 펼쳐 넣는다 |
 | `src/models/parts/draw.js` | 꾸미기 도우미: arc, eye, cheek, box, fill |
 | `scripts/check.mjs` | `npm run check` — 끊김·NaN·튐 검사 |
 | `scripts/layers.mjs` | 층 관통 진단 |
