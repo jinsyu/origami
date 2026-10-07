@@ -1,5 +1,15 @@
 // 영어 문구. 작품별 이름·설명·단계 안내, 화면 문구
 export const enModels = {
+  candle: {
+    name: 'Candle', desc: 'Fold three corners to the center and fold the bottom up so only a small flame shows at the top. Stick it on a birthday card.', paper: 'Square origami paper (orange)',
+    done: 'Your candle is done! Fold several to decorate a birthday cake.',
+    steps: [
+      'Place the paper colored side up as a diamond. Fold in half both ways and unfold to make creases.',
+      'Fold the left, right and bottom corners to the center point.',
+      'Fold the bottom edge up along the dotted line so only a small flame shows at the top.',
+      'Fold both sides behind along the vertical dotted lines, and you are done!',
+    ],
+  },
   monkey: {
     name: 'Monkey', desc: 'Fold in half, then squash one side open to reveal a white face. Draw the eyes and hair.', paper: 'Square origami paper',
     done: 'Your monkey is done!',
