@@ -241,6 +241,7 @@ function dashed(a, b, color, mountain) {
   guideMats.push(m);
 }
 
+const _sz = new THREE.Vector2();
 function arrow(path, color) {
   const parts = makeArrow(path, color);
   guideGroup.add(...parts);
@@ -625,6 +626,6 @@ renderer.setAnimationLoop(() => {
     if (camTween.k >= 1) camTween = null;
   }
   controls.update();
-  faceCamera(guideGroup, camera);
+  faceCamera(guideGroup, camera, _sz.set(canvas.clientWidth, canvas.clientHeight));
   renderer.render(scene, camera);
 });

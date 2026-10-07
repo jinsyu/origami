@@ -90,7 +90,7 @@ export function snapshot(model, plan, t, dir, size = 320, key, withGuides = fals
   const fit = fitCamera(camera, pts, dir, 1, withGuides ? 1.04 : 1.18);
   camera.position.copy(fit.pos);
   camera.lookAt(fit.target);
-  faceCamera(guides, camera);
+  faceCamera(guides, camera, new THREE.Vector2(renderer.domElement.width, renderer.domElement.height));
   renderer.render(scene, camera);
   const url = renderer.domElement.toDataURL('image/png');
   if (key) cache.set(key, url);
