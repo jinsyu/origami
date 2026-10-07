@@ -45,8 +45,8 @@ export function makeShirt(P = shirtParams) {
         text: '흰 띠를 위로 끄집어내 펴고, 접은 선대로 앞으로 내려 접어요. 깃이 생겨요.',
         sim: true,
         moves: [1, -1].flatMap((sx) => [
-          { line: [[-1, T], [1, T]], side: [sx * 0.1, T - 0.02], filter: (c) => flap(sx)(c) && has('band')(c), toward: 1, tag: 'collar', at: [0, 0.5] },
-          { line: CL(sx), side: [sx * 0.03, T + 0.02], filter: flap(sx), toward: 1, tag: 'collar', at: [0.4, 1] },
+          { line: [[-1, T], [1, T]], side: [sx * 0.1, T - 0.02], filter: (c) => flap(sx)(c) && has('band')(c), toward: 1, tag: 'collar', at: [0, 0.8] },
+          { line: CL(sx), side: [sx * 0.03, T + 0.02], filter: flap(sx), toward: 1, tag: 'collar', at: [0.3, 1] },
         ]),
       },
       {
