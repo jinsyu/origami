@@ -48,8 +48,8 @@ export const koala = {
       ],
     },
     { text: '종이를 뒤집어요.', moves: [flip], view: [0, 0.4, 1] },
-    { text: '아래 끝을 점선에서 접어 올려요.', moves: [{ line: [[-1, -0.5], [1, -0.5]], side: [0, -R], filter: (c) => !c.tags.has('top'), tag: 'chin' }, { line: [[-1, -0.5], [1, -0.5]], side: [0, -R], filter: (c) => c.tags.has('top'), toward: -1 }] },
-    { text: '올린 끝을 점선에서 뒤로 접어 하얀 입만 남겨요.', moves: [{ line: [[-1, -0.4], [1, -0.4]], side: [0, -0.32], filter: has('chin'), toward: -1 }] },
+    { text: '앞 장만 아래 끝을 점선에서 접어 올려요.', moves: [{ line: [[-1, -0.5], [1, -0.5]], side: [0, -R], filter: (c) => !c.tags.has('top'), tag: 'chin' }] },
+    { text: '뒤에 남은 아래 끝을 점선에서 뒤로 접어요. 하얀 입이 생겨요.', moves: [{ line: [[-1, -0.5], [1, -0.5]], side: [0, -R], filter: (c) => c.tags.has('top'), toward: -1 }] },
     { text: '연필로 눈과 커다란 코를 그리면 완성!', view: [0, -0.1, 1], draw: [...eye(-0.14, -0.19, 0.022), ...eye(0.14, -0.19, 0.022), { dot: [0, -0.3], r: 0.055, ry: 0.075, color: PENCIL }] },
   ],
 };
