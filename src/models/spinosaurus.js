@@ -1,7 +1,7 @@
 // 스피노사우루스 (정사각형 색종이, 마름모 방향)
 // 출처: Origami Club "A Spinosaurus" (Fumiaki Shingu) https://en.origami-club.com/easy/dinosaur/spinosaurus/
 // 아래 변을 가운데 선에 맞춰 접고 아래·위를 접어 띠를 만든 뒤, 오른쪽 끝을 접고 위아래로 뒤집어 왼쪽 끝을 접으면 머리가 된다.
-import { eye, PENCIL } from './parts/draw.js';
+import { bigEye, fillPoly, PENCIL } from './parts/draw.js';
 const R = Math.SQRT1_2;
 const C = Math.cos(Math.PI / 8), S = Math.sin(Math.PI / 8);
 const SPOT = '#8a3fa0';
@@ -38,18 +38,20 @@ export function makeSpinosaurus(P = spinosaurusParams) {
       { text: '위아래로 뒤집어요. 흰 세모가 위로 솟아요.', moves: [{ spin: { a: [0, 0, 0], b: [1, 0, 0], angle: 180 } }], view: V },
       { text: '왼쪽 끝을 세로 점선에서 오른쪽으로 접어요. 머리가 돼요.', moves: [{ line: [[head, -1], [head, 1]], side: [-R, 0], tag: 'head' }] },
       {
-        text: '연필로 눈과 이빨, 등 돛의 가시를 그려요.',
+        text: '연필로 눈과 뾰족한 이빨, 등 돛의 가시를 그려요.',
         view: V,
         draw: [
-          ...eye(-0.19, 0.055, 0.022),
-          { line: [[-0.14, -0.03], [-0.11, -0.075], [-0.08, -0.03], [-0.05, -0.075], [-0.02, -0.03], [0.01, -0.065]], w: 0.008, color: PENCIL },
-          ...[-0.12, -0.06, 0, 0.06, 0.12].map((x) => ({ line: [[x * 0.9, 0.18], [x, 0.27]], w: 0.012, color: PENCIL })),
+          ...bigEye(-0.2, 0.065, 0.034, { look: [0.4, -0.1], brow: 0.8, side: 1 }),
+          // 흰 입 윗변에서 내려오는 이빨
+          ...[-0.15, -0.09, -0.03, 0.03].map((x) => fillPoly([[x - 0.028, -0.005], [x + 0.028, -0.005], [x, -0.055]], PENCIL)),
+          // 돛의 가시: 밑에서 위로 부채처럼 퍼지는 굵은 줄
+          ...[-2, -1, 0, 1, 2].map((k) => ({ line: [[k * 0.05, 0.175], [k * 0.065, 0.3 - Math.abs(k) * 0.03]], w: 0.016, color: PENCIL })),
         ],
       },
       {
         text: '색연필로 몸에 점무늬를 그리면 완성!',
         view: V,
-        draw: [[0.13, 0.06], [0.28, 0.08], [0.21, -0.04], [0.36, -0.02], [0.1, -0.09], [0.42, -0.1]].map(([x, y]) => ({ dot: [x, y], r: 0.012, color: SPOT })),
+        draw: [[0.13, 0.06], [0.28, 0.08], [0.21, -0.04], [0.36, -0.02], [0.1, -0.09], [0.42, -0.1], [0.02, 0.09]].map(([x, y]) => ({ dot: [x, y], r: 0.014, color: SPOT })),
       },
     ],
   };

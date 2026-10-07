@@ -521,7 +521,7 @@ export const enModels = {
       'Fold the upper-left part behind along the crease.',
       'Fold the left tip up along the slanted dotted line. It becomes the horns.',
       'Turn the paper over.',
-      'Fold the left tip of the front layer to the right along the dotted line. It becomes a leg.',
+      'Fold the left tip of the front layer to the right along the dotted line, letting the tip stick out a little below. It becomes a leg.',
       'Draw the eye and the stripes on the frill with a pencil.',
       'Draw spots on the body with a colored pencil, and you are done!',
     ],

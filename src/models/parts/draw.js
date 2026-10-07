@@ -25,3 +25,11 @@ export const heart = (c, r, n = 40) => Array.from({ length: n }, (_, i) => {
   const t = (i / n) * Math.PI * 2;
   return [c[0] + r * 0.0625 * 16 * Math.sin(t) ** 3, c[1] + r * 0.0625 * (13 * Math.cos(t) - 5 * Math.cos(2 * t) - 2 * Math.cos(3 * t) - Math.cos(4 * t))];
 });
+// 큰 눈: 흰자 + 연필 테두리 + 한쪽으로 쏠린 눈동자, brow 를 주면 찡그린 눈썹 (공룡처럼 무섭게)
+//  look: 눈동자가 쏠리는 방향 [dx, dy] (-1~1), brow: 눈썹 기울기 (+면 바깥쪽이 올라감, 0 이면 없음)
+export const bigEye = (x, y, r, { look = [0, 0], brow = 0, side = 1 } = {}) => [
+  { dot: [x, y], r, color: '#ffffff' },
+  { line: arc([x, y], r, r, 0, 360, 28), w: r * 0.22, color: PENCIL },
+  { dot: [x + look[0] * r * 0.4, y + look[1] * r * 0.4], r: r * 0.5, color: PENCIL },
+  ...(brow ? [{ line: [[x - side * r * 1.1, y + r * (1.15 - brow * 0.5)], [x + side * r * 1.1, y + r * (1.15 + brow * 0.5)]], w: r * 0.35, color: PENCIL }] : []),
+];
