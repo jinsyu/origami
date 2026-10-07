@@ -17,10 +17,8 @@ export const top = {
   finalView: [0.3, -0.5, 1],
   done: '방석 팽이 완성! 이쑤시개를 잡고 손가락으로 비틀어 돌리면 색이 섞여 보여요.',
   steps: [
-    {
-      text: '색깔 면이 아래로 가게 놓고, 대각선으로 두 번 접었다 펴서 가운데 점을 찾아요.',
-      moves: [{ line: [[-1, -1], [1, 1]], side: [H, -H], unfold: true }, { line: [[-1, 1], [1, -1]], side: [H, H], unfold: true }],
-    },
+    { text: '색깔 면이 아래로 가게 놓고, 대각선으로 반 접었다 펴요.', moves: [{ line: [[-1, -1], [1, 1]], side: [H, -H], unfold: true }] },
+    { text: '반대쪽 대각선으로도 접었다 펴요. 두 선이 만나는 곳이 가운데 점이에요.', moves: [{ line: [[-1, 1], [1, -1]], side: [H, H], unfold: true }] },
     {
       text: '네 모서리를 가운데 점에 맞춰 접어요. 방석 접기예요.',
       moves: [

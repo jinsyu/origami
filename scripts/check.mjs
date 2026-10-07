@@ -6,6 +6,7 @@
 import { buildModel, endPose } from '../src/engine.js';
 import { prepareSim, simPose } from '../src/sim.js';
 import { MODELS } from '../src/models/index.js';
+import { enModels } from '../src/i18n/en.js';
 
 const TEAR = 0.07;   // 끝 상태에서 허용하는 같은 점의 최대 차이
 const JUMP = 0.05;   // 복합 단계에서 프레임 사이 최대 이동
@@ -47,6 +48,12 @@ for (const m of MODELS) {
     }
   });
   console.log(`✓ ${m.level}. ${m.name} — ${plans.length}단계, ${Math.round(performance.now() - t0)}ms`);
+}
+// 영어 문구: 작품마다 있고 단계 수가 같아야 한다
+for (const m of MODELS) {
+  const e = enModels[m.id];
+  if (!e) bad(m, '영어 문구 없음');
+  else if (e.steps.length !== m.steps.length) bad(m, `영어 단계 수 ${e.steps.length} ≠ ${m.steps.length}`);
 }
 console.log(fail ? `\n문제 ${fail}건` : '\n모든 작품 통과');
 process.exit(fail ? 1 : 0);

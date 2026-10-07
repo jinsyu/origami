@@ -4,7 +4,8 @@ export const enModels = {
     name: 'Cushion Spinning Top', desc: 'Fold the four corners to the center three times for a sturdy top. Color it, add a toothpick and give it a spin.', paper: 'Square origami paper, a toothpick',
     done: 'Your spinning top is done! Twist the toothpick between your fingers and watch the colors blend.',
     steps: [
-      'Place the paper colored side down. Fold and unfold both diagonals to find the center.',
+      'Place the paper colored side down. Fold in half along a diagonal and unfold.',
+      'Fold and unfold along the other diagonal too. Where the two lines cross is the center.',
       'Fold all four corners to the center point. This is the cushion fold.',
       'Fold the four new corners to the center once more.',
       'Turn the paper over.',
