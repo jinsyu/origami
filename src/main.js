@@ -21,7 +21,7 @@ const LANG = (() => {
 })();
 const EN = LANG === 'en';
 const KO = {
-  title: '종이접기 교실', pencils: '연필, 색연필', fold: '이 단계 접기', draw: '이 단계 그리기', full: '크게 보기', unfull: '작게 보기', stop: '멈추기', replay: '처음부터 다시 보기', auto: '끝까지 이어서 보기',
+  title: '종이접기 교실', pencils: '연필, 색연필', pencil: '연필', fold: '이 단계 접기', draw: '이 단계 그리기', full: '크게 보기', unfull: '작게 보기', stop: '멈추기', replay: '처음부터 다시 보기', auto: '끝까지 이어서 보기',
   startBtn: (n) => `${n}부터 시작하기`, continueBtn: (n, i) => `${n} ${i}단계부터 이어서 접기`,
   done: '완성', folded: '접어 봤어요', resume: (i) => `${i}단계부터 이어서`, next: (n) => `다음 작품: ${n}`, stepsCount: (n) => `${n}단계`, level: (l) => ['입문', '초급', '중급', '고급'][l - 1],
   printTitle: (n) => `${n} 접는 방법`,
@@ -340,7 +340,13 @@ function saveResume(id, i) {
 }
 
 // 준비물: 꾸미기 단계가 있으면 연필·색연필도 챙기게 한다
-const supplies = (m) => (m.steps.some((s) => s.draw) ? `${m.paper}, ${T.pencils}` : m.paper);
+function supplies(m) {
+  const strokes = m.steps.flatMap((s) => s.draw || []);
+  if (!strokes.length) return m.paper;
+  // 연필 색(기본)과 흰색만 쓰면 연필만, 다른 색이 있으면 색연필도
+  const colored = strokes.some((s) => s.color && !['#34363a', '#ffffff'].includes(s.color.toLowerCase()));
+  return `${m.paper}, ${colored ? T.pencils : T.pencil}`;
+}
 
 function openModel(m, startStep = 0) {
   if (m !== model) {

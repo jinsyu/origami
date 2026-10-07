@@ -127,8 +127,7 @@ export const enModels = {
       'Fold the next layer down too, a little higher than the first, so a stripe shows.',
       'Turn the paper over.',
       'Fold both sides in at an angle to shape the body.',
-      'Turn it back over.',
-      'With a pencil, draw round eyes at both ends of the head, and you are done!',
+      'Turn it back over. Your cicada is done!',
     ],
   },
   kabuto: {
@@ -191,9 +190,7 @@ export const enModels = {
       'Fold the bottom corner up to a little above the center line.',
       'Fold the right corner in a little past the middle.',
       'Fold the left corner in over the right flap.',
-      'Fold the top corner down to close the flap.',
-      'With a pencil, draw a stamp outline at the top right and lines for your friend’s name.',
-      'Color a heart sticker on the tip of the flap and fill in the stamp with colored pencils, and you are done!',
+      'Fold the top corner down to close the flap. Your envelope is done!',
     ],
   },
 
@@ -229,7 +226,7 @@ export const enModels = {
   },
   frame: {
     name: 'Picture Frame', desc: 'Fold the four corners to the center on both sides to make a frame with a white border. Lots of layers, so fold carefully.', paper: 'Square origami paper',
-    done: 'Your picture frame is done! You can also draw another picture or stick in a photo.',
+    done: 'Your picture frame is done! Draw a picture or stick a photo in the middle.',
     steps: [
       'Place the paper colored side up. Fold it in half diagonally and unfold.',
       'Fold it in half along the other diagonal and unfold too. You get an X.',
@@ -237,14 +234,12 @@ export const enModels = {
       'Fold the four tips at the center back outward a little. Colored triangles appear.',
       'Turn the paper over.',
       'Fold the four corners to the center point again.',
-      'Turn it back over.',
-      'With a pencil, draw a flower in the middle of the frame: round petals, a stem and a leaf.',
-      'Color the petals pink, the center yellow and the leaf green with colored pencils, and you are done!',
+      'Turn it back over. Your picture frame is done!',
     ],
   },
   duck: {
     name: 'Duck', desc: 'Reverse fold the thin end up into a neck, then reverse fold its tip once more for the head and beak. Two reverse folds in a row.', paper: 'Square origami paper',
-    done: 'Your duck is done! Float it on water.',
+    done: 'Your duck is done! Draw an eye and float it on water.',
     steps: [
       'Place the paper colored side down as a diamond. Fold it in half vertically and unfold to make a center line.',
       'Fold the two lower edges to the center line to make a kite.',
@@ -252,8 +247,7 @@ export const enModels = {
       'Fold the paper in half backward along the center line.',
       'Lay it down with the fold at the bottom. The thin end points right.',
       'Outside reverse fold the thin end so it stands up. This is the neck.',
-      'Reverse fold the tip of the neck forward for the head and beak.',
-      'Dot an eye on the head with a pencil, then color the beak orange with a colored pencil, and you are done!',
+      'Reverse fold the tip of the neck forward for the head and beak. Your duck is done!',
     ],
   },
   tulip: {
@@ -354,7 +348,7 @@ export const enUI = {
   symbols: 'Learn the fold symbols',
   foot: 'Drag to rotate the paper. Use ← → to change steps and Space to play.',
   back: 'All models', print: 'Printable diagram', full: 'Full screen', unfull: 'Exit full screen',
-  prev: 'Previous step', pencils: 'pencil, colored pencils', fold: 'Fold this step', draw: 'Draw this step', auto: 'Play to the end', stop: 'Stop', replay: 'Watch again from the start',
+  prev: 'Previous step', pencils: 'pencil, colored pencils', pencil: 'pencil', fold: 'Fold this step', draw: 'Draw this step', auto: 'Play to the end', stop: 'Stop', replay: 'Watch again from the start',
   speed: 'Speed', slow: 'Slow', normal: 'Normal', fast: 'Fast', steps: 'Steps', done: 'Done', peek: 'Result',
   valley: 'Valley fold', mountain: 'Mountain fold', next: (n) => `Next: ${n}`, stepsCount: (n) => `${n} steps`,
   startBtn: (n) => `Start with the ${n}`, continueBtn: (n, i) => `Continue the ${n} from step ${i}`,
