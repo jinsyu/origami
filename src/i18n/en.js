@@ -1,5 +1,18 @@
 // 영어 문구. 작품별 이름·설명·단계 안내, 화면 문구
 export const enModels = {
+  pencil: {
+    name: 'Pencil', desc: 'Fold the top into a thin strip for the lead, then fold the corners front and back for a pointy pencil.', paper: 'Square origami paper',
+    done: 'Your pencil is done! Fold them in many colors and put them in your pencil case.',
+    steps: [
+      'Place the paper colored side down. Fold in half both ways and unfold to make creases.',
+      'Fold the top edge to the center line and unfold.',
+      'Fold the top edge to the crease you just made and unfold.',
+      'Fold the top edge down to the top crease to make a thin strip. This is the lead.',
+      'Fold both side edges to the center line.',
+      'Fold the inner top corners down and outward along the dotted lines. The white wood shows.',
+      'Fold the outer top corners behind along the dotted lines to make a pointy tip, and you are done!',
+    ],
+  },
   frog: {
     name: 'Frog', desc: 'Squash one side of a triangle into a square head with a white mouth. Good practice for the squash fold.', paper: 'Square origami paper',
     done: 'Your frog is done! Ribbit ribbit!',

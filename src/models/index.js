@@ -36,5 +36,6 @@ import { car } from './car.js';
 import { goldfish } from './goldfish.js';
 import { mouse } from './mouse.js';
 import { frog } from './frog.js';
+import { pencil } from './pencil.js';
 
-export const MODELS = [dog, cat, flower, cup, bookmark, house, cicada, kabuto, hat, airplane, glider, envelope, whale, heart, frame, duck, tulip, heron, masu, roofhouse, crane, fox, panda, boat, top2, ddakji, rabbit, watermelon, motorboat, fuji, chick, pig, koala, car, goldfish, mouse, frog].sort((a, b) => a.level - b.level);
+export const MODELS = [dog, cat, flower, cup, bookmark, house, cicada, kabuto, hat, airplane, glider, envelope, whale, heart, frame, duck, tulip, heron, masu, roofhouse, crane, fox, panda, boat, top2, ddakji, rabbit, watermelon, motorboat, fuji, chick, pig, koala, car, goldfish, mouse, frog, pencil].sort((a, b) => a.level - b.level);
