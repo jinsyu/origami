@@ -74,6 +74,10 @@ button, select, input { font: inherit; color: inherit; }
 .g-foot { max-width: 1120px; margin: 0 auto; padding: 12px 24px 56px; color: var(--muted); font-size: 14px; }
 
 /* 접기 기호 */
+.tips { list-style: none; padding: 0; margin: 0; display: grid; grid-template-columns: repeat(auto-fill, minmax(260px, 1fr)); gap: 18px; }
+.tips li { background: var(--sheet); border: 1px solid var(--rule); border-radius: 6px; padding: 16px 18px 18px; }
+.tips h3 { font-family: var(--display); font-weight: 400; font-size: 20px; margin: 0 0 6px; }
+.tips p { margin: 0; font-size: 14.5px; color: var(--ink-soft); line-height: 1.6; }
 .symbols { list-style: none; padding: 0; margin: 0; display: grid; grid-template-columns: repeat(auto-fill, minmax(230px, 1fr)); gap: 18px; }
 .symbols a { display: block; text-decoration: none; color: inherit; background: var(--sheet); border: 1px solid var(--rule); border-radius: 6px; padding: 16px 18px 18px; height: 100%; }
 .symbols a:hover { border-color: #b9c4b5; }
