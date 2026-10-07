@@ -621,7 +621,7 @@ export const enModels = {
       'Inside reverse fold the right leg up between the wings. This is the neck.',
       'Inside reverse fold the left leg up too. This is the tail.',
       'Inside reverse fold the tip of the neck to make the head.',
-      'Spread both wings out level. Your crane is done!',
+      'Spread the wings while gently pulling them apart, and the body puffs up. Your crane is done!',
     ],
   },
   roofhouse: {

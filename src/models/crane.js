@@ -47,6 +47,15 @@ const head = () => {
     { line, side: tip, spine, filter: (c) => c.tags.has('neck') && c.tags.has('f2'), toward: 1, shift: 0.5 },
   ];
 };
+// 날개를 벌리면 몸통 앞뒤 벽이 벌어져 빵빵해진다: 가운데(x=0)가 가장 많이, 목·꼬리 쪽과 위아래 끝은 그대로.
+// 겹마다 지금 높이(z)에 비례해 밀어내므로 겹 순서가 유지된다
+const puff = (p, e) => {
+  const [x, y, z] = p;
+  const fx = Math.max(0, 1 - Math.abs(x) / 0.135);
+  const fy = y < 0 && y > -0.32 ? Math.sin((Math.PI * -y) / 0.32) : 0;
+  const s = Math.max(-1, Math.min(1, z / 0.03));
+  return [x, y, z + 0.07 * e * fx * fy * s];
+};
 const tagged = (moves, tag) => moves.map((m) => ({ ...m, tag }));
 const preAndPetal = (front, face, petalTag, side) => [
   { text: `${side} 날개 두 장의 아래쪽 변을 가운데 선에 맞춰 접어요.`, moves: tagged(kite(front), 'kite') },
@@ -66,7 +75,9 @@ export const crane = {
   outline: [[0, -R], [R, 0], [0, R], [-R, 0]],
   view: [0.3, -0.45, 1],
   finalView: [0.45, 0.75, 1],
-  done: '학 완성! 날개를 살짝 벌리고 몸통을 부풀려 보세요.',
+  // 21단계: 몸통 속 가운데 겹(날개 밑동과 다리 겹이 만나는 점)이 부풀리며 벌어진다. 겉에서는 보이지 않는다
+  knownTears: [21],
+  done: '학 완성! 몸통이 빵빵하게 부풀었어요.',
   steps: [
     { text: '흰 면이 위로 오게 마름모로 놓고, 위 꼭짓점을 아래 꼭짓점에 맞춰 반으로 접어요.', moves: [{ line: [[-1, 0], [1, 0]], side: [0, 1], tag: 'f1' }] },
     { text: '오른쪽 끝을 왼쪽 끝에 맞춰 한 번 더 반으로 접어요.', moves: [{ line: [[0, -1], [0, 1]], side: [1, 0], tag: 'f2' }] },
@@ -83,7 +94,8 @@ export const crane = {
     { text: '왼쪽 다리도 안쪽 뒤집어 접어 세워요. 꼬리가 돼요.', sim: true, moves: lift(-1, 145, 'tail') },
     { text: '목 끝을 안쪽 뒤집어 접어 머리를 만들어요.', sim: true, moves: head() },
     {
-      text: '양쪽 날개를 옆으로 수평이 되게 펼치면 학 완성!',
+      text: '양쪽 날개를 옆으로 펼치면서 살살 당기면 몸통이 빵빵하게 부풀어요. 학 완성!',
+      deform: puff,
       moves: [
         { line: [[-1, -K], [1, -K]], side: [0, 0.2], filter: (c) => c.tags.has('petalB'), angle: 90, toward: 1 },
         { line: [[-1, -K], [1, -K]], side: [0, 0.2], filter: (c) => c.tags.has('petalA'), angle: 90, toward: -1 },

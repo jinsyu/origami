@@ -1,6 +1,6 @@
 // 종이 메시: 단계 계획(plan)과 진행률 t를 받아 앞·뒷면, 가장자리·접힌 선을 그린다.
 import * as THREE from 'three';
-import { pose, polyNormal, sheetsOf, sheetOfU } from './engine.js';
+import { pose, polyNormal, cross, sub, sheetsOf, sheetOfU } from './engine.js';
 import { prepareSim, simPose } from './sim.js';
 
 export const simOf = (p) => p._sim || (p._sim = prepareSim(p));
@@ -216,9 +216,13 @@ export class PaperMesh {
       const nn = normals[qi];
       const c = [0, 1, 2].map((i) => pts.reduce((a, v) => a + v[i], 0) / pts.length);
       for (let i = 0; i < pts.length; i++) {
-        for (const v of [c, pts[i], pts[(i + 1) % pts.length]]) {
+        // 부풀린 면은 평평하지 않으므로 삼각형마다 법선을 구한다 (평평하면 다각형 법선과 같다)
+        const a = pts[i], b = pts[(i + 1) % pts.length];
+        const tn = cross(sub(a, c), sub(b, c)), tl = Math.hypot(...tn);
+        const n3 = tl > 1e-9 ? [tn[0] / tl, tn[1] / tl, tn[2] / tl] : nn;
+        for (const v of [c, a, b]) {
           P[k] = v[0]; P[k + 1] = v[1]; P[k + 2] = v[2];
-          Nn[k] = nn[0]; Nn[k + 1] = nn[1]; Nn[k + 2] = nn[2];
+          Nn[k] = n3[0]; Nn[k + 1] = n3[1]; Nn[k + 2] = n3[2];
           k += 3;
         }
       }

@@ -259,7 +259,7 @@ function planStep(polys, step) {
     moves.push(r.mv);
   });
   moves.forEach((mv, mi) => { mv.shift = computeShift(cur, mv, mi); });
-  return { polys: cur, moves, edges: edgeList(cur) };
+  return { polys: cur, moves, edges: edgeList(cur), deform: step.deform };
 }
 
 // 복합 단계: 하위 동작을 차례로 적용해 최종 상태를 만든다 (각 상태의 위치를 hist에 기록)
@@ -295,13 +295,15 @@ function planSeqStep(polys, step) {
 export function pose(plan, t) {
   if (plan.sim) return t < 0.5 ? plan.polys.map((q) => q.hist[0]) : plan.polys.map((q) => q.p);
   const e = t * t * (3 - 2 * t);
-  return plan.polys.map((q) => {
+  const out = plan.polys.map((q) => {
     if (q.owner < 0) return q.p;
     const mv = plan.moves[q.owner];
     const f = mv.unfold ? Math.sin(Math.PI * e) : e;
     const s = mv.unfold ? 0 : mv.shift * f;
     return q.p.map((p) => add(rotate(p, mv.o, mv.d, mv.theta * f), mul(mv.u, s)));
   });
+  // deform(p, e): 위치에 따라 꼭짓점을 옮기는 연속 변형 (부풀리기). 같은 점은 같이 움직여 끊기지 않는다
+  return plan.deform ? out.map((L) => L.map((p) => plan.deform(p, e))) : out;
 }
 
 // 단계의 시작·끝 상태
