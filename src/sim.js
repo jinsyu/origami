@@ -122,11 +122,13 @@ export function prepareSim(plan) {
   const rv = plan.swing && plan.subs.find((s) => s.mv.rev);
   if (rv) {
     sim.swing = { P: rv.mv.rev.P, delta: rv.mv.rev.delta };
-    // 뒤집어 넘기기: 날개 끝의 앞뒤 겹이 함께 접는 선을 축으로 보는 사람 반대쪽(뒤)으로 180° 넘어간다.
+    // 뒤집어 넘기기(단계에 swing: 'tuck'): 날개 끝의 앞뒤 겹이 함께 접는 선을 축으로 보는 사람 반대쪽(뒤)으로 180° 넘어간다.
+    // 도안 화살표가 모서리를 뒤로 돌려 넘기는 경우(게 7·8단계)에 쓴다. 기본(평면 안 돌리기)은 날개가 겹 사이로 들어가며
+    // 올라가는 모습이라, 학 목·꼬리처럼 '날개 사이로 안쪽 뒤집어 접기'는 기본을 쓴다 (tuck 이면 뒤로 접는 것처럼 보인다).
     // 180° 회전은 어느 쪽으로 돌아도 끝 자리가 같으므로, 두 겹 모두 뒤로 돌린다 (앞 겹은 뒤로 넘어가 겹 사이로 들어가고,
     // 뒤 겹은 그 뒤를 돌아 앞으로 나온다). 같은 축을 같이 돌아 등선·접는 선 이음이 끊기지 않는다
     const subOf = member.map((ms) => ms.find((k) => plan.subs[k].mv.rev));
-    if (member.every((ms, pi) => !ms.length || subOf[pi] !== undefined)) {
+    if (plan.swing === 'tuck' && member.every((ms, pi) => !ms.length || subOf[pi] !== undefined)) {
       sim.tuck = start.map((L, pi) => {
         const k = subOf[pi];
         if (k === undefined) return null;

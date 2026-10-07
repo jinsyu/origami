@@ -28,6 +28,7 @@ export const crab = {
     {
       text: '왼쪽 끝을 점선에서 안쪽으로 뒤집어 접어 위로 세워요. 집게가 돼요.',
       sim: true,
+      swing: 'tuck', // 도안 화살표대로 모서리가 뒤로 돌아 넘어간다
       moves: [
         { line: CL, side: [-0.45, 0.45], filter: (c) => flap(c) && top(c) && c.x < 0, toward: -1, spine: [[0, 0], [-1, 1]], tag: 'clawL' },
         { line: CL, side: [-0.45, 0.45], filter: (c) => flap(c) && !top(c) && c.x < 0, toward: 1, spine: [[0, 0], [-1, 1]], tag: 'clawL' },
@@ -36,6 +37,7 @@ export const crab = {
     {
       text: '오른쪽 끝도 똑같이 안쪽으로 뒤집어 접어 집게를 세워요.',
       sim: true,
+      swing: 'tuck', // 도안 화살표대로 모서리가 뒤로 돌아 넘어간다
       moves: [
         { line: CR, side: [0.45, 0.45], filter: (c) => flap(c) && top(c) && c.x > 0, toward: -1, spine: [[0, 0], [1, 1]], tag: 'clawR' },
         { line: CR, side: [0.45, 0.45], filter: (c) => flap(c) && !top(c) && c.x > 0, toward: 1, spine: [[0, 0], [1, 1]], tag: 'clawR' },

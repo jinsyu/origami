@@ -425,7 +425,7 @@ function planSeqStep(polys, step) {
   cur.forEach((q) => { q.owner = -1; });
   // 펼쳐 누르기·꽃잎 접기처럼 포개진 겹을 들어 올려 다시 배치하는 단계 (role 이 붙은 하위 동작)
   const unstack = step.moves.some((m) => m.role);
-  return { polys: cur, moves: [], subs, sim: true, unstack, tearOk: !!step.tearOk, swing: step.swing !== false, edges: edgeList(cur) };
+  return { polys: cur, moves: [], subs, sim: true, unstack, tearOk: !!step.tearOk, swing: step.swing === false ? false : step.swing === 'tuck' ? 'tuck' : true, edges: edgeList(cur) };
 }
 
 // 서로 엇갈리는 두 '접었다 펴기'를 한 단계에서 하면, 동시에 움직일 때 한 조각이 한 동작에만 속해
