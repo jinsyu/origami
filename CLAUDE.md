@@ -45,6 +45,7 @@ GitHub `jinsyu/origami` → Vercel 자동 배포 (main 푸시 = 배포). 빌드 
 
 - 로컬: `python3 -m http.server 5173` (이미 띄워져 있으면 재사용). 브라우저 캐시 때문에 수정 파일은 `fetch(url,{cache:'reload'})` 후 새로고침.
 - 검증: `npm run check` + `node --check src/i18n/en.js` (check는 en.js를 읽지 않음) + 브라우저 화면 확인.
+- 공유 미리보기: `scripts/og.html` 을 1200x630 으로 캡처해 og.jpg 로 저장 (작품 수 문구 갱신).
 - 썸네일: `node scripts/thumb-server.mjs` 띄우고 헤드리스 크롬(`--headless=new --use-angle=swiftshader --enable-unsafe-swiftshader`)으로 `?live&save#/` 를 40초 열기. 작품·색을 바꾸면 반드시 다시 만든다.
 - 브라우저 패널이 가려지면 rAF가 멈춘다 → 슬라이더(`#progress`)를 직접 바꿔 상태를 본다.
 
