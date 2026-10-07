@@ -1,0 +1,11 @@
+{
+  "src": "https://en.origami-club.com/easy/sea/octopus/zu.gif",
+  "panels": [
+    { "label": 1, "after": 0, "box": [43, 31, 442, 430] },
+    { "label": 2, "after": 1, "box": [541, 31, 940, 430] },
+    { "label": 3, "after": 2, "box": [150, 496, 354, 894] },
+    { "label": 4, "after": 3, "box": [403, 496, 724, 894] },
+    { "label": 5, "after": 4, "box": [94, 953, 414, 1350] },
+    { "label": "완성", "after": 6, "box": [454, 1033, 980, 1472] }
+  ]
+}
