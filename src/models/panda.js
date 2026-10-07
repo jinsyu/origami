@@ -40,7 +40,7 @@ export function makePanda({ s, v, b, n } = pandaParams) {
       ],
     },
     { text: '아래 꼭짓점을 점선에서 접어 올려요.', moves: [{ line: [[-1, b], [1, b]], side: [0, -R], tag: 'chin' }] },
-    { text: '올린 끝을 흰 부분 안쪽으로 접어 넣어요. 검은 코가 생겨요.', moves: [{ line: [[-1, n], [1, n]], side: [0, n + 0.05], filter: (c2) => c2.tags.has('chin') && c2.tags.has('rear'), toward: -1 }] },
+    { text: '올린 끝을 흰 부분 안쪽으로 접어 넣어요. 검은 코가 생겨요.', moves: [{ line: [[-1, n], [1, n]], side: [0, n + 0.05], filter: (c2) => c2.tags.has('chin') && c2.tags.has('rear'), toward: 1, insert: 1 }] },
     {
       text: '검은 색연필로 눈 둘레를 칠하고, 흰 눈을 그리면 완성!',
       view: [0, -0.2, 1],

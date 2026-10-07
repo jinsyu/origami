@@ -39,8 +39,8 @@ export function makeWhale({ tx, th, hy } = whaleParams) {
       text: '가는 끝을 바깥으로 뒤집어 접어 위로 세워요. 꼬리가 돼요.',
       sim: true,
       moves: [
-        { line: TAIL_LINE, side: [0.6, 0.02], filter: (c) => !c.tags.has('back'), toward: 1, spine: [[0, 0], [1, 0]] },
-        { line: TAIL_LINE, side: [0.6, 0.02], filter: (c) => c.tags.has('back'), toward: -1, spine: [[0, 0], [1, 0]] },
+        { line: TAIL_LINE, side: [0.6, 0.02], filter: (c) => !c.tags.has('back'), toward: -1, spine: [[0, 0], [1, 0]] },
+        { line: TAIL_LINE, side: [0.6, 0.02], filter: (c) => c.tags.has('back'), toward: 1, spine: [[0, 0], [1, 0]] },
       ],
     },
     {
