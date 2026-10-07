@@ -1,5 +1,21 @@
 // 영어 문구. 작품별 이름·설명·단계 안내, 화면 문구
 export const enModels = {
+  koala: {
+    name: 'Koala Face', desc: 'Fold both sides down and then back up and out to make big round ears. Draw a big nose.', paper: 'Square origami paper (gray)',
+    done: 'Your koala face is done!',
+    steps: [
+      'Place the paper colored side down as a diamond. Fold in half and unfold to make a center crease.',
+      'Fold the top corner down to the bottom corner.',
+      'Fold both side corners down to the bottom corner.',
+      'Fold the flaps back up and outward along the dotted lines. These are the ears.',
+      'Fold the small point between the ears down a little.',
+      'Fold the ear tips down a little to round them.',
+      'Turn the paper over.',
+      'Fold the bottom tip up along the dotted line.',
+      'Fold the tip behind along the dotted line, leaving only a white mouth.',
+      'Draw the eyes and a big nose with a pencil, and you are done!',
+    ],
+  },
   pig: {
     name: 'Pig Face', desc: 'Fold the bottom tip up and back down for a white snout, and fold the top corners for ears. Draw the nostrils.', paper: 'Square origami paper (pink)',
     done: 'Your pig face is done! Say oink oink!',
