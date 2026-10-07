@@ -30,6 +30,7 @@ GitHub `jinsyu/origami` → Vercel 자동 배포 (main 푸시 = 배포). 빌드 
 | `src/models/*.js`, `index.js` | 작품 데이터와 목록 (level 순 정렬) |
 | `src/models/parts/folds.js` | squash, petal, flip 등 공용 접기 |
 | `src/models/parts/bases.js` | 기본형 단계 묶음: `squareBase()`(사각, 5단계), `birdBase()`(학, 14단계), `waterbombBase()`(물풍선, 5단계), `fishBase()`(물고기, 4단계: 연 선 두 번 + 토끼 귀 접기 위아래). 작품 steps 앞에 펼쳐 넣는다 |
+| `src/models/parts/axioms.js` | 접는 선 작도(종이접기 공리): `through`, `pointToPoint`, `lineToLine`, `perpThrough`, `parallelThrough`, `pointToLineThrough`, `pointToLinePerp`, `intersect`, `reflect`, `mid`, `along` |
 | `src/models/parts/draw.js` | 꾸미기 도우미: arc, eye, cheek, box, fill |
 | `scripts/check.mjs` | `npm run check` — 끊김·NaN·튐 검사 |
 | `scripts/layers.mjs` | 층 관통 진단 |
@@ -108,6 +109,7 @@ GitHub `jinsyu/origami` → Vercel 자동 배포 (main 푸시 = 배포). 빌드 
 - **grab (종이처럼 고르기)**: 동작에 `grab: [x, y]` 를 주면 그 점을 덮는 겹에서 출발해, 접는 선을 넘지 않고 종이로 이어진 조각만 함께 접는다. `layers: 'top'`(기본, 맨 위 한 장) | `'all'`(그 점의 모든 겹) | 숫자 n. `side` 를 생략하면 잡은 점 쪽이 접히는 쪽. `filter` 와 함께 쓰면 후보를 더 좁힌다.
   - 같은 쪽에서 접힌 선으로 붙어 있는 겹은 자동으로 같이 움직인다(실제 종이와 같음). 태그를 미리 붙여 둘 필요가 줄어든다.
   - `half: 'front'|'back'`: 잡은 겹을 높이 순으로 위·아래 절반으로 나눈다. 뒤집어 접기(앞 겹 toward -1, 뒤 겹 toward 1)에 쓴다. 학 18·19단계를 이것으로 바꿔도 결과가 같음을 확인.
+- **접는 선 작도 (`parts/axioms.js`)**: 동작의 `line`·`side`·`grab`·`spine` 에 함수 `(S) => 값` 을 쓰면 엔진이 그 단계 직전 종이 상태 `S` 를 넘긴다. `S.at(uv)` = 처음 종이 위 점 uv 가 지금 놓인 자리, `S.edge(u1, u2)` = 두 점을 잇는 선. 도안 문장을 그대로 옮긴다: "변을 가운데 선에 맞춰" → `lineToLine(S.edge(A, B), center, near)`, "꼭짓점을 점에 맞춰" → `pointToPoint(S.at(A), S.at(P))`. 단순 단계는 단계 시작 상태, 복합 단계는 앞 하위 동작까지 반영한 상태로 정한다. 물고기 기본형 연 모양 선을 공리로 바꿔도 결과가 같음(2e-16) 확인.
 - 공용 동작(`parts/folds.js`):
   - `pleat({ a, far, width, sel, toward })`: 계단 접기. 선 a 에서 골짜기, far 쪽으로 width 떨어진 선에서 산. 복합 단계 moves.
   - `crimp({ a, far, width, front, back })`: 반으로 접힌 날개를 앞뒤 대칭 계단으로 꺾기.

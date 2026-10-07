@@ -343,6 +343,42 @@ function computeShift(cur, mv, mi) {
 
 const moveTo = (p, mv, f) => add(rotate(p, mv.o, mv.d, mv.theta * f), mul(mv.u, mv.shift * f));
 
+// 접는 선 작도용 종이 상태: 동작의 line·side·grab·spine 이 함수면 (S) => 값 으로 지금 종이 상태에서 정한다
+// (parts/axioms.js). S.at(uv): 처음 종이 위 점 uv 가 지금 놓인 자리, S.edge(u1, u2): 두 점을 잇는 선
+function paperState(polys) {
+  const inUv = (U, u) => {
+    let sg = 0;
+    for (let k = 0; k < U.length; k++) {
+      const a = U[k], b = U[(k + 1) % U.length], c = (b[0] - a[0]) * (u[1] - a[1]) - (b[1] - a[1]) * (u[0] - a[0]);
+      if (Math.abs(c) < 1e-9) continue;
+      if (sg && Math.sign(c) !== sg) return false;
+      sg = Math.sign(c);
+    }
+    return true;
+  };
+  const at = (u) => {
+    // 그 점을 가진 조각 가운데 맨 위 조각에서 (접힌 선 위의 점은 여러 겹에 있지만 xy 는 같다)
+    let best = null;
+    for (const q of polys) {
+      if (!inUv(q.uv, u)) continue;
+      const p = affineOf(q.uv, q.p)(u);
+      if (!best || p[2] > best[2]) best = p;
+    }
+    if (!best) throw new Error(`종이 위에 없는 점 ${u}`);
+    return [best[0], best[1]];
+  };
+  return { at, edge: (u1, u2) => [at(u1), at(u2)] };
+}
+function resolveMove(m, polys) {
+  const keys = ['line', 'side', 'grab', 'spine'].filter((k) => typeof m[k] === 'function');
+  if (!keys.length) return m;
+  const S = paperState(polys), r = { ...m };
+  for (const k of keys) r[k] = m[k](S);
+  return r;
+}
+const resolveStep = (step, polys) => (step.moves && step.moves.some((m) => ['line', 'side', 'grab', 'spine'].some((k) => typeof m[k] === 'function'))
+  ? { ...step, moves: step.moves.map((m) => resolveMove(m, polys)) } : step);
+
 // 단순 단계: 여러 동작을 동시에 진행
 function planStep(polys, step) {
   let cur = polys.map(clonePoly);
@@ -370,6 +406,7 @@ function planSeqStep(polys, step) {
   const subs = [];
   step.moves.forEach((m, k) => {
     cur.forEach((q) => { q.owner = -1; });
+    m = resolveMove(m, cur); // 앞 하위 동작까지 반영한 상태에서 선을 정한다
     const r = selectMove(cur, m, 0);
     cur = r.cur;
     const mv = r.mv;
@@ -620,7 +657,8 @@ export function buildModel(model) {
   });
   const plans = [];
   let inked = []; // 꾸미기 단계에서 이미 그린 획 (다음 꾸미기 단계에도 그대로 보인다)
-  for (const step of model.steps) {
+  for (const step0 of model.steps) {
+    const step = step0.sim ? step0 : resolveStep(step0, polys);
     const plan = step.sim ? planSeqStep(polys, step) : crossUnfold(step) ? planCrossUnfold(polys, step) : planStep(polys, step);
     if (inked.length || step.draw) { plan.inked = inked; plan.draw = step.draw || []; inked = [...inked, ...plan.draw]; }
     // 화면용 겹 다지기 (엔진 상태는 그대로)
