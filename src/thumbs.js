@@ -89,8 +89,12 @@ export function snapshot(model, plan, t, dir, size = 320, key, withGuides = fals
   guides.visible = withGuides;
   if (withGuides) drawGuides(guides, model, plan);
   const pts = toVecs(loops);
-  if (withGuides) guides.traverse((o) => { if (o.isMesh || o.isLine) { o.geometry.computeBoundingSphere(); const s = o.geometry.boundingSphere; pts.push(s.center.clone().addScaledVector(new THREE.Vector3(1, 1, 0).normalize(), s.radius * 0.5)); } });
-  const fit = fitCamera(camera, pts, dir, 1, 1.18);
+  // 안내선·화살표가 잘리지 않도록 전체 범위의 꼭짓점을 함께 맞춘다
+  if (withGuides && guides.children.length) {
+    const b = new THREE.Box3().setFromObject(guides);
+    for (const x of [b.min.x, b.max.x]) for (const y of [b.min.y, b.max.y]) for (const z of [b.min.z, b.max.z]) pts.push(new THREE.Vector3(x, y, z));
+  }
+  const fit = fitCamera(camera, pts, dir, 1, withGuides ? 1.04 : 1.18);
   camera.position.copy(fit.pos);
   camera.lookAt(fit.target);
   renderer.render(scene, camera);
@@ -106,7 +110,10 @@ export function stepThumb(model, plans, i) {
 
 // 인쇄 도면용: 접는 선·화살표까지 그린 큰 그림
 export function diagram(model, plans, i) {
-  const dir = model.steps[i].view && model.steps[i].view[2] > 0.5 ? [model.steps[i].view[0] * 0.5, model.steps[i].view[1] * 0.5, 1] : [0.12, -0.25, 1];
+  const st = model.steps[i], ms = st.moves || [];
+  // 좌우 대칭으로 함께 접는 단계는 정면 쪽에서 조금 내려다본다 (화살표가 납작해지지 않게)
+  const sym = !st.sim && ms.length === 2 && ms[0].line && ms[1].line && ms[0].line.every((p, k) => Math.abs(p[0] + ms[1].line[k][0]) < 1e-6 && Math.abs(p[1] - ms[1].line[k][1]) < 1e-6);
+  const dir = st.view && st.view[2] > 0.5 ? [st.view[0] * 0.5, st.view[1] * 0.5, 1] : sym ? [0, -0.45, 1] : [0.12, -0.25, 1];
   // 꾸미기 단계는 접는 선이 없으므로 다 그린 모습을 보여 준다
   if (model.steps[i].draw) return snapshot(model, plans[i], 1, [0, 0, 1], 420, `${model.id}:d${i}`);
   return snapshot(model, plans[i], 0, dir, 420, `${model.id}:d${i}`, true);
