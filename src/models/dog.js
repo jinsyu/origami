@@ -1,9 +1,15 @@
 // 강아지 얼굴 (정사각형 색종이, 마름모 방향)
+// 출처: Origami Club "Dog (face)"(전통, Fumiaki Shingu 도안) https://en.origami-club.com/easy/animal-face/dogface/
 import { arc, eye, cheek, PENCIL } from './parts/draw.js';
 const R = Math.SQRT1_2;
 const ear = (c) => c.tags.has('earL') || c.tags.has('earR');
 
-export const dog = {
+export const dogParams = { ex: 0.137, ey: -0.264, y3: -0.52, y4: -0.514 };
+
+export function makeDog({ ex, ey, y3, y4 } = dogParams) {
+  return {
+  params: { ex, ey, y3, y4 },
+  make: makeDog,
   id: 'dog',
   name: '강아지 얼굴',
   level: 1,
@@ -23,17 +29,17 @@ export const dog = {
     {
       text: '양쪽 모서리를 비스듬히 아래로 접어요. 끝이 얼굴 밖으로 늘어지게 하면 귀가 돼요.',
       moves: [
-        { line: [[0.245, 0], [0.5285, -0.225]], side: [R, 0], tag: 'earR' },
-        { line: [[-0.245, 0], [-0.5285, -0.225]], side: [-R, 0], tag: 'earL' },
+        { line: [[ex, 0], [0.5285, ey]], side: [R, 0], tag: 'earR' },
+        { line: [[-ex, 0], [-0.5285, ey]], side: [-R, 0], tag: 'earL' },
       ],
     },
     {
       text: '아래 꼭짓점에서 앞의 한 장만 위로 조금 접어 올려요. 코가 돼요.',
-      moves: [{ line: [[-1, -0.5], [1, -0.5]], side: [0, -1], filter: (c) => c.tags.has('front') && !ear(c) }],
+      moves: [{ line: [[-1, y3], [1, y3]], side: [0, -1], filter: (c) => c.tags.has('front') && !ear(c) }],
     },
     {
-      text: '남은 한 장은 뒤로 접어 턱을 만들어요.',
-      moves: [{ line: [[-1, -0.56], [1, -0.56]], side: [0, -1], filter: (c) => !c.tags.has('front') && !ear(c), toward: -1 }],
+      text: '남은 한 장도 점선에서 앞으로 접어 올려요. 하얀 세모를 덮어 주둥이가 돼요.',
+      moves: [{ line: [[-1, y4], [1, y4]], side: [0, -1], filter: (c) => !c.tags.has('front') && !ear(c) }],
     },
     {
       text: '연필로 눈과 코, 입을 그려요. 코는 접어 올린 세모 끝에 동그랗게 칠해요.',
@@ -53,3 +59,6 @@ export const dog = {
     },
   ],
 };
+}
+
+export const dog = makeDog();

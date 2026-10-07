@@ -1,0 +1,46 @@
+{
+  "src": "https://en.origami-club.com/easy/animal-face/dogface/zu.gif",
+  "note": "도안 2단계(세로 선 접었다 펴기)는 앱에서 생략 — 도안 n번 그림 after 를 한 칸씩 당김",
+  "panels": [
+    {
+      "label": 2,
+      "after": 1,
+      "box": [
+        278,
+        22,
+        548,
+        148
+      ]
+    },
+    {
+      "label": 4,
+      "after": 2,
+      "box": [
+        96,
+        264,
+        326,
+        442
+      ]
+    },
+    {
+      "label": 5,
+      "after": 3,
+      "box": [
+        18,
+        470,
+        250,
+        656
+      ]
+    },
+    {
+      "label": "완성",
+      "after": 6,
+      "box": [
+        300,
+        520,
+        554,
+        664
+      ]
+    }
+  ]
+}

@@ -403,7 +403,7 @@ export const enModels = {
       'Place the paper colored side down as a diamond. Fold the top corner down to the bottom corner.',
       'Fold both side corners down at an angle so the tips hang outside the face. These are the ears.',
       'Fold only the front layer of the bottom corner up a little. This is the nose.',
-      'Fold the remaining layer behind to make the chin.',
+      'Fold the remaining layer up in front along the dotted line too. It covers the white triangle and becomes the muzzle.',
       'With a pencil, draw the eyes, nose and mouth. Fill in the nose at the tip of the folded-up triangle.',
       'Color the cheeks and tongue pink with a colored pencil, and you are done!',
     ],
