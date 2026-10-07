@@ -74,7 +74,7 @@ export const enModels = {
       'Fold the left side at an angle along the dotted line starting at the bottom left corner. This is the trunk.',
       'Fold the top half down.',
       'Open the pocket at the top left and squash it flat along the diagonal dotted line. The face and ear appear.',
-      'Draw an eye with a pencil, and you are done!',
+      'Draw an eye and trunk wrinkles with a pencil, and you are done!',
     ],
   },
   penguin: {
