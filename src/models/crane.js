@@ -53,7 +53,7 @@ const puff = (p, e) => {
   const [x, y, z] = p;
   const fx = Math.max(0, 1 - Math.abs(x) / 0.135);
   const fy = y < 0 && y > -0.32 ? Math.sin((Math.PI * -y) / 0.32) : 0;
-  const s = Math.max(-1, Math.min(1, z / 0.03));
+  const s = Math.max(-1, Math.min(1, z / 0.019)); // 0.019 = 몸통 바깥 겹 높이
   // 목·꼬리는 겹 사이를 눌러 얇게 한다 (두꺼우면 아래에서 볼 때 속의 흰 면이 들여다보인다)
   const k = Math.min(1, Math.max(0, (Math.abs(x) - 0.12) / 0.08));
   const w = k * k * (3 - 2 * k) * e;
