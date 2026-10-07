@@ -50,6 +50,16 @@ export const enModels = {
     ],
   },
 
+  bookmark: {
+    name: 'Corner Bookmark', desc: 'A bookmark that slips over the corner of a page. Make a pocket with the front layer and tuck both ends inside. Draw a face on it!', paper: 'Square origami paper',
+    done: 'Your corner bookmark is done! Draw eyes and teeth to make a monster bookmark.',
+    steps: [
+      'Place the paper colored side down as a diamond. Fold the bottom corner up to the top corner.',
+      'Fold only the front layer of the top corner down to the middle of the bottom edge. This layer becomes the pocket.',
+      'Fold the right corner up to the top corner, tucking it inside the pocket.',
+      'Fold the left corner up the same way and tuck it into the pocket. Your corner bookmark is done!',
+    ],
+  },
   cicada: {
     name: 'Cicada', desc: 'A striped head and slanted wings. Practice picking out layers one at a time.', paper: 'Square origami paper',
     done: 'Your cicada is done! Look at the striped head and the wings spreading out.',

@@ -3,6 +3,7 @@ import { dog } from './dog.js';
 import { cat } from './cat.js';
 import { flower } from './flower.js';
 import { cup } from './cup.js';
+import { bookmark } from './bookmark.js';
 import { house } from './house.js';
 import { cicada } from './cicada.js';
 import { kabuto } from './kabuto.js';
@@ -20,4 +21,4 @@ import { crane } from './crane.js';
 import { masu } from './masu.js';
 import { roofhouse } from './roofhouse.js';
 
-export const MODELS = [dog, cat, flower, cup, house, cicada, kabuto, hat, airplane, glider, envelope, whale, heart, frame, duck, tulip, heron, masu, roofhouse, crane].sort((a, b) => a.level - b.level);
+export const MODELS = [dog, cat, flower, cup, bookmark, house, cicada, kabuto, hat, airplane, glider, envelope, whale, heart, frame, duck, tulip, heron, masu, roofhouse, crane].sort((a, b) => a.level - b.level);
