@@ -3,11 +3,16 @@
 // 아래를 띠로 접어 바퀴를 내려 접고, 위를 접었다 올려 차체를 만든 뒤 모서리를 비스듬히 접어 앞유리를 만든다.
 import { fillPoly, PENCIL } from './parts/draw.js';
 const H = 0.5;
-const WIN = [[-0.29, 0.05], [-0.03, 0.05], [-0.03, 0.19], [-0.12, 0.19]]; // 앞유리와 나란한 창문
+const WIN = [[-0.21, 0.05], [0.03, 0.05], [0.03, 0.19], [-0.04, 0.19]]; // 앞유리와 나란한 창문
 const has = (t) => (c) => c.tags.has(t);
 const flip = { spin: { a: [0, 0, 0], b: [0, 1, 0], angle: 180 } };
 
-export const car = {
+export const carParams = { wa: -0.14, wb: -0.1 };
+
+export function makeCar({ wa, wb } = carParams) {
+  return {
+  params: { wa, wb },
+  make: makeCar,
   id: 'car',
   name: '자동차',
   level: 2,
@@ -31,8 +36,11 @@ export const car = {
     },
     { text: '위쪽을 가운데 선에서 접어 내려요.', moves: [{ line: [[-1, 0], [1, 0]], side: [0, 0.4], filter: (c) => !c.tags.has('band'), tag: 'roof' }] },
     { text: '내린 부분을 점선에서 다시 접어 올려요.', moves: [{ line: [[-1, -0.13], [1, -0.13]], side: [0, -0.4], filter: has('roof') }] },
-    { text: '오른쪽 위 모서리를 점선을 따라 비스듬히 접어요. 앞유리가 돼요.', moves: [{ line: [[0.02, 0.4], [0.62, -0.1]], side: [0.48, 0.22], filter: (c) => !c.tags.has('wheel') }] },
+    { text: '오른쪽 위 모서리를 점선을 따라 비스듬히 접어요. 앞유리가 돼요.', moves: [{ line: [[wa, 0.4], [wa + 0.6, 0.4 + (wb - 0.4) * 1]], side: [0.48, 0.22], filter: (c) => !c.tags.has('wheel') }] },
     { text: '종이를 뒤집어요.', moves: [flip], view: [0, 0.4, 1] },
     { text: '연필로 앞유리 옆에 창문을 그리면 완성!', view: [0, 0, 1], draw: [fillPoly(WIN, '#ffffff'), { line: [...WIN, WIN[0]], w: 0.012, color: PENCIL }] },
   ],
 };
+}
+
+export const car = makeCar();
