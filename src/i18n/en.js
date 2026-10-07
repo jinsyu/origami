@@ -368,7 +368,7 @@ export const enUI = {
   back: 'All models', print: 'Printable diagram', full: 'Full screen', unfull: 'Exit full screen',
   prev: 'Previous step', pencils: 'pencil, colored pencils', pencil: 'pencil', fold: 'Fold this step', draw: 'Draw this step', auto: 'Play to the end', stop: 'Stop', replay: 'Watch again from the start',
   speed: 'Speed', slow: 'Slow', normal: 'Normal', fast: 'Fast', steps: 'Steps', done: 'Done', peek: 'Result',
-  valley: 'Valley fold', mountain: 'Mountain fold', next: (n) => `Next: ${n}`, stepsCount: (n) => `${n} steps`,
+  valley: 'Valley fold', mountain: 'Mountain fold', next: (n) => `Next: ${n}`, stepsCount: (n) => `${n} steps`, sheetsCount: (n) => `${n} sheets`,
   startBtn: (n) => `Start with the ${n}`, continueBtn: (n, i) => `Continue the ${n} from step ${i}`,
   folded: 'Folded', resume: (i) => `Continue from step ${i}`, level: (l) => ['Beginner', 'Easy', 'Intermediate', 'Advanced'][l - 1], printTitle: (n) => `How to fold a ${n}`, printBtn: 'Print', toViewer: 'Back to folding',
   sym: [

@@ -23,7 +23,7 @@ const EN = LANG === 'en';
 const KO = {
   title: '종이접기 교실', pencils: '연필, 색연필', pencil: '연필', fold: '이 단계 접기', draw: '이 단계 그리기', full: '크게 보기', unfull: '작게 보기', stop: '멈추기', replay: '처음부터 다시 보기', auto: '끝까지 이어서 보기',
   startBtn: (n) => `${n}부터 시작하기`, continueBtn: (n, i) => `${n} ${i}단계부터 이어서 접기`,
-  done: '완성', folded: '접어 봤어요', resume: (i) => `${i}단계부터 이어서`, next: (n) => `다음 작품: ${n}`, stepsCount: (n) => `${n}단계`, level: (l) => ['입문', '초급', '중급', '고급'][l - 1],
+  done: '완성', folded: '접어 봤어요', resume: (i) => `${i}단계부터 이어서`, next: (n) => `다음 작품: ${n}`, stepsCount: (n) => `${n}단계`, sheetsCount: (n) => `색종이 ${n}장`, level: (l) => ['입문', '초급', '중급', '고급'][l - 1],
   printTitle: (n) => `${n} 접는 방법`,
   bands: [['all', '전체'], ['1', '입문'], ['2', '초급'], ['3', '중급'], ['4', '고급']], bandLabel: '난이도로 보기',
 };
@@ -151,7 +151,7 @@ function renderGallery() {
       <div class="meta"><h3></h3><p></p><div class="facts"><span class="steps"></span></div></div></a>`;
     li.querySelector('h3').textContent = m.name;
     li.querySelector('p').textContent = m.desc;
-    li.querySelector('.steps').textContent = T.stepsCount(m.steps.length);
+    li.querySelector('.steps').textContent = T.stepsCount(m.steps.length) + (m.sheets ? ` · ${T.sheetsCount(m.sheets.length)}` : '');
     li.querySelector('.facts').prepend(meter(m.level));
     li.querySelector('img').alt = EN ? `Finished ${m.name}` : `${m.name} 완성 모습`;
     ol.appendChild(li);
