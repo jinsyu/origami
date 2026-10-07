@@ -696,14 +696,13 @@ export const enModels = {
     ],
   },
   flower: {
-    name: 'Tulip Flower', desc: 'Fold both ends of a triangle up beside the top point and three petals open into a tulip.', paper: 'Square origami paper',
+    name: 'Tulip Flower', desc: 'Fold a triangle, then lift both ends up past the top corner to make a tulip with three open petals.', paper: 'Square origami paper',
     done: 'Your tulip is done! Glue it on paper and draw a green stem and leaves.',
     steps: [
       'Place the paper colored side down as a diamond. Fold the bottom corner up to the top corner.',
-      'Fold the right corner up at an angle so its tip pokes out just right of the top point.',
-      'Fold the left corner up the same way. Three pointy petals appear at the top.',
-      'Turn the paper over.',
-      'Fold the corners sticking out at the sides behind to round off the flower, and you are done!',
+      'Fold the right corner up and to the left along the dotted line, so its tip pokes out past the top corner.',
+      'Fold the left corner up to the right the same way. Three pointy petals appear at the top.',
+      'Fold the bottom tip behind along the dotted line, and your tulip is done!',
     ],
   },
   cup: {
