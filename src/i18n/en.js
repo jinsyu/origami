@@ -495,6 +495,22 @@ export const enModels = {
       'Draw buttons with a pencil, and you are done!',
     ],
   },
+  tyranno: {
+    name: 'Tyrannosaurus', desc: 'Fold at a slant, fold it in half behind and stand it up to make a T. rex with a big open mouth. Draw the teeth and pattern!', paper: 'Square origami paper',
+    done: 'Your Tyrannosaurus is done! Roar!',
+    steps: [
+      'Place the paper colored side down like a diamond. Fold it in half and unfold to make a crease across the middle.',
+      'Fold the lower-left edge to the center line.',
+      'Fold the top corner down at a slant along the dotted line.',
+      'Fold the upper-right and lower-right edges to the center line.',
+      'Fold the right part behind along the dotted line.',
+      'Turn it so the folded edge stands straight up.',
+      'Fold the tip of the tail at the lower left inward along the dotted line.',
+      'Fold the tip of the mouth behind a little along the dotted line.',
+      'Draw the eye and sharp teeth with a pencil.',
+      'Draw spiky patterns on the body with a colored pencil, and you are done!',
+    ],
+  },
   neuli: {
     name: 'Neuli Face', desc: 'Our school friend Neuli! Fold a triangle, stand the ears up and fold the chin to make a wide, cute face.', paper: 'Square origami paper (light yellow or apricot)',
     done: 'Neuli face is done! You can draw a flower on top of the head too.',
