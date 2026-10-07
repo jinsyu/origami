@@ -163,10 +163,12 @@ export const pieup = letter({
   ],
 });
 
-// ㄹ: 띠를 한 번 더 반 접어 가늘게(H/8). 왼쪽 띠를 통째로 잘라 가운데 가로 획으로, 오른쪽 띠의 아래 반을 잘라 뒤집어 왼쪽 아래 세로 획으로
+// ㄹ (영상 순서): 띠를 한 번 더 반 접어 가늘게(H/8) → 왼쪽 띠를 통째로, 오른쪽 띠의 아래 절반을 잘라 낸다 →
+// 위·아래 띠를 안으로 접는다 → 왼쪽 띠를 돌려 가운데 가로 획(y∈[0, H/8])으로 붙이고 오른쪽 띠를 접어 그 끝을 덮는다 →
+// 짧은 조각을 펼쳐 반대쪽으로 다시 접은 뒤 안쪽 왼쪽 아래(x∈[-H/2, -3H/8], y∈[-H/2, 0])에 붙인다
 export const rieul = letter({
   id: 'rieul', char: 'ㄹ', roman: 'rieul', video: 'tzuSzLH3usE',
-  desc: ['가늘게 접은 테두리 띠 두 조각을 가위로 잘라 가운데 획과 왼쪽 아래 획으로 붙이면 한글 ㄹ 이 돼요.', 'Cut two pieces off the thin border strips and glue them on as the middle stroke and the lower left stroke to make the Korean letter ㄹ (rieul).'],
+  desc: ['가늘게 접은 테두리 띠에서 두 조각을 가위로 잘라 가운데 획과 왼쪽 아래 획으로 옮겨 붙이면 한글 ㄹ 이 돼요.', 'Cut two pieces off the thin border strips and glue them on as the middle stroke and the lower left stroke to make the Korean letter ㄹ (rieul).'],
   steps: [
     ...frameBase(), halveBands(),
     cutBand('left', 'bar'),
@@ -180,17 +182,57 @@ export const rieul = letter({
       ],
       tag: 'leg', pull: [H / 4, 0],
     }),
-    stroke('top'),
-    glue('bar', { from: 'left', rot: 90, move: [0, 5 * H / 8] }, '가운데 획: 왼쪽에서 떼어 낸 띠를 돌려 가운데에 가로로 붙여요. 오른쪽 끝은 오른쪽 띠 자리까지 닿게 해요.', 'Middle stroke: turn the strip cut from the left and glue it across the middle so its right end reaches the right strip.'),
-    stroke('right'),
+    stroke('top'), stroke('bottom'),
+    glue('bar', { from: 'left', rot: 90, move: [0, 5 * H / 8] }, '왼쪽에서 떼어 낸 긴 띠를 돌려 흰 네모 가운데에 가로로 붙여요. ㄹ 의 가운데 획이에요.', 'Turn the long strip cut from the left and glue it across the middle of the white square. This is the middle stroke of ㄹ.'),
+    { ...stroke('right'), ko: '오른쪽 띠를 흰 네모의 변을 따라 안쪽으로 접어 가운데 획의 끝을 덮어요.', en: 'Fold the right strip inward along the edge of the white square so it covers the end of the middle stroke.' },
     {
-      ko: '오른쪽에서 잘라 낸 짧은 띠를 뒤집어 왼쪽 아래에 세로로 붙여요.',
-      en: 'Turn over the short strip cut from the right and glue it upright at the lower left.',
-      moves: [flipGlue('leg', [[3 * H / 16, -1], [3 * H / 16, 1]])],
+      ko: '오른쪽에서 잘라 낸 짧은 띠를 펼쳐, 반대쪽으로 다시 접어요.',
+      en: 'Open the short strip cut from the right and fold it again the other way.',
+      // 떼어 놓은 자리 x∈[3H/4, 7H/8], 바깥 변 x=7H/8 이 반 접은 선. 펼친 뒤 같은 선에서 뒤로 접는다
+      sim: true,
+      moves: [foldPiece('leg', foldX(7 * H / 8, -1)), foldPiece('leg', { ...foldX(7 * H / 8, 1), toward: -1 })],
+    },
+    {
+      ko: '짧은 띠를 흰 네모 안쪽 왼쪽 아래에 세로로 붙여요.',
+      en: 'Glue the short strip upright inside the white square at the lower left.',
+      moves: [place('leg', { move: [-5 * H / 4, 0] })],
       torn: true,
       view: [0, 0, 1],
     },
-    stroke('bottom'),
+  ],
+});
+
+// ㅑ: 영상은 말아 접은 띠의 두 칸을 펼쳐 눌러 세우는데, 그 꼭짓점을 영상에서 확정하지 못해 같은 끝 모양을 가위로 만든다.
+// 흰 면 위 → 양옆을 가운데로 두 번 모으고 반 접어 폭 1/8·높이 1 막대 (x∈[-1/8, 0]) → 아래 1/4 을 잘라 막대 높이 3/4 →
+// 잘라 낸 조각을 반으로 잘라 1/8 정사각형 두 개 → 막대 오른쪽에 짧은 획으로 붙인다
+// (막대 높이 기준 위에서 0.21–0.38, 0.54–0.71. 영상 측정 0.19–0.38, 0.54–0.76)
+export const ya = letter({
+  id: 'ya', char: 'ㅑ', roman: 'ya', video: '0Ax-hbENp8Q',
+  desc: ['긴 막대를 접은 뒤 아래 끝을 잘라 두 조각으로 나누고, 막대 옆에 붙이면 한글 ㅑ 가 돼요.', 'Fold a long bar, cut off its bottom end, cut that into two pieces and glue them beside the bar to make the Korean letter ㅑ (ya).'],
+  steps: [
+    { ko: '흰 면이 위로 오게 놓고, 양쪽 끝을 가운데 선에 맞춰 접어요.', en: 'Place the paper white side up and fold both sides to the middle line.', moves: [foldX(H / 2, 1), foldX(-H / 2, -1)] },
+    { ko: '양쪽을 한 번 더 가운데 선에 맞춰 접어요.', en: 'Fold both sides to the middle line once more.', moves: [foldX(H / 4, 1), foldX(-H / 4, -1)] },
+    { ko: '가운데 선에서 반으로 접어 긴 막대를 만들어요.', en: 'Fold it in half along the middle line to make a long bar.', moves: [foldX(0, 1)] },
+    cutPiece({
+      ko: '막대 아래쪽 ¼ 을 가위로 잘라 내요.', en: 'Cut off the bottom quarter of the bar with scissors.',
+      cuts: [{ line: [[-1, -H / 2], [1, -H / 2]], side: [0, -H] }], tag: 'tick', pull: [H / 2, 0],
+    }),
+    cutPiece({
+      ko: '잘라 낸 조각을 반으로 잘라 작은 네모 두 개를 만들어요.', en: 'Cut the piece in half to make two small squares.',
+      cuts: [{ line: [[-1, -3 * H / 4], [1, -3 * H / 4]], side: [0, -H], filter: (c) => c.tags.has(PIECE('tick')) }], tag: 'tick2', pull: [0, -H / 4],
+    }),
+    {
+      ko: '두 네모를 막대 오른쪽에 짧은 획으로 붙여요. 위에서 조금 내려온 곳과 가운데쯤에 하나씩 붙여요.',
+      en: 'Glue the two squares to the right of the bar as short strokes, one a little below the top and one near the middle.',
+      // 조각 1: x∈[1/8, 1/4], y∈[-3/8, -1/4] → x∈[0, 1/8], y∈[7/32, 11/32]
+      // 조각 2: x∈[1/8, 1/4], y∈[-5/8, -1/2] → x∈[0, 1/8], y∈[-1/32, 3/32]
+      moves: [
+        place('tick', { move: [-H / 4, 19 * H / 16] }),
+        place('tick2', { move: [-H / 4, 19 * H / 16] }),
+      ],
+      torn: true,
+      view: [0, 0, 1],
+    },
   ],
 });
 
@@ -268,4 +310,6 @@ export const hieut = letter({
   ],
 });
 
-export const HANGUL = [giyeok, nieun, digeut, rieul, mieum, bieup, siot, ieung, jieut, chieut, kieuk, tieut, pieup, hieut, a, i];
+export const HANGUL = [giyeok, nieun, digeut, rieul, mieum, bieup, siot, ieung, jieut, chieut, kieuk, tieut, pieup, hieut, a, ya, i];
+// 한글 자모 필터에서 보이는 순서 (ㄱㄴㄷ… 사전 순서; 갤러리 전체는 난이도 순이라 따로 둔다)
+HANGUL.forEach((m, i) => { m.groupOrder = i; });

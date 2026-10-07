@@ -105,11 +105,18 @@ const hero = createHero($('heroCanvas'), MODELS, plansOf, (m) => {
 const bandKey = 'origami.band';
 let band = 'all';
 try { band = localStorage.getItem(bandKey) || 'all'; } catch { /* 저장소 사용 불가 */ }
+// 주소로 고르기: ?band=hangul (한글 자모만 보이게 공유할 때). 주소에 있으면 기억한 값보다 먼저
+const urlBand = new URLSearchParams(location.search).get('band');
+if (urlBand) band = urlBand;
 if (!['all', '1', '2', '3', '4', 'hangul'].includes(band)) band = 'all';
 // 난이도 구간이 아닌 주제 묶음(작품의 group): 그 묶음만 보인다
 const inBand = (key, level, group) => key === 'all' || (key === 'hangul' ? group === key : String(level) === key);
 function applyBand() {
-  [...$('cards').children].forEach((li) => { li.hidden = !inBand(band, li.dataset.band, li.dataset.group); });
+  [...$('cards').children].forEach((li) => {
+    li.hidden = !inBand(band, li.dataset.band, li.dataset.group);
+    // 주제 묶음은 그 묶음의 순서(한글 자모: ㄱㄴㄷ…)로, 그 밖에는 난이도 순서 그대로
+    li.style.order = band === 'hangul' && li.dataset.order ? li.dataset.order : '';
+  });
   $('bands').querySelectorAll('button').forEach((b) => b.setAttribute('aria-pressed', String(b.dataset.band === band)));
 }
 function renderBands() {
@@ -152,6 +159,7 @@ function renderGallery() {
     li.dataset.id = m.id;
     li.dataset.band = String(m.level);
     if (m.group) li.dataset.group = m.group;
+    if (m.groupOrder !== undefined) li.dataset.order = String(m.groupOrder);
     li.innerHTML = `<a href="#/m/${m.id}"><div class="pic matgrid"><span class="lv" aria-hidden="true">${T.level(m.level)}</span><img alt="" /></div>
       <div class="meta"><h3></h3><p></p><div class="facts"><span class="steps"></span></div></div></a>`;
     li.querySelector('h3').textContent = m.name;
