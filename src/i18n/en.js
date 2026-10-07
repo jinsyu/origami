@@ -1,5 +1,18 @@
 // 영어 문구. 작품별 이름·설명·단계 안내, 화면 문구
 export const enModels = {
+  pig: {
+    name: 'Pig Face', desc: 'Fold the bottom tip up and back down for a white snout, and fold the top corners for ears. Draw the nostrils.', paper: 'Square origami paper (pink)',
+    done: 'Your pig face is done! Say oink oink!',
+    steps: [
+      'Place the paper colored side down as a diamond. Fold in half both ways and unfold to make creases.',
+      'Fold both side corners to the center line.',
+      'Fold the top corner down to the bottom corner.',
+      'Fold the bottom tip up along the dotted line.',
+      'Fold that tip back down a little. A white snout appears.',
+      'Fold both top corners down a little to make ears.',
+      'Draw the eyes and nostrils with a pencil, and you are done!',
+    ],
+  },
   chick: {
     name: 'Chick', desc: 'Fold a corner in and back out to make a tiny beak, then fold in half for a cute chick.', paper: 'Square origami paper (yellow)',
     done: 'Your chick is done! Say peep peep!',
