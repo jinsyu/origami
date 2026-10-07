@@ -6,7 +6,12 @@ import { eye, PENCIL } from './parts/draw.js';
 const H = 0.5;
 const top = (c) => c.tags.has('top');
 
-export const monkey = {
+export const monkeyParams = { vx: 0.335, bx: 0.175 };
+
+export function makeMonkey({ vx, bx } = monkeyParams) {
+  return {
+  params: { vx, bx },
+  make: makeMonkey,
   id: 'monkey',
   name: '원숭이',
   level: 2,
@@ -21,8 +26,8 @@ export const monkey = {
   steps: [
     { text: '색깔 면이 아래로 가게 놓고, 반으로 접었다 펴서 가운데 세로 선을 만들어요.', moves: [{ line: [[0, -1], [0, 1]], side: [1, 0], unfold: true }] },
     { text: '위쪽을 아래로 반 접어요.', moves: [{ line: [[-1, 0], [1, 0]], side: [0, H], tag: 'top' }] },
-    { text: '오른쪽 틈을 벌리고 비스듬한 점선을 따라 꾹 눌러 펼쳐요. 하얀 얼굴이 나와요.', sim: true, moves: squashFlap({ V: [0.29, 0], hd: [-0.12, -0.5], sd: [1, 0], outer: (c) => !top(c), inner: top, faceTag: 'face', size: 0.5 }) },
-    { text: '얼굴의 왼쪽 끝을 점선에서 조금 접어 넣어요. 귀가 생겨요.', moves: [{ line: [[-0.09, -0.287], [-0.058, -0.382]], side: [-0.12, -0.35], filter: (c) => c.tags.has('face_in') || c.tags.has('face') }] },
+    { text: '오른쪽 틈을 벌리고 비스듬한 점선을 따라 꾹 눌러 펼쳐요. 하얀 얼굴이 나와요.', sim: true, moves: squashFlap({ V: [vx, 0], hd: [bx - vx, -0.5], sd: [1, 0], outer: (c) => !top(c), inner: top, faceTag: 'face', size: 0.5 }) },
+    { text: '얼굴의 왼쪽 끝과 오른쪽 아래 모서리를 점선에서 조금 접어 넣어요. 귀와 턱이 생겨요.', sim: true, moves: [{ line: [[-0.09, -0.287], [-0.058, -0.382]], side: [-0.12, -0.35], filter: (c) => c.tags.has('face_in') || c.tags.has('face') }, { line: [[0.353, -0.5], [0.5, -0.33]], grab: [0.47, -0.47] }] },
     { text: '왼쪽을 세로 점선에서 뒤로 접어요.', moves: [{ line: [[-0.25, -1], [-0.25, 1]], side: [-H, -0.25], toward: -1 }] },
     {
       text: '연필로 눈과 머리카락을 그리고, 색연필로 입을 칠하면 완성!',
@@ -35,3 +40,6 @@ export const monkey = {
     },
   ],
 };
+}
+
+export const monkey = makeMonkey();
