@@ -511,6 +511,21 @@ export const enModels = {
       'Draw spiky patterns on the body with a colored pencil, and you are done!',
     ],
   },
+  triceratops: {
+    name: 'Triceratops', desc: 'Fold a triangle and fold its sharp tip at a slant to make a Triceratops with horns. Draw the face and pattern!', paper: 'Square origami paper',
+    done: 'Your Triceratops is done! Nice horns.',
+    steps: [
+      'Place the paper colored side down. Fold it in half along a diagonal and unfold.',
+      'Fold it in half along the other diagonal to make a triangle.',
+      'Fold the lower-left corner of the front layer to the center point.',
+      'Fold the upper-left part behind along the crease.',
+      'Fold the left tip up along the slanted dotted line. It becomes the horns.',
+      'Turn the paper over.',
+      'Fold the left tip of the front layer to the right along the dotted line. It becomes a leg.',
+      'Draw the eye and the stripes on the frill with a pencil.',
+      'Draw spots on the body with a colored pencil, and you are done!',
+    ],
+  },
   neuli: {
     name: 'Neuli Face', desc: 'Our school friend Neuli! Fold a triangle, stand the ears up and fold the chin to make a wide, cute face.', paper: 'Square origami paper (light yellow or apricot)',
     done: 'Neuli face is done! You can draw a flower on top of the head too.',
