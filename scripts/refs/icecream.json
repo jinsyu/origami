@@ -1,0 +1,56 @@
+{
+  "src": "https://en.origami-club.com/easy/food/soft-cream2/zu.gif",
+  "note": "완성 그림은 아이스크림 두 개가 겹쳐 있어 뺐다",
+  "panels": [
+    {
+      "label": 1,
+      "after": 0,
+      "box": [
+        74,
+        14,
+        522,
+        462
+      ]
+    },
+    {
+      "label": 2,
+      "after": 1,
+      "box": [
+        592,
+        14,
+        854,
+        462
+      ]
+    },
+    {
+      "label": 3,
+      "after": 2,
+      "box": [
+        176,
+        490,
+        442,
+        937
+      ]
+    },
+    {
+      "label": 4,
+      "after": 3,
+      "box": [
+        556,
+        548,
+        820,
+        937
+      ]
+    },
+    {
+      "label": 5,
+      "after": 4,
+      "box": [
+        66,
+        934,
+        332,
+        1350
+      ]
+    }
+  ]
+}
