@@ -70,7 +70,7 @@ const rabbitEar = (sy) => [
   { line: [[0, -1], [0, 1]], side: [0.1, 0], angle: 0, seam: true },
   { line: kiteLine(-1, sy), side: [-0.1, sy * 0.5], filter: (c) => c.x < 0 && sy * c.y > 0, toward: 1, tag: `fishL${sy}` },
   { line: kiteLine(1, sy), side: [0.1, sy * 0.5], filter: (c) => c.x > 0 && sy * c.y > 0, toward: 1, tag: `fishR${sy}` },
-  { line: [[0, 0], [0, sy]], side: [-0.1, sy * T * 0.3], filter: (c) => c.tags.has(`fishR${sy}`) && c.x < 0, toward: 1, tag: `fishF${sy}` },
+  { line: [[0, 0], [0, sy]], side: [-0.1, sy * T * 0.3], filter: (c) => c.tags.has(`fishR${sy}`) && c.x < 0, toward: 1, insert: 1, tag: `fishF${sy}` }, // 귀가 쓰러지면 넘어간 반쪽은 아래, 연 모양으로 한 번 접힌 반쪽(색 면)이 위
 ];
 export const fishBase = () => [
   {
