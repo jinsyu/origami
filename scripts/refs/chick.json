@@ -1,5 +1,5 @@
 {
-  "src": "https://en.origami-club.com/easy/animal/chick/zu.gif",
+  "src": "scripts/refs/chick.png",
   "panels": [
     {
       "label": 1,
@@ -42,7 +42,18 @@
         270,
         552
       ]
+    },
+    {
+      "label": "완성(모바일)",
+      "after": 7,
+      "box": [
+        657,
+        170,
+        1032,
+        400
+      ]
     }
   ],
-  "note": "2·3번 그림은 서로 겹쳐 그려져 상자로 가를 수 없고, 완성 그림은 병아리 두 마리가 겹쳐 있어 뺐다"
+  "note": "2·3번은 서로 겹쳐 그려져 뺐다. 완성은 도안 그림(병아리 두 마리 겹침) 대신 Origami Club 모바일 단계 그림 마지막 장(en.origami-mobile.com/easy/animal/chicken/images/63.png)을 도안 오른쪽에 붙여 비교",
+  "src_original": "https://en.origami-club.com/easy/animal/chick/zu.gif"
 }
