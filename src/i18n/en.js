@@ -1,5 +1,17 @@
 // 영어 문구. 작품별 이름·설명·단계 안내, 화면 문구
 export const enModels = {
+  watermelon: {
+    name: 'Watermelon', desc: 'Fold the bottom into a band for the white rind, then fold the sides down at an angle for a slice of watermelon. Draw black seeds.', paper: 'Square origami paper (red)',
+    done: 'Your watermelon is done! A cool summer fruit.',
+    steps: [
+      'Place the paper colored side up. Fold the bottom edge to the center and unfold to make a crease.',
+      'Fold the bottom edge up to that crease. A white band appears.',
+      'Turn the paper over.',
+      'Fold both sides along the lines that run from the top center to the ends just above the white band.',
+      'Turn the paper over. A red triangle with a white rind appears.',
+      'Draw black seeds with a pencil, and you are done!',
+    ],
+  },
   rabbit: {
     name: 'Rabbit Face', desc: 'Fold the bottom edge up into a band, then bring both sides to the center. The band ends pop up into long ears.', paper: 'Square origami paper',
     done: 'Your rabbit face is done!',
