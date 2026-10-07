@@ -110,7 +110,7 @@ export const enModels = {
       'Fold the top and bottom flaps of the right diamond to the right along the dotted lines.',
       'Fold the top half behind along the center line.',
       'Outside reverse fold the right part up along the dotted line. This becomes the ears.',
-      'Outside reverse fold the left end up along the dotted line.',
+      'Outside reverse fold the left end up along the dotted line. It becomes the snout later.',
       'Inside reverse fold the left end along the dotted line. Do the same on the back.',
       'Turn the paper over. A sitting fox appears.',
       'Draw a smiling eye, a black nose tip and whiskers with a pencil, and you are done!',

@@ -63,7 +63,7 @@ export const foxcub = {
     },
     { text: '가운데 가로 선에서 위쪽을 뒤로 반 접어요.', moves: [{ line: [[-1, 0], [1, 0]], side: [0, 0.2], toward: -1, tag: 'back' }] },
     {
-      text: '오른쪽 부분을 점선에서 바깥으로 뒤집어 접어 위로 세워요. 목과 머리가 돼요.',
+      text: '오른쪽 부분을 점선에서 바깥으로 뒤집어 접어 위로 세워요. 귀가 돼요.',
       sim: true,
       moves: [
         { line: NECK, side: [0.45, -0.1], filter: (c) => !c.tags.has('back'), toward: 1, spine: [[0, 0], [1, 0]], tag: 'neck' },
@@ -71,7 +71,7 @@ export const foxcub = {
       ],
     },
     {
-      text: '왼쪽 끝을 점선에서 바깥으로 뒤집어 접어 위로 세워요. 꼬리가 돼요.',
+      text: '왼쪽 끝을 점선에서 바깥으로 뒤집어 접어 위로 세워요. 나중에 주둥이가 돼요.',
       sim: true,
       moves: [
         { line: TAIL, side: [-0.4, -0.05], filter: (c) => !c.tags.has('back'), toward: 1, spine: [[0, 0], [-1, 0]], tag: 'tail' },
