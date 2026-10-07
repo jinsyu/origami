@@ -48,7 +48,7 @@ document.querySelectorAll('.lang-btn').forEach((b) => {
 
 // 개발 중인 작품: 주소에 ?dev 를 붙이면 보인다
 if (new URLSearchParams(location.search).has('dev')) {
-  MODELS.push((await import('./models/_test.js')).test);
+  MODELS.push((await import('./models/_test.js')).test, ...(await import('./models/index.js')).DEV);
   MODELS.sort((a, b) => a.level - b.level);
 }
 

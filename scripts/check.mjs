@@ -5,7 +5,8 @@
 // - 복합 단계의 움직임이 프레임 사이에 갑자기 튀지 않는지
 import { buildModel, endPose } from '../src/engine.js';
 import { prepareSim, simPose } from '../src/sim.js';
-import { MODELS } from '../src/models/index.js';
+import { MODELS as LIVE, DEV } from '../src/models/index.js';
+const MODELS = [...LIVE, ...DEV];
 import { enModels } from '../src/i18n/en.js';
 
 const TEAR = 0.07;   // 끝 상태에서 허용하는 같은 점의 최대 차이
@@ -50,7 +51,7 @@ for (const m of MODELS) {
   console.log(`✓ ${m.level}. ${m.name} — ${plans.length}단계, ${Math.round(performance.now() - t0)}ms`);
 }
 // 영어 문구: 작품마다 있고 단계 수가 같아야 한다
-for (const m of MODELS) {
+for (const m of LIVE) {
   const e = enModels[m.id];
   if (!e) bad(m, '영어 문구 없음');
   else if (e.steps.length !== m.steps.length) bad(m, `영어 단계 수 ${e.steps.length} ≠ ${m.steps.length}`);
