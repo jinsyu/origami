@@ -49,7 +49,7 @@ export function createHero(canvas, models, plansOf, onChange) {
     requestAnimationFrame(loop);
   };
   return {
-    start() { if (running) return; running = true; resize(); if (idx < 0) show(models.length - 2); last = performance.now(); requestAnimationFrame(loop); },
+    start() { if (running) return; running = true; resize(); if (idx < 0) show(Math.max(0, models.findIndex((m) => m.id === 'crane'))); /* 대표 작품인 학부터 */ last = performance.now(); requestAnimationFrame(loop); },
     stop() { running = false; },
     next() { timer = 0; show(idx + 1); },
   };
