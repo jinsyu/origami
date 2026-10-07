@@ -300,6 +300,17 @@ export const enModels = {
       'Spread both wings out level. Your crane is done!',
     ],
   },
+  roofhouse: {
+    name: 'House with a Roof', desc: 'Squash the tops of both side flaps into a triangular roof. The easiest way to practice the squash fold.', paper: 'Square origami paper',
+    done: 'Your house is done! Draw windows and a door.',
+    steps: [
+      'Place the paper colored side down. Fold the top half down.',
+      'Fold it in half vertically and unfold to make a center line.',
+      'Fold both ends to the center line.',
+      'Lift the right flap, open the top and press it flat into a triangular roof.',
+      'Squash the left flap the same way to finish the roof. Your house is done!',
+    ],
+  },
   bird: {
     name: 'Flapping Bird', desc: 'Raise the neck and tail straight from the bird base and spread the wings at an angle. Pull the tail and the wings flap.', paper: 'Square origami paper',
     done: 'Your flapping bird is done! Hold below the neck and gently pull the tail to make the wings flap.',
