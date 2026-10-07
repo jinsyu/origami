@@ -1,5 +1,17 @@
 // 영어 문구. 작품별 이름·설명·단계 안내, 화면 문구
 export const enModels = {
+  owl: {
+    name: 'Owl', desc: 'Fold the top and bottom corners, then bring both sides to the center for a square owl. Draw big eyes.', paper: 'Square origami paper (brown)',
+    done: 'Your owl is done! Hoot hoot!',
+    steps: [
+      'Place the paper colored side down as a diamond. Fold in half both ways and unfold to make creases.',
+      'Fold the top corner down along the dotted line.',
+      'Fold the bottom corner up to the center point.',
+      'Fold both side corners to the center line.',
+      'Fold the tip of the top triangle up a little to make the beak.',
+      'Draw big round eyes and wing marks with a pencil, and you are done!',
+    ],
+  },
   yacht: {
     name: 'Yacht', desc: 'Just three folds make a yacht with a white sail.', paper: 'Square origami paper',
     done: 'Your yacht is done! Float it on a blue sea.',
