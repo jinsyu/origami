@@ -72,9 +72,9 @@ GitHub `jinsyu/origami` → Vercel 자동 배포 (main 푸시 = 배포). 빌드 
 - 여러 장: `sheets: [{ outline, colors, place: {x, y, z, rot} }]`. 장마다 태그 `sheet0`, `sheet1`… 로 골라 접는다. 옮기기·돌리기는 `axis3` (`offset` 으로 평행 이동). (현재 쓰는 작품 없음)
 - 아직 불가: 연꽃(입체), 몸 전체 강아지(다리 기본형 필요).
 
-## 현재 작품 (64개)
+## 현재 작품 (65개)
 
-- 입문: 사자 얼굴, 샌드위치, 부엉이, 요트, 촛불, 강아지 얼굴, 고양이 얼굴, 여우 얼굴, 판다 얼굴, 토끼 얼굴, 수박, 보트, 눈 덮인 산, 병아리, 돼지 얼굴, 쥐 얼굴, 아이스크림, UFO, 문어, 피아노, 튤립 꽃, 집, 편지 봉투, 로켓
+- 입문: 사자 얼굴, 샌드위치, 부엉이, 요트, 촛불, 강아지 얼굴, 고양이 얼굴, 여우 얼굴, 판다 얼굴, 토끼 얼굴, 수박, 보트, 눈 덮인 산, 병아리, 돼지 얼굴, 쥐 얼굴, 아이스크림, UFO, 문어, 피아노, 튤립 꽃, 집, 편지 봉투, 로켓, 불독 얼굴
 - 초급: 펭귄, 코알라 얼굴, 자동차, 트럭, 말 얼굴, 케이크, 금붕어, 연필, 컵, 모서리 책갈피, 매미, 투구, 종이 모자, 하트, 액자, 지붕 집, 원숭이, 코끼리, 종이비행기, 글라이더, 고래, 오리, 튤립 꽃봉오리, 귀 큰 강아지, 올챙이, 호랑이 얼굴, 셔츠, 티라노사우루스, 트리케라톱스, 스피노사우루스, 해달, 개복치, 꿀벌, 유령, 개구리
 - 중급: 게, 두루미, 네모 상자, 잉꼬
 - 고급: 학 (아기 여우는 DEV로 뺌)
@@ -91,7 +91,7 @@ GitHub `jinsyu/origami` → Vercel 자동 배포 (main 푸시 = 배포). 빌드 
 
 도면은 그림이라 `https://en.origami-club.com/<분류>/<작품>/zu.html` 에서 `zu.gif` 를 받아 `sips -s format png` 로 바꿔 직접 보고 좌표를 잡는다. 작품 파일 첫 줄에 출처 주소를 적는다.
 
-- 구현: 사자 얼굴(lion), 샌드위치(sandwich2), 부엉이(owl, Origami Club 도면대로 다시 구현), 요트(yacht), 촛불(candle2), 원숭이(monkey2), 코끼리(elephant2), 펭귄(penguin), 게(crab2), 아기 여우(fox-cub), 피아노(piano2), 문어, UFO, 아이스크림(soft-cream2), 토끼 얼굴, 수박, 보트(motorboat), 눈 덮인 산(fuji), 병아리, 돼지 얼굴, 코알라 얼굴, 자동차, 금붕어, 연필, 쥐 얼굴, 트럭(track), 말 얼굴(horse), 케이크(cake), 귀 큰 강아지(dog), 로켓(rocket), 올챙이(tadpole), 잉꼬(parakeet, 끄집어내기 대신 같은 끝 모양의 토끼 귀 접기), 호랑이 얼굴(tiger-face, 사용자 요청으로 추가), 셔츠(shirt, 7단계는 도안 글 '뒤로'와 달리 그림대로 앞으로 올려 깃 밑에 끼움), 티라노사우루스(dinosaur/tyranno, 뒤로 반 접은 선이 세로가 되게 돌려 세움), 트리케라톱스(dinosaur/triceratops), 스피노사우루스(dinosaur/spinosaurus, 7단계 뒤집기는 위아래로), 해달(sea/sea-otter, 머리 쪽 선이 가운데에 더 가까움), 개복치(sea/headfish, 펼쳐 누르기를 날개 젖히기·되접기·아래 올리기로 나눔), 꿀벌(other/bee2, 날개는 squashFlap), 유령(other/ghost2), 개구리(sea/frog, 앞다리는 머리·입 밑으로 끼움) — 도안 맞춤 검사 통과
+- 구현: 사자 얼굴(lion), 샌드위치(sandwich2), 부엉이(owl, Origami Club 도면대로 다시 구현), 요트(yacht), 촛불(candle2), 원숭이(monkey2), 코끼리(elephant2), 펭귄(penguin), 게(crab2), 아기 여우(fox-cub), 피아노(piano2), 문어, UFO, 아이스크림(soft-cream2), 토끼 얼굴, 수박, 보트(motorboat), 눈 덮인 산(fuji), 병아리, 돼지 얼굴, 코알라 얼굴, 자동차, 금붕어, 연필, 쥐 얼굴, 트럭(track), 말 얼굴(horse), 케이크(cake), 귀 큰 강아지(dog), 로켓(rocket), 올챙이(tadpole), 잉꼬(parakeet, 끄집어내기 대신 같은 끝 모양의 토끼 귀 접기), 호랑이 얼굴(tiger-face, 사용자 요청으로 추가), 셔츠(shirt, 7단계는 도안 글 '뒤로'와 달리 그림대로 앞으로 올려 깃 밑에 끼움), 티라노사우루스(dinosaur/tyranno, 뒤로 반 접은 선이 세로가 되게 돌려 세움), 트리케라톱스(dinosaur/triceratops), 스피노사우루스(dinosaur/spinosaurus, 7단계 뒤집기는 위아래로), 해달(sea/sea-otter, 머리 쪽 선이 가운데에 더 가까움), 개복치(sea/headfish, 펼쳐 누르기를 날개 젖히기·되접기·아래 올리기로 나눔), 꿀벌(other/bee2, 날개는 squashFlap), 유령(other/ghost2), 개구리(sea/frog, 앞다리는 머리·입 밑으로 끼움), 불독 얼굴(animal-face/bulldog-face) — 도안 맞춤 검사 통과
 - 실패·보류:
   - 북극곰: 펼쳐 누르기+주머니 접기 — 보류
   - 고릴라(animal/gorilla): 5단계 펼쳐 누르기에서 세모가 윗변 위로 솟아야 하는데 축 해석 실패(경첩 x=-0.25·x=0 둘 다 시도) — 보류

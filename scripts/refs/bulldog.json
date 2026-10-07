@@ -1,0 +1,14 @@
+{
+  "src": "https://en.origami-club.com/easy/animal-face/bulldog-face/zu.gif",
+  "panels": [
+    { "label": 1, "after": 0, "box": [38, 15, 247, 225] },
+    { "label": 2, "after": 1, "box": [304, 15, 514, 226] },
+    { "label": 3, "after": 2, "box": [38, 245, 249, 353] },
+    { "label": 4, "after": 3, "box": [304, 245, 515, 353] },
+    { "label": 5, "after": 4, "box": [38, 383, 249, 492] },
+    { "label": 6, "after": 5, "box": [304, 383, 515, 462] },
+    { "label": 7, "after": 6, "box": [89, 528, 198, 607] },
+    { "label": "완성", "after": 7, "box": [335, 507, 544, 655] }
+  ],
+  "fit": { "nose": [-0.22, -0.08], "chin": [-0.56, -0.44], "side": [0.3, 0.42], "earA": [0.06, 0.22], "earB": [0.05, 0.2] }
+}

@@ -616,6 +616,21 @@ export const enModels = {
       'Draw round eyes on both sides of the head with a pencil, and you are done!',
     ],
   },
+  bulldog: {
+    name: 'Bulldog Face', desc: 'Fold the triangle tips up and down to make the nose and chin, then fold the top corners down for floppy ears. Draw its face!', paper: 'Square origami paper',
+    done: 'Your bulldog face is done! Woof woof!',
+    steps: [
+      'Place the paper colored side down like a diamond. Fold it in half and unfold to make a crease down the middle.',
+      'Fold the top corner down to the bottom corner.',
+      'Fold the bottom tip of the front layer up to the top edge along the dotted line.',
+      'Fold that tip down a little along the dotted line. It becomes the nose.',
+      'Fold the bottom tip of the back layer up along the dotted line. It becomes the chin.',
+      'Fold both sides behind along the dotted lines.',
+      'Fold the two top corners down along the dotted lines. They become ears.',
+      'Draw the eyes, a black nose and the mouth with a pencil.',
+      'Dot the white cheeks with a pencil, and you are done!',
+    ],
+  },
   neuli: {
     name: 'Neuli Face', desc: 'Our school friend Neuli! Fold a triangle, stand the ears up and fold the chin to make a wide, cute face.', paper: 'Square origami paper (light yellow or apricot)',
     done: 'Neuli face is done! You can draw a flower on top of the head too.',
