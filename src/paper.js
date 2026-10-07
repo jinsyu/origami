@@ -161,6 +161,14 @@ export class PaperMesh {
       const c = sh.colors || model.colors;
       return { front: new THREE.Color(c.front), back: new THREE.Color(c.back) };
     });
+    // 어두운 종이(한글 자모의 검은 색종이)에는 남색 선이 묻힌다: 선을 바탕 색의 반대로 칠해(흰 면엔 어둡게, 검은 면엔 밝게) 어느 면에서나 보이게
+    const darkPaper = this.sheetColors.some((c) => [c.front, c.back].some((k) => 0.2126 * k.r + 0.7152 * k.g + 0.0722 * k.b < 0.1));
+    for (const [l, g, op] of [[this.dark, 0.5, 0.45], [this.light, 0.22, 0.16]]) {
+      const m = l.material;
+      if (darkPaper) Object.assign(m, { blending: THREE.CustomBlending, blendSrc: THREE.OneMinusDstColorFactor, blendDst: THREE.OneMinusSrcColorFactor, blendEquation: THREE.AddEquation, opacity: 1 }), m.color.setRGB(g, g, g);
+      else Object.assign(m, { blending: THREE.NormalBlending, opacity: op }), m.color.set('#1e2b3a');
+      m.needsUpdate = true;
+    }
     this.frontMat.color.set('#ffffff');
     this.backMat.color.set('#ffffff');
     this.frontMat.vertexColors = this.backMat.vertexColors = true;
