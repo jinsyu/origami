@@ -589,6 +589,21 @@ export const enModels = {
       'Color thick stripes on the body and color the tail tip black, and you are done!',
     ],
   },
+  ghost: {
+    name: 'Ghost', desc: 'Fold a kite, fold the flaps back out and bend the bottom tip sideways to make a cute ghost with a tail. Draw its face!', paper: 'Square origami paper',
+    done: 'Your ghost is done! Bleh~',
+    steps: [
+      'Place the paper colored side down like a diamond. Fold it in half and unfold to make a crease down the middle.',
+      'Fold the two lower edges to the center line.',
+      'Fold the upper parts of the flaps back outward along the dotted lines.',
+      'Fold both sides inward along the dotted lines.',
+      'Fold the top tip down along the dotted line.',
+      'Fold the bottom tip sideways along the dotted line. It becomes the tail.',
+      'Turn the paper over.',
+      'Draw the eyes and a smiling mouth with a pencil.',
+      'Draw a tongue sticking out with a red colored pencil, and you are done!',
+    ],
+  },
   neuli: {
     name: 'Neuli Face', desc: 'Our school friend Neuli! Fold a triangle, stand the ears up and fold the chin to make a wide, cute face.', paper: 'Square origami paper (light yellow or apricot)',
     done: 'Neuli face is done! You can draw a flower on top of the head too.',
