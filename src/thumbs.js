@@ -42,7 +42,8 @@ function drawGuides(group, model, plan) {
   const dashed = (a, b, color, mountain) => {
     const A = new THREE.Vector3(...a), B = new THREE.Vector3(...b), L = A.distanceTo(B);
     const dash = mountain ? 0.05 : 0.026, gap = 0.018;
-    const m = new THREE.MeshBasicMaterial({ color, depthTest: false });
+    // 흰 테두리(투명)보다 뒤에 그려지도록 점선도 투명 물체로 둔다 (불투명 물체가 먼저 그려지므로)
+    const m = new THREE.MeshBasicMaterial({ color, depthTest: false, transparent: true });
     for (let s = 0; s < L; s += dash + gap) {
       const p = A.clone().lerp(B, s / L), q = A.clone().lerp(B, Math.min(1, (s + dash) / L));
       seg(p, q, 0.009, halo, 9);
