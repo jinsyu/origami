@@ -72,7 +72,7 @@ GitHub `jinsyu/origami` → Vercel 자동 배포 (main 푸시 = 배포). 빌드 
 
 도면은 그림이라 `https://en.origami-club.com/<분류>/<작품>/zu.html` 에서 `zu.gif` 를 받아 `sips -s format png` 로 바꿔 직접 보고 좌표를 잡는다. 작품 파일 첫 줄에 출처 주소를 적는다.
 
-- 구현: 샌드위치(sandwich2), 부엉이(owl, Origami Club 도면대로 다시 구현), 요트(yacht), 촛불(candle2), 원숭이(monkey2, 4단계 얼굴 모서리 접기 생략), 코끼리(elephant2), 펭귄(penguin), 게(crab2), 아기 여우(fox-cub), 피아노(piano2), 문어, UFO, 아이스크림(soft-cream2), 토끼 얼굴, 수박, 보트(motorboat), 눈 덮인 산(fuji), 병아리, 돼지 얼굴, 코알라 얼굴, 자동차, 금붕어, 연필, 쥐 얼굴
+- 구현: 샌드위치(sandwich2), 부엉이(owl, Origami Club 도면대로 다시 구현), 요트(yacht), 촛불(candle2), 원숭이(monkey2), 코끼리(elephant2), 펭귄(penguin), 게(crab2), 아기 여우(fox-cub), 피아노(piano2), 문어, UFO, 아이스크림(soft-cream2), 토끼 얼굴, 수박, 보트(motorboat), 눈 덮인 산(fuji), 병아리, 돼지 얼굴, 코알라 얼굴, 자동차, 금붕어, 연필, 쥐 얼굴
 - 실패·보류:
   - 트럭(vehicle/track): 운전석 칸(6·7단계)을 만들지 못해 자동차와 구별 안 됨 — 보류
   - 강아지(animal/dog)·북극곰: 펼쳐 누르기+당겨 빼기/주머니 접기 — 보류

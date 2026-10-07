@@ -47,6 +47,7 @@ export const enModels = {
       'Place the paper colored side down. Fold in half and unfold to make a center crease.',
       'Fold the top half down.',
       'Open the pocket on the right and squash it flat along the slanted dotted line. A white face appears.',
+      'Fold the left tip of the face in a little along the dotted line. An ear appears.',
       'Fold the left side behind along the vertical dotted line.',
       'Draw the eyes and hair with a pencil, then color the mouth with a colored pencil, and you are done!',
     ],

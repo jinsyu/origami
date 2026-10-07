@@ -22,6 +22,7 @@ export const monkey = {
     { text: '색깔 면이 아래로 가게 놓고, 반으로 접었다 펴서 가운데 세로 선을 만들어요.', moves: [{ line: [[0, -1], [0, 1]], side: [1, 0], unfold: true }] },
     { text: '위쪽을 아래로 반 접어요.', moves: [{ line: [[-1, 0], [1, 0]], side: [0, H], tag: 'top' }] },
     { text: '오른쪽 틈을 벌리고 비스듬한 점선을 따라 꾹 눌러 펼쳐요. 하얀 얼굴이 나와요.', sim: true, moves: squashFlap({ V: [0.29, 0], hd: [-0.12, -0.5], sd: [1, 0], outer: (c) => !top(c), inner: top, faceTag: 'face', size: 0.5 }) },
+    { text: '얼굴의 왼쪽 끝을 점선에서 조금 접어 넣어요. 귀가 생겨요.', moves: [{ line: [[-0.09, -0.287], [-0.058, -0.382]], side: [-0.12, -0.35], filter: (c) => c.tags.has('face_in') || c.tags.has('face') }] },
     { text: '왼쪽을 세로 점선에서 뒤로 접어요.', moves: [{ line: [[-0.25, -1], [-0.25, 1]], side: [-H, -0.25], toward: -1 }] },
     {
       text: '연필로 눈과 머리카락을 그리고, 색연필로 입을 칠하면 완성!',
