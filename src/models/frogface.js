@@ -16,14 +16,16 @@ export function makeFrogface(P = frogfaceParams) {
   const w = Q - top; // 접어 내린 띠의 폭
   const g = 2 * side - H; // 눈 혹 안쪽 변의 |x| (안으로 접힌 옆판 끝)
   const eyeC = 0.03, jaw = 0.088; // 눈 안쪽 위·아래 모서리를 접는 크기 (도안에서 잼)
-  // 한쪽 위 벌려 누르기: 띠의 바깥 쪽을 비스듬한 선에서 위로 젖히고, 젖힌 끝을 되접은 뒤, 뒤판 끝을 세로선에서 안으로 접는다
+  // 한쪽 위 벌려 누르기: 날개를 세로선(경첩)에서 접어 넘기면서 띠 주머니를 벌려 눌러 눈 혹을 세운다.
+  // 끝 상태: 띠의 비스듬한 선(a-b) 너머가 그 선에서 뒤집히고, 그 가운데 날개 쪽 조각은 b 를 지나는 반대 대각선에서 되접히며, 뒤판 날개는 경첩에서 넘어간다.
+  // 움직임(역할 vK·vR·vM): 세 조각은 꼭짓점 b 에서 붙어 있어 한 몸처럼 움직인다 (날개가 앞서고 띠가 따라 들린다)
   const squash = (sx) => {
     const pull = `pull${sx}`;
     const a = [sx * (side - w), top - w], b = [sx * side, top]; // 비스듬한 선: 띠 아래 변 위의 점 → 경첩 모서리
     return [
-      { line: [a, b], side: [sx * 0.45, top - w + 0.01], filter: (c) => has('band')(c) && sx * c.x > 0 && (c.y - (top - w)) < sx * c.x - (side - w), toward: 1, tag: pull, at: [0, 0.6] },
-      { line: [b, [b[0] - sx, b[1] + 1]], side: [sx * 0.3, top + 0.2], filter: (c) => has(pull)(c) && sx * c.x + c.y > side + top, toward: 1, at: [0.3, 0.9] },
-      { line: [[sx * side, -1], [sx * side, 1]], side: [sx * 0.45, -0.1], filter: (c) => !has('band')(c) && !has(pull)(c) && sx * c.x > side, toward: 1, at: [0.4, 1] },
+      { line: [a, b], side: [sx * 0.45, top - w + 0.01], filter: (c) => has('band')(c) && sx * c.x > 0 && (c.y - (top - w)) < sx * c.x - (side - w), toward: 1, tag: pull, role: 'vK' },
+      { line: [b, [b[0] - sx, b[1] + 1]], side: [sx * 0.3, top + 0.2], filter: (c) => has(pull)(c) && sx * c.x + c.y > side + top, toward: 1, role: 'vR', vtx: { V: b, e1: [sx, -1], e2: [sx, 0] } },
+      { line: [[sx * side, -1], [sx * side, 1]], side: [sx * 0.45, -0.1], filter: (c) => !has('band')(c) && !has(pull)(c) && sx * c.x > side, toward: 1, role: 'vM' },
     ];
   };
   return {

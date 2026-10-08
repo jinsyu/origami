@@ -116,7 +116,14 @@ export function prepareSim(plan) {
     if (!off.some((L) => L.some(([a, b]) => Math.abs(a[0]) + Math.abs(a[1]) + Math.abs(a[2]) + Math.abs(b[0]) + Math.abs(b[1]) + Math.abs(b[2]) > 1e-9))) off = null;
     else off = off.map((L) => ({ A: L.map((x) => x[0]), B: L.map((x) => x[1]) }));
   }
-  const sim = { off, unstack: plan.unstack, loops, nCorner, NV: nCorner, member, subs: plan.subs, start, end, dist, guides, squash, tearOk: plan.tearOk };
+  // 꼭짓점 펼쳐 누르기(역할: vM/vK/vR): 한 꼭짓점에서 만나는 세 조각이 서로 붙은 채 움직인다
+  let vfold = null;
+  if (['vM', 'vK', 'vR'].every((r) => r in roleIdx)) {
+    const tag = (r) => `__s${roleIdx[r]}`;
+    const group = polys.map((q) => (q.tags.has(tag('vR')) ? 'R' : q.tags.has(tag('vK')) ? 'K' : q.tags.has(tag('vM')) ? 'M' : null));
+    vfold = { roleIdx, group };
+  }
+  const sim = { off, unstack: plan.unstack, loops, nCorner, NV: nCorner, member, subs: plan.subs, start, end, dist, guides, squash, vfold, tearOk: plan.tearOk };
   // swing: 뒤집어 접기를 '겹을 책처럼 벌리기' 대신 '날개를 평면 안에서 돌리며 앞뒤 겹이 등선 쪽으로 좁아졌다 자리를 바꾸기'로 보여 준다.
   // 벌어진 틈으로 안쪽 면이 보이지 않아 겉면 색이 유지된다. 끝 상태는 같다.
   const rv = plan.swing && plan.subs.find((s) => s.mv.rev);
@@ -149,7 +156,60 @@ export function prepareSim(plan) {
     squash.c0 = start.map((L, pi) => L.map((p, li) => (A0[pi] ? sub3(p, A0[pi][li]) : [0, 0, 0])));
     squash.c1 = end.map((L, pi) => L.map((p, li) => (A1[pi] ? sub3(p, A1[pi][li]) : [0, 0, 0])));
   }
+  if (vfold) {
+    const A0 = vfoldPose(sim, 0), A1 = vfoldPose(sim, 1);
+    vfold.c0 = start.map((L, pi) => L.map((p, li) => (A0[pi] ? sub3(p, A0[pi][li]) : [0, 0, 0])));
+    vfold.c1 = end.map((L, pi) => L.map((p, li) => (A1[pi] ? sub3(p, A1[pi][li]) : [0, 0, 0])));
+  }
   return sim;
+}
+
+// 꼭짓점 펼쳐 누르기의 해석적 경로 (개구리 얼굴 눈).
+// 꼭짓점 V 에서 세 조각이 만난다: M 은 경첩을 축으로 θM·g, K 는 다른 접는 선을 축으로 θK·f 돈다.
+// R 은 K 와 선 e1 로, M 과 선 e2 로 붙어 있으므로 두 선의 사이각이 그대로여야 한다 → g 마다 f 를 푼다.
+// M 이 앞서고 K 가 따라오는 갈래(작은 f)를 고른다. R 은 (e1, e2) 틀이 옮겨 간 대로 놓는다.
+function vfoldTable(sim) {
+  const { roleIdx } = sim.vfold;
+  const K = sim.subs[roleIdx.vK].mv, M = sim.subs[roleIdx.vM].mv, vt = sim.subs[roleIdx.vR].vtx;
+  const e1 = norm3([vt.e1[0], vt.e1[1], 0]), e2 = norm3([vt.e2[0], vt.e2[1], 0]), c0 = dot3(e1, e2);
+  const F = (f, g) => dot3(rotDir(e1, K.d, K.theta * f), rotDir(e2, M.d, M.theta * g)) - c0;
+  const N = 400, tab = [0];
+  let prev = 0;
+  for (let i = 1; i <= N; i++) {
+    const g = i / N, roots = [];
+    const S = 800;
+    let a = F(0, g);
+    for (let j = 1; j <= S; j++) {
+      const b = F(j / S, g);
+      if (a === 0 || a * b < 0) {
+        let lo = (j - 1) / S, hi = j / S;
+        for (let k = 0; k < 40; k++) { const md = (lo + hi) / 2; if (F(lo, g) * F(md, g) <= 0) hi = md; else lo = md; }
+        roots.push((lo + hi) / 2);
+      }
+      a = b;
+    }
+    if (i === N) roots.push(1);
+    const r = roots.length ? roots.reduce((x, y) => (Math.abs(y - prev) < Math.abs(x - prev) ? y : x)) : prev;
+    tab.push(Math.max(prev, r)); prev = tab[i];
+  }
+  return { K, M, V: [vt.V[0], vt.V[1], 0], e1, e2, tab, N };
+}
+function vfoldPose(sim, t) {
+  if (!sim.vfold.T) sim.vfold.T = vfoldTable(sim);
+  const { K, M, V, e1, e2, tab, N } = sim.vfold.T;
+  const g = ease(t), x = g * N, i = Math.min(N - 1, Math.floor(x)), f = tab[i] + (tab[i + 1] - tab[i]) * (x - i);
+  const frame = (a, b) => { const u3 = norm3(cross3(a, b)); return [a, cross3(u3, a), u3]; };
+  const U = frame(e1, e2), W = frame(rotDir(e1, K.d, K.theta * f), rotDir(e2, M.d, M.theta * g));
+  return sim.start.map((Lp, pi) => {
+    const gr = sim.vfold.group[pi];
+    if (!gr) return null;
+    return Lp.map((p) => {
+      if (gr === 'M') return rotate(p, M.o, M.d, M.theta * g);
+      if (gr === 'K') return rotate(p, K.o, K.d, K.theta * f);
+      const r = sub3(p, V), c = U.map((u) => dot3(r, u));
+      return [0, 1, 2].map((k) => V[k] + c[0] * W[0][k] + c[1] * W[1][k] + c[2] * W[2][k]);
+    });
+  });
 }
 
 // 하위 동작 k를 비율 f만큼 적용 (회전 후 층 간격 이동)
@@ -334,6 +394,10 @@ function kinematic(sim, t) {
   }
   if (sim.squash) {
     const A = squashPose(sim, t), { c0, c1 } = sim.squash;
+    kin = kin.map((L, pi) => (A[pi] ? A[pi].map((p, li) => [0, 1, 2].map((c) => p[c] + c0[pi][li][c] * (1 - t) + c1[pi][li][c] * t)) : L));
+  }
+  if (sim.vfold) {
+    const A = vfoldPose(sim, t), { c0, c1 } = sim.vfold;
     kin = kin.map((L, pi) => (A[pi] ? A[pi].map((p, li) => [0, 1, 2].map((c) => p[c] + c0[pi][li][c] * (1 - t) + c1[pi][li][c] * t)) : L));
   }
   return kin;

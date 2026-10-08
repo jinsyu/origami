@@ -431,7 +431,7 @@ function planSeqStep(polys, step) {
       }
       q.hist = [...q.hist, q.p.map((v) => v.slice())];
     }
-    subs.push({ mv, at: m.at || [0, 1], curve: m.curve || (mv.transient ? 'updown' : 'ease'), peak: m.peak ?? 0.5, role: m.role });
+    subs.push({ mv, at: m.at || [0, 1], curve: m.curve || (mv.transient ? 'updown' : 'ease'), peak: m.peak ?? 0.5, role: m.role, vtx: m.vtx });
   });
   cur.forEach((q) => { q.owner = -1; });
   // 펼쳐 누르기·꽃잎 접기처럼 포개진 겹을 들어 올려 다시 배치하는 단계 (role 이 붙은 하위 동작)

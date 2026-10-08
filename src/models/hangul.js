@@ -218,19 +218,28 @@ const YA_T = (H - YA_TOP) / 2; // 띠 높이 = 두 번 말기의 한 번 폭
 const YA_B = YA_TOP - YA_T; // 띠 아래 변
 const BAND = 'band', ROLL1 = 'roll1';
 const inBand = (c) => c.tags.has(BAND);
-const tab = (cx, ko, en) => {
+// 칸 세우기는 영상처럼 두 단계: (1) 칸의 띠를 접힌 채로 위로 젖혀 세운다 — 앞에 첫 번째 말림 겹이 덮여 검게 보인다
+// (2) 그 앞 겹의 오른쪽 아래 세모를 대각선으로 뒤로 접어 넣는다 → 앞면이 반씩 검정/흰색.
+// 영상(9:50~10:05)에서 칸 양옆 띠는 손가락으로 눌러 두고 칸만 들어 올리며, 칸 밑동 두 모서리는 살짝 구겨져 들어간다.
+// 그 모서리는 평평하게 접힐 수 없으므로(띠 밑 바탕에 접는 선이 없음) 엔진에서는 칸 양옆을 보이지 않는 이음선(seam)으로 나눈다
+const tabUp = (cx, ko, en) => {
   const c0 = cx - YA_T / 2, c1 = cx + YA_T / 2;
   return {
     ko, en, sim: true, tearOk: true,
     moves: [
-      // 띠의 그 칸만 나눈다 (영상에서 손으로 구겨 넣는 자리)
       { line: [[c0, -1], [c0, 1]], side: [c0 + 0.01, YA_B + 0.01], angle: 0, seam: true, filter: inBand },
       { line: [[c1, -1], [c1, 1]], side: [c1 - 0.01, YA_B + 0.01], angle: 0, seam: true, filter: (c) => inBand(c) && c.x > c0 },
-      // 두 번째로 말았던 것을 그 칸만 풀어 위로 세운다
       { line: [[-1, YA_TOP], [1, YA_TOP]], side: [cx, YA_B + 0.01], filter: (c) => inBand(c) && c.x > c0 && c.x < c1, tag: `tab${cx}` },
-      // 앞에 덮인 첫 번째 말림 겹의 오른쪽 아래 세모를 대각선으로 접어 뒤로 넣는다 → 앞면이 반씩 검정/흰색
-      { line: [[c0, YA_TOP], [c1, YA_TOP + YA_T]], side: [c1 - 0.01, YA_TOP + 0.01], filter: (c) => c.tags.has(`tab${cx}`) && c.tags.has(ROLL1), toward: -1 },
     ],
+    view: [0.15, -0.35, 1],
+  };
+};
+const tabTuck = (cx, ko, en) => {
+  const c0 = cx - YA_T / 2, c1 = cx + YA_T / 2;
+  return {
+    ko, en, torn: true, // 칸 양옆 이음선(앞 단계)에서 새로 생긴 꼭짓점도 같은 끊김
+    moves: [{ line: [[c0, YA_TOP], [c1, YA_TOP + YA_T]], side: [c1 - 0.01, YA_TOP + 0.01], filter: (c) => c.tags.has(`tab${cx}`) && c.tags.has(ROLL1), toward: -1 }],
+    view: [0, -0.2, 1],
   };
 };
 export const ya = letter({
@@ -242,21 +251,23 @@ export const ya = letter({
     { ko: '양쪽 끝을 조금(⅛) 접어 넣어요. 양옆에 검은 기둥이 생겨요.', en: 'Fold both side edges in a little (1/8). Black columns appear on both sides.', moves: [foldX(3 * H / 4, 1), foldX(-3 * H / 4, -1)] },
     { ko: '위쪽을 ¼ 보다 조금 더 접어 내려요.', en: 'Fold the top down a little more than a quarter.', moves: [{ ...foldY(YA_TOP, 1), tag: 'topflap' }] },
     {
-      ko: '접은 부분을 다시 올리면서, 양옆 검은 기둥의 윗부분은 안쪽으로 접어 넣어요. 가운데 흰 부분만 위로 남아요.',
-      en: 'Lift the folded part back up, tucking the tops of the black columns inward. Only the white middle stays up.',
+      ko: '접은 부분을 다시 올리면서, 양옆 검은 기둥의 윗부분은 흰 부분 뒤로 접어 넣어요. 가운데 흰 부분만 위로 남아요.',
+      en: 'Lift the folded part back up, tucking the tops of the black columns behind the white part. Only the white middle stays up.',
       sim: true, tearOk: true,
       moves: [
         { line: [[-1, YA_TOP], [1, YA_TOP]], side: [0, YA_TOP - 0.05], filter: (c) => c.tags.has('topflap') },
-        // 검은 기둥 윗부분: 흰 기둥 변(x=±1/4)을 따라 흰 덮개 앞으로 접어 넣는다 (영상 9:08 흰 덮개 윗모서리의 검은 조각). 말아 내리면 띠 속에 들어간다
+        // 검은 기둥 윗부분: 흰 기둥 변(x=±1/4)을 따라 흰 덮개 뒤로 접어 넣는다 (영상 9:07 흰 덮개 윗모서리 뒤로 검은 조각이 비침). 말아 내리면 띠 속에 들어간다
         { line: [[-1, YA_TOP], [1, YA_TOP]], side: [3 * H / 5, (YA_TOP + H) / 2], angle: 0, seam: true, filter: (c) => Math.abs(c.x) > H / 2 },
-        { line: [[H / 2, -1], [H / 2, 1]], side: [3 * H / 5, (YA_TOP + H) / 2], filter: (c) => c.y > YA_TOP && c.x > H / 2 },
-        { line: [[-H / 2, -1], [-H / 2, 1]], side: [-3 * H / 5, (YA_TOP + H) / 2], filter: (c) => c.y > YA_TOP && c.x < -H / 2 },
+        { line: [[H / 2, -1], [H / 2, 1]], side: [3 * H / 5, (YA_TOP + H) / 2], filter: (c) => c.y > YA_TOP && c.x > H / 2, toward: -1 },
+        { line: [[-H / 2, -1], [-H / 2, 1]], side: [-3 * H / 5, (YA_TOP + H) / 2], filter: (c) => c.y > YA_TOP && c.x < -H / 2, toward: -1 },
       ],
     },
     { ko: '위쪽 흰 부분을 반으로 접어 내려요.', en: 'Fold the white top part down in half.', moves: [{ ...foldY(H - YA_T, 1), tag: ROLL1 }] },
-    { ko: '한 번 더 접어 내려 위쪽에 검은 띠를 만들어요.', en: 'Fold it down once more to make a black band along the top.', moves: [{ ...foldY(YA_TOP, 1), filter: (c) => Math.abs(c.x) < H / 2, tag: BAND }] },
-    tab(-H / 4, '띠의 왼쪽 칸 하나를 위로 세워요. 칸 앞쪽 겹을 들어 올리고 대각선으로 접어 넣어요.', 'Stand one square of the band up on the left: lift its front layer and tuck it along the diagonal.'),
-    tab(5 * H / 16, '오른쪽 칸 하나도 같은 방법으로 세워요. 짧은 획 두 개가 돼요.', 'Stand one square on the right the same way. They become the two short strokes.'),
+    { ko: '한 번 더 접어 내려 위쪽에 검은 띠를 만들어요.', en: 'Fold it down once more to make a black band along the top.', moves: [{ ...foldY(YA_TOP, 1), filter: (c) => Math.abs(c.x) < H / 2, tag: BAND, noRejoin: true }] }, // 뒤로 넣은 기둥 윗부분이 아래 기둥과 같은 면이 되어 '다시 펴기'로 잘못 잡히지 않게
+    tabUp(-H / 4, '띠의 왼쪽 칸 하나를 위로 젖혀 세워요. 양옆 띠는 손가락으로 눌러 두고, 칸만 접힌 채로 들어 올려요.', 'Stand one square of the band up on the left. Hold the band on both sides down with your fingers and lift just that square, still folded.'),
+    tabTuck(-H / 4, '세운 칸의 앞 겹 오른쪽 아래 세모를 대각선으로 뒤로 접어 넣어요. 칸이 반은 검정, 반은 흰색이 돼요.', 'Fold the lower right triangle of the front layer of that square behind along the diagonal. The square becomes half black, half white.'),
+    tabUp(5 * H / 16, '오른쪽 칸 하나도 같은 방법으로 위로 젖혀 세워요.', 'Stand one square on the right up the same way.'),
+    tabTuck(5 * H / 16, '앞 겹 세모를 똑같이 뒤로 접어 넣어요. 짧은 획 두 개가 돼요.', 'Tuck the front triangle behind the same way. They become the two short strokes.'),
     { ko: '아래 흰 부분을 띠 바로 밑까지 접어 올려요.', en: 'Fold the white bottom part up to just below the band.', moves: [foldY((-H + YA_B) / 2, -1)] },
     { ko: '한 번 더 접어 올려요.', en: 'Fold it up once more.', moves: [foldY(((-H + YA_B) / 2 + YA_B) / 2, -1)] },
     { ko: '길이 방향으로 반을 뒤로 접어 막대를 만들어요.', en: 'Fold it in half lengthwise behind to make a bar.', moves: [{ ...foldY((((-H + YA_B) / 2 + YA_B) / 2 + YA_TOP) / 2, -1), toward: -1 }] },
